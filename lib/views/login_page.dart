@@ -6,6 +6,8 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  LoginPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
@@ -43,6 +45,20 @@ class LoginPage extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
               obscureText: true,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: (){
+                    authViewModel.clearErrorMessage();
+                    Navigator.pushNamed(context, '/forgot-password');
+                  }, 
+                  child: Text(
+                    'Forgot Password?',
+                  )
+                ),
+              ],
             ),
             SizedBox(height: 20),
             ElevatedButton(
