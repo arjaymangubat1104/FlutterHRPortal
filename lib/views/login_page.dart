@@ -197,7 +197,10 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Dont have an account?"
+                  "Don't have an account?",
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
