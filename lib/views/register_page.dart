@@ -170,9 +170,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     authViewModel.setErrorMessage('Display Name cannot be empty');
                   } else {
                     await authViewModel.register(
-                      _displayNameController.text,
                       _emailController.text,
                       _passwordController.text,
+                      _displayNameController.text,
                       context,
                     );
                   }
