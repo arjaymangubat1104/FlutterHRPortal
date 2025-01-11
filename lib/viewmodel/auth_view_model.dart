@@ -34,6 +34,9 @@ class AuthViewModel extends ChangeNotifier {
       notifyListeners();
       _isSuccessSignUp = true;
       Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      _errorMessage = _getFirebaseAuthErrorMessage(e);
+      notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
@@ -58,17 +61,32 @@ class AuthViewModel extends ChangeNotifier {
       notifyListeners();
       Navigator.pushReplacementNamed(context, '/home');
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        _errorMessage = 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        _errorMessage = 'Wrong password provided.';
-      } else {
-        _errorMessage = 'An error occurred. Please try again.';
-      }
+      _errorMessage = _getFirebaseAuthErrorMessage(e);
       notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+    }
+  }
+
+  String _getFirebaseAuthErrorMessage(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'invalid-email':
+        return 'The email address is badly formatted.';
+      case 'user-disabled':
+        return 'The user account has been disabled.';
+      case 'user-not-found':
+        return 'No user found for that email.';
+      case 'wrong-password':
+        return 'Wrong password provided.';
+      case 'email-already-in-use':
+        return 'The email address is already in use by another account.';
+      case 'operation-not-allowed':
+        return 'Email/password accounts are not enabled.';
+      case 'weak-password':
+        return 'The password is too weak.';
+      default:
+        return 'Incorrect email or password.';
     }
   }
 

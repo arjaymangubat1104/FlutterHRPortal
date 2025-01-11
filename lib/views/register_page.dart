@@ -26,7 +26,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     return Scaffold(
       appBar: AppBar(
-
+        automaticallyImplyLeading: false
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -52,7 +52,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         Text(
                           authViewModel.errorMessage!,
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 10
+                          ),
                         ),
                       ],
                     ),

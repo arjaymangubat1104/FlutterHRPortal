@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        
+
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -55,7 +55,10 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         Text(
                           authViewModel.errorMessage!,
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 10
+                          ),
                         ),
                       ],
                     ),
