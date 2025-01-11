@@ -57,7 +57,7 @@ class PromptDialogBox extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                elevation: 5,
+                elevation: 0,
               ),
               child: Text(
                 buttonText,

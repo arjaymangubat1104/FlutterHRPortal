@@ -59,7 +59,7 @@ class AuthViewModel extends ChangeNotifier {
 
       _errorMessage = null;
       notifyListeners();
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/intro');
     } on FirebaseAuthException catch (e) {
       _errorMessage = _getFirebaseAuthErrorMessage(e);
       notifyListeners();
