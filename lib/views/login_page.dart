@@ -28,6 +28,9 @@ class _LoginPageState extends State<LoginPage> {
     // });
 
     return Scaffold(
+      appBar: AppBar(
+        
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

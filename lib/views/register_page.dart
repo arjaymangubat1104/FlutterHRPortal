@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_attendance_system/utils/custom_dialog_box.dart';
 import 'package:provider/provider.dart';
 import '../viewmodel/auth_view_model.dart';
 
@@ -24,6 +25,9 @@ class _RegisterPageState extends State<RegisterPage> {
     final authViewModel = Provider.of<AuthViewModel>(context);
 
     return Scaffold(
+      appBar: AppBar(
+
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -175,6 +179,22 @@ class _RegisterPageState extends State<RegisterPage> {
                       _displayNameController.text,
                       context,
                     );
+                    if(authViewModel.isSuccessSignUp) {
+                      showDialog(
+                        context: context, 
+                        builder: (context){
+                          return PromptDialogBox(
+                            icon: Icons.check_circle,
+                            title: 'Successfully Registered', 
+                            content: 'Congrats! You have successfully registered', 
+                            buttonText: 'OK', 
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }
+                          );
+                        }
+                      );
+                    }
                   }
                 },
                 style: ElevatedButton.styleFrom(

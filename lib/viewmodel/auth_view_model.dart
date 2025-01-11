@@ -8,9 +8,11 @@ class AuthViewModel extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   UserModel? _userModel;
   String? _errorMessage;
+  bool _isSuccessSignUp = false;
 
   UserModel? get userModel => _userModel;
   String? get errorMessage => _errorMessage;
+  bool get isSuccessSignUp => _isSuccessSignUp;
 
   Future<void> register(String email, String password, String displayName, BuildContext context) async {
     try {
@@ -25,6 +27,7 @@ class AuthViewModel extends ChangeNotifier {
       await _firestore.collection('users').doc(user.uid).set(_userModel!.toMap());
 
       notifyListeners();
+      _isSuccessSignUp = true;
       Navigator.pop(context);
     } catch (e) {
       _errorMessage = e.toString();
@@ -68,7 +71,7 @@ class AuthViewModel extends ChangeNotifier {
     await _auth.signOut();
     _userModel = null;
     notifyListeners();
-    Navigator.pushReplacementNamed(context, '/');
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   void clearErrorMessage() {
