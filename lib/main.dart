@@ -3,8 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'viewmodel/auth_view_model.dart';
+import 'views/files_page.dart';
 import 'views/home_page.dart';
+import 'views/intro_page.dart';
 import 'views/login_page.dart';
+import 'views/profile_page.dart';
 import 'views/register_page.dart';
 
 
@@ -32,13 +35,16 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Firebase MVVM',
         theme: ThemeData(
-          primarySwatch: Colors.green,
+          primarySwatch: Colors.deepOrange,
         ),
         initialRoute: '/login',
         routes: {
           '/login': (context) => LoginPage(),
           '/register': (context) => RegisterPage(),
           '/home': (context) => HomePage(),
+          '/intro': (context) => IntroPage(),
+          '/files': (context) => FilesPage(),
+          '/profile': (context) => ProfilePage(),
         },
       ),
     );
