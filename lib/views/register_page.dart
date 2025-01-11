@@ -190,6 +190,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             buttonText: 'OK', 
                             onPressed: () {
                               Navigator.pop(context);
+                              authViewModel.isSuccessSignUp = false;
                             }
                           );
                         }

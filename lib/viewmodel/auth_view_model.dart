@@ -14,6 +14,11 @@ class AuthViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get isSuccessSignUp => _isSuccessSignUp;
 
+  set isSuccessSignUp(bool value) {
+    _isSuccessSignUp = value;
+    notifyListeners();
+  }
+
   Future<void> register(String email, String password, String displayName, BuildContext context) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
