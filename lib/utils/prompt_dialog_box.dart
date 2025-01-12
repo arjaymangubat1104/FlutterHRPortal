@@ -5,6 +5,7 @@ class PromptDialogBox extends StatelessWidget {
   final String title;
   final String content;
   final String buttonText;
+  final bool isSuccess;
   final Function onPressed;
 
   const PromptDialogBox({
@@ -12,6 +13,7 @@ class PromptDialogBox extends StatelessWidget {
     required this.title,
     required this.content,
     required this.buttonText,
+    required this.isSuccess,
     required this.onPressed,
   });
 
@@ -22,7 +24,7 @@ class PromptDialogBox extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: Colors.green,
+            color: isSuccess ? Colors.green : Colors.red,
             size: 75,
           ),
           Text(

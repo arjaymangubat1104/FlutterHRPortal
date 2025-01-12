@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_attendance_system/utils/custom_dialog_box.dart';
+import 'package:flutter_attendance_system/utils/prompt_dialog_box.dart';
 import 'package:provider/provider.dart';
 import '../viewmodel/auth_view_model.dart';
 
@@ -180,7 +180,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       _emailController.text,
                       _passwordController.text,
                       _displayNameController.text,
-                      context,
                     );
                     if(authViewModel.isSuccessSignUp) {
                       showDialog(
@@ -190,7 +189,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             icon: Icons.check_circle,
                             title: 'Successfully Registered', 
                             content: 'Congrats! You have successfully registered', 
-                            buttonText: 'OK', 
+                            buttonText: 'OK',
+                            isSuccess: authViewModel.isSuccessSignUp, 
                             onPressed: () {
                               Navigator.pop(context);
                               authViewModel.isSuccessSignUp = false;
@@ -199,6 +199,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         }
                       );
                     }
+                    Navigator.pop(context);
                   }
                 },
                 style: ElevatedButton.styleFrom(

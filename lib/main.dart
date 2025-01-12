@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'viewmodel/attendance_view_model.dart';
 import 'viewmodel/auth_view_model.dart';
 import 'viewmodel/time_date_view_model.dart';
 import 'views/files_page.dart';
@@ -33,6 +34,11 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
         ChangeNotifierProvider(create: (context) => TimeDateViewModel()),
+        ChangeNotifierProvider(
+          create: (context) => AttendanceViewModel(
+            authViewModel: Provider.of<AuthViewModel>(context, listen: false),
+          ),
+        ),
         // Add other providers here
       ],
       child: MaterialApp(

@@ -19,7 +19,7 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> register(String email, String password, String displayName, BuildContext context) async {
+  Future<void> register(String email, String password, String displayName) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -33,7 +33,6 @@ class AuthViewModel extends ChangeNotifier {
 
       notifyListeners();
       _isSuccessSignUp = true;
-      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       _errorMessage = _getFirebaseAuthErrorMessage(e);
       notifyListeners();
