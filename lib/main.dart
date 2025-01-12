@@ -3,13 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'viewmodel/auth_view_model.dart';
+import 'viewmodel/time_date_view_model.dart';
 import 'views/files_page.dart';
 import 'views/home_page.dart';
 import 'views/intro_page.dart';
 import 'views/login_page.dart';
 import 'views/profile_page.dart';
 import 'views/register_page.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +21,7 @@ void main() async {
       projectId: 'flutterattendance-13ad7'
     )
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -29,8 +29,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AuthViewModel(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthViewModel()),
+        ChangeNotifierProvider(create: (context) => TimeDateViewModel()),
+        // Add other providers here
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Firebase MVVM',
