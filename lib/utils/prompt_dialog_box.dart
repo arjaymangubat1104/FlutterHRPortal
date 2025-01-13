@@ -9,6 +9,7 @@ class PromptDialogBox extends StatelessWidget {
   final Function onPressed;
 
   const PromptDialogBox({
+    super.key, 
     required this.icon,
     required this.title,
     required this.content,

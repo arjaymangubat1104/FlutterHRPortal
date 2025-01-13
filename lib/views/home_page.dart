@@ -16,8 +16,8 @@ class HomePage extends StatelessWidget {
     final timeDateViewModel = Provider.of<TimeDateViewModel>(context);
     final attendanceViewModel = Provider.of<AttendanceViewModel>(context);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      attendanceViewModel.fetchUserAttendance();
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      await attendanceViewModel.fetchUserAttendance();
     });
 
     return Scaffold(
@@ -142,11 +142,25 @@ class HomePage extends StatelessWidget {
                             Text(
                               'Time In: ${attendanceViewModel.getLatestTimeIn()}',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 15,
+                                color: Colors.grey[700]
                               ),
                             ),
                           ],
                         ),
+                        const SizedBox(height: 5),
+                        Row(
+                          children: [
+                            Text(
+                              'Time Out: ${attendanceViewModel.getLatestTimeOut()}',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.grey[700]
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -162,6 +176,7 @@ class HomePage extends StatelessWidget {
                                       content: 'Are you sure you want to time in?',
                                       onYes: () async{
                                         await attendanceViewModel.timeIn();
+                                        await attendanceViewModel.fetchUserAttendance();
                                         Navigator.pop(context);
                                         showDialog(
                                           context: context, 
@@ -216,6 +231,7 @@ class HomePage extends StatelessWidget {
                                       content: 'Are you sure you want to time out?',
                                       onYes: () async{
                                         await attendanceViewModel.timeOut();
+                                        await attendanceViewModel.fetchUserAttendance();
                                         Navigator.pop(context);
                                         showDialog(
                                           context: context, 

@@ -182,6 +182,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       _displayNameController.text,
                     );
                     if(authViewModel.isSuccessSignUp) {
+                      Navigator.pop(context);
                       showDialog(
                         context: context, 
                         builder: (context){
@@ -199,7 +200,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         }
                       );
                     }
-                    Navigator.pop(context);
                   }
                 },
                 style: ElevatedButton.styleFrom(

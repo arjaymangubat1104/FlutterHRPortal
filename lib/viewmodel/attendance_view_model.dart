@@ -17,6 +17,9 @@ class AttendanceViewModel extends ChangeNotifier{
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
+  List<UserAttendanceModel> _attendanceList = [];
+  List<UserAttendanceModel> get attendanceList => _attendanceList;
+
   bool _isSuccessInOut = false;
   bool _isSuccessFetch = false;
 
@@ -109,11 +112,10 @@ class AttendanceViewModel extends ChangeNotifier{
         .where('user_id', isEqualTo: userModel.uid)
         .orderBy('attendance_date', descending: true)
         .get();
-      List<UserAttendanceModel> userAttendanceList = attendanceQuery.docs.map((doc) {
+      _attendanceList = attendanceQuery.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         return UserAttendanceModel.fromJson(data);
       }).toList();
-      _userModel?.attendanceList = userAttendanceList;
       notifyListeners();
       _isSuccessFetch = true;
     } catch (e) {
@@ -122,22 +124,29 @@ class AttendanceViewModel extends ChangeNotifier{
     }
   }
 
-  // Method to get the latest time in
+  // Method to get the latest time in and convert it to 12-hour format
   String getLatestTimeIn() {
-    if (_userModel != null && _userModel!.attendanceList.isNotEmpty) {
-      return _userModel!.attendanceList.first.timeIn ?? 'Not Available';
+    if (_attendanceList.isNotEmpty) {
+      String? timeIn = _attendanceList.first.timeIn;
+      if (timeIn != null && timeIn.isNotEmpty) {
+        DateTime parsedTime = DateFormat('HH:mm:ss').parse(timeIn);
+        return DateFormat('hh:mm:ss a').format(parsedTime);
+      }
     }
-    return 'Not Available';
+    return 'Pending time in...';
   }
 
-  // Method to get the latest time out
+  // Method to get the latest time out and convert it to 12-hour format
   String getLatestTimeOut() {
-    if (_userModel != null && _userModel!.attendanceList.isNotEmpty) {
-      return _userModel!.attendanceList.first.timeOut ?? 'Not Available';
+    if (_attendanceList.isNotEmpty) {
+      String? timeOut = _attendanceList.first.timeOut;
+      if (timeOut != null && timeOut.isNotEmpty) {
+        DateTime parsedTime = DateFormat('HH:mm:ss').parse(timeOut);
+        return DateFormat('hh:mm:ss a').format(parsedTime);
+      }
     }
-    return 'Not Available';
+    return 'Pending time out...';
   }
-
 
 }
 
