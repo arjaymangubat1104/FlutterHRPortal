@@ -9,16 +9,19 @@ class AttendanceViewModel extends ChangeNotifier{
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AuthViewModel authViewModel;
 
-  AttendanceViewModel({required this.authViewModel});
+  AttendanceViewModel ({required this.authViewModel});
 
-  late UserModel _userModel;
+  UserModel? _userModel;
   UserModel? get userModel => _userModel;
+
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
   bool _isSuccessInOut = false;
+  bool _isSuccessFetch = false;
 
   bool get isSuccessInOut => _isSuccessInOut;
+  bool get isSuccessFetch => _isSuccessFetch;
 
   set isSuccessInOut(bool value) {
     _isSuccessInOut = value;
@@ -96,8 +99,45 @@ class AttendanceViewModel extends ChangeNotifier{
     }
   }
 
-   // Method to fetch user attendance data
-  
+  Future<void> fetchUserAttendance() async {
+    try {
+      UserModel? userModel = authViewModel.userModel;
+      if (userModel == null) {
+        throw Exception("User not logged in");
+      }
+      QuerySnapshot attendanceQuery = await _firestore.collection('attendance')
+        .where('user_id', isEqualTo: userModel.uid)
+        .orderBy('attendance_date', descending: true)
+        .get();
+      List<UserAttendanceModel> userAttendanceList = attendanceQuery.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        return UserAttendanceModel.fromJson(data);
+      }).toList();
+      _userModel?.attendanceList = userAttendanceList;
+      notifyListeners();
+      _isSuccessFetch = true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+    }
+  }
+
+  // Method to get the latest time in
+  String getLatestTimeIn() {
+    if (_userModel != null && _userModel!.attendanceList.isNotEmpty) {
+      return _userModel!.attendanceList.first.timeIn ?? 'Not Available';
+    }
+    return 'Not Available';
+  }
+
+  // Method to get the latest time out
+  String getLatestTimeOut() {
+    if (_userModel != null && _userModel!.attendanceList.isNotEmpty) {
+      return _userModel!.attendanceList.first.timeOut ?? 'Not Available';
+    }
+    return 'Not Available';
+  }
+
 
 }
 
