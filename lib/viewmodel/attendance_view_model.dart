@@ -27,7 +27,7 @@ class AttendanceViewModel extends ChangeNotifier{
 
   DateTime? _checkInTime;
   DateTime? _checkOutTime;
-  
+
   Future<void> timeIn() async {
     try {
       _checkInTime = DateTime.now();
@@ -35,14 +35,24 @@ class AttendanceViewModel extends ChangeNotifier{
       if (userModel == null) {
         throw Exception("User not logged in");
       }
+
+      QuerySnapshot attendanceQuery = await _firestore.collection('attendance')
+        .where('user_id', isEqualTo: userModel.uid)
+        .where('attendance_date', isEqualTo: DateFormat('yyyy-MM-dd').format(_checkInTime!))
+        .get();
+
+      if (attendanceQuery.docs.isNotEmpty) {
+        throw Exception("You've already timed in today");
+      }
+
       UserAttendanceModel attendance = UserAttendanceModel(
         id: _firestore.collection('attendance').doc().id,
         userId: userModel.uid,
         userName: userModel.displayName,
-        attendanceStatus: 'Present',
+        attendanceStatus: 'AWOL',
         attendanceDate: DateFormat('yyyy-MM-dd').format(_checkInTime!),
         timeIn: DateFormat('HH:mm:ss').format(_checkInTime!),
-        timeOut: DateFormat('HH:mm:ss').format(_checkInTime!),
+        timeOut: '',
       );
       await _firestore.collection('attendance').doc(attendance.id).set(attendance.toJson());
       _isSuccessInOut = true;
@@ -62,13 +72,17 @@ class AttendanceViewModel extends ChangeNotifier{
         throw Exception("User not logged in");
       }
       QuerySnapshot attendanceQuery = await _firestore.collection('attendance')
-        .where('userId', isEqualTo: userModel.uid)
-        .where('attendanceDate', isEqualTo: DateFormat('yyyy-MM-dd').format(_checkOutTime!))
+        .where('user_id', isEqualTo: userModel.uid)
+        .where('attendance_date', isEqualTo: DateFormat('yyyy-MM-dd').format(_checkOutTime!))
         .get();
       if (attendanceQuery.docs.isNotEmpty) {
         DocumentSnapshot doc = attendanceQuery.docs.first;
+         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        if (data['time_out'] != null && data['time_out'].isNotEmpty) {
+          throw Exception("You've already timed out today");
+        }
         await _firestore.collection('attendance').doc(doc.id).update({
-          'timeOut': DateFormat('HH:mm:ss').format(_checkOutTime!),
+          'time_out': DateFormat('HH:mm:ss').format(_checkOutTime!),
         });
         _isSuccessInOut = true;
         notifyListeners();
@@ -81,4 +95,9 @@ class AttendanceViewModel extends ChangeNotifier{
       notifyListeners();
     }
   }
+
+   // Method to fetch user attendance data
+  
+
 }
+
