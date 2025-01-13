@@ -18,15 +18,55 @@ class ConfimationDialogBox extends StatelessWidget{
     return AlertDialog(
       title: Text(title),
       content: Text(content),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () => onNo(),
-          child: Text('No'),
-        ),
-        TextButton(
-          onPressed: () => onYes(),
-          child: Text('Yes'),
-        ),
+      actions: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () => onNo(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                textStyle: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                'No',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(width: 50),
+            ElevatedButton(
+              onPressed: () => onYes(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                textStyle: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                'Yes',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        )
       ],
     );
   }

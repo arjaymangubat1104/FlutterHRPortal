@@ -88,7 +88,7 @@ class HomePage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              ' - ${userModel?.uid}',
+                              ' - ${userModel?.uid ?? 'uid'}',
                               style: TextStyle(
                                 fontSize: 10,
                               ),
@@ -119,7 +119,7 @@ class HomePage extends StatelessWidget {
                             Icon(
                               Icons.calendar_today,
                               size: 30,
-                              color: Colors.teal,
+                              color: Colors.yellow,
                             ),
                             const SizedBox(width: 5),
                             Text(
@@ -140,7 +140,6 @@ class HomePage extends StatelessWidget {
                               height: 25,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  //attendanceViewModel.timeIn();
                                   showDialog(
                                     context: context, 
                                     builder: (context) => ConfimationDialogBox(
@@ -164,7 +163,7 @@ class HomePage extends StatelessWidget {
                                           PromptDialogBox(
                                             icon: Icons.error_outline,
                                             title: 'Time In Failed', 
-                                            content: 'You have failed to time in', 
+                                            content: attendanceViewModel.errorMessage ?? 'You have failed to time in', 
                                             buttonText: 'OK',
                                             isSuccess: attendanceViewModel.isSuccessInOut, 
                                             onPressed: () => Navigator.pop(context),
@@ -176,7 +175,7 @@ class HomePage extends StatelessWidget {
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
+                                  backgroundColor: Colors.green,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5),
                                   ),
@@ -195,10 +194,42 @@ class HomePage extends StatelessWidget {
                               height: 25,
                               child: ElevatedButton(
                                 onPressed: () async{
-                                  await attendanceViewModel.timeOut();
+                                  showDialog(
+                                    context: context, 
+                                    builder: (context) => ConfimationDialogBox(
+                                      title: 'Confirm Time Out',
+                                      content: 'Are you sure you want to time out?',
+                                      onYes: () async{
+                                        await attendanceViewModel.timeOut();
+                                        Navigator.pop(context);
+                                        showDialog(
+                                          context: context, 
+                                          builder: (context) => attendanceViewModel.isSuccessInOut ?
+                                          PromptDialogBox(
+                                            icon: Icons.check_circle,
+                                            title: 'Time Out Successful', 
+                                            content: 'You have successfully time out', 
+                                            buttonText: 'OK',
+                                            isSuccess: attendanceViewModel.isSuccessInOut, 
+                                            onPressed: () => Navigator.pop(context),
+                                          )
+                                          :
+                                          PromptDialogBox(
+                                            icon: Icons.error_outline,
+                                            title: 'Time Out Failed', 
+                                            content: attendanceViewModel.errorMessage ?? 'You have failed to time out', 
+                                            buttonText: 'OK',
+                                            isSuccess: attendanceViewModel.isSuccessInOut, 
+                                            onPressed: () => Navigator.pop(context),
+                                          )
+                                        );
+                                      },
+                                      onNo: () => Navigator.pop(context),
+                                    )
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
+                                  backgroundColor: Colors.red,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5),
                                   ),
