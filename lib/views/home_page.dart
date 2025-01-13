@@ -16,6 +16,10 @@ class HomePage extends StatelessWidget {
     final timeDateViewModel = Provider.of<TimeDateViewModel>(context);
     final attendanceViewModel = Provider.of<AttendanceViewModel>(context);
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      attendanceViewModel.fetchUserAttendance();
+    });
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -132,6 +136,17 @@ class HomePage extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Time In: ${attendanceViewModel.getLatestTimeIn()}',
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                          ],
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
