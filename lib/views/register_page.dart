@@ -20,6 +20,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
   bool _isObscure = true;
 
+  bool _showSpinner = false;
+
+  
+
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
@@ -85,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ],
             ),
             const SizedBox(height: 10),
-             TextField(
+            TextField(
               controller: _displayNameController,
               decoration: InputDecoration(
                 labelText: 'Display Name',
@@ -165,10 +169,13 @@ class _RegisterPageState extends State<RegisterPage> {
               obscureText: _isObscure,
             ),
             SizedBox(height: 20),
-           SizedBox(
+            SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  setState(() {
+                    _showSpinner = true;
+                  });
                   if (_emailController.text.isEmpty) {
                     authViewModel.setErrorMessage('Email cannot be empty');
                   } else if (_passwordController.text.isEmpty) {
@@ -176,30 +183,53 @@ class _RegisterPageState extends State<RegisterPage> {
                   } else if(_displayNameController.text.isEmpty) {
                     authViewModel.setErrorMessage('Display Name cannot be empty');
                   } else {
-                    await authViewModel.register(
-                      _emailController.text,
-                      _passwordController.text,
-                      _displayNameController.text,
-                    );
-                    if(authViewModel.isSuccessSignUp) {
-                      Navigator.pop(context);
-                      showDialog(
-                        context: context, 
-                        builder: (context){
-                          return PromptDialogBox(
-                            icon: Icons.check_circle,
-                            title: 'Successfully Registered', 
-                            content: 'Congrats! You have successfully registered', 
-                            buttonText: 'OK',
-                            isSuccess: authViewModel.isSuccessSignUp, 
-                            onPressed: () {
-                              Navigator.pop(context);
-                              authViewModel.isSuccessSignUp = false;
+                    try {
+                        await authViewModel.register(
+                          _emailController.text,
+                          _passwordController.text,
+                          _displayNameController.text,
+                        );
+                        if(authViewModel.isSuccessSignUp) {
+                          Navigator.pop(context);
+                          showDialog(
+                            context: context, 
+                            builder: (context){
+                              return PromptDialogBox(
+                                icon: Icons.check_circle,
+                                title: 'Successfully Registered', 
+                                content: 'Congrats! You have successfully registered', 
+                                buttonText: 'OK',
+                                isSuccess: authViewModel.isSuccessSignUp, 
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  authViewModel.isSuccessSignUp = false;
+                                }
+                              );
                             }
                           );
                         }
-                      );
-                    }
+                        // Handle successful registration
+                      } catch (e) {
+                        // Handle registration error
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Registration Failed'),
+                            content: Text(e.toString()),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
+                      } finally {
+                        setState(() {
+                          _showSpinner = false;
+                        });
+                      }
+                    
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -210,7 +240,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   minimumSize: Size(double.infinity, 56),
                 ),
                 child: Center(
-                  child: Text(
+                  child: _showSpinner ? CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ) :
+                  Text(
                     'Register',
                     style: TextStyle(
                       color: Colors.white,

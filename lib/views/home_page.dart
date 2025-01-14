@@ -17,7 +17,7 @@ class HomePage extends StatelessWidget {
     final attendanceViewModel = Provider.of<AttendanceViewModel>(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async{
-      await attendanceViewModel.fetchUserAttendance();
+      await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
     });
 
     return Scaffold(
@@ -135,38 +135,25 @@ class HomePage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Time In: ${attendanceViewModel.getLatestTimeIn()}',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.grey[700]
-                              ),
-                            ),
-                          ],
-                        ),
                         const SizedBox(height: 5),
                         Row(
                           children: [
                             Text(
-                              'Time Out: ${attendanceViewModel.getLatestTimeOut()}',
+                              attendanceViewModel.statusMessage(),
                               style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 12,
                                 color: Colors.grey[700]
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             SizedBox(
                               width: 150,
-                              height: 25,
+                              height: 40,
                               child: ElevatedButton(
                                 onPressed: () {
                                   showDialog(
@@ -176,7 +163,9 @@ class HomePage extends StatelessWidget {
                                       content: 'Are you sure you want to time in?',
                                       onYes: () async{
                                         await attendanceViewModel.timeIn();
-                                        await attendanceViewModel.fetchUserAttendance();
+                                        if(attendanceViewModel.isSuccessInOut){
+                                          await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
+                                        }
                                         Navigator.pop(context);
                                         showDialog(
                                           context: context, 
@@ -218,10 +207,10 @@ class HomePage extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 20),
                             SizedBox(
                               width: 150,
-                              height: 25,
+                              height: 40,
                               child: ElevatedButton(
                                 onPressed: () async{
                                   showDialog(
@@ -231,7 +220,9 @@ class HomePage extends StatelessWidget {
                                       content: 'Are you sure you want to time out?',
                                       onYes: () async{
                                         await attendanceViewModel.timeOut();
-                                        await attendanceViewModel.fetchUserAttendance();
+                                        if(attendanceViewModel.isSuccessInOut){
+                                          await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
+                                        }
                                         Navigator.pop(context);
                                         showDialog(
                                           context: context, 
