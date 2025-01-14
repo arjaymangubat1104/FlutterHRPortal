@@ -6,15 +6,22 @@ import 'package:provider/provider.dart';
 import '../viewmodel/attendance_view_model.dart';
 import '../viewmodel/auth_view_model.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
     final userModel = authViewModel.userModel;
     final timeDateViewModel = Provider.of<TimeDateViewModel>(context);
     final attendanceViewModel = Provider.of<AttendanceViewModel>(context);
+
+    bool _showSpinner = false;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async{
       await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
@@ -41,7 +48,16 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () {
-              authViewModel.logout(context);
+              setState(() {
+                _showSpinner = true;
+              });
+              try{
+                authViewModel.logout(context);
+              } finally {
+                setState(() {
+                  _showSpinner = false;
+                });
+              }
             },
           ),
         ],
@@ -162,11 +178,18 @@ class HomePage extends StatelessWidget {
                                       title: 'Confirm Time In',
                                       content: 'Are you sure you want to time in?',
                                       onYes: () async{
-                                        await attendanceViewModel.timeIn();
-                                        if(attendanceViewModel.isSuccessInOut){
+                                        setState(() {
+                                          _showSpinner = true;
+                                        });
+                                        try{
+                                          await attendanceViewModel.timeIn();
                                           await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
+                                          Navigator.pop(context);
+                                        } finally {
+                                          setState(() {
+                                            _showSpinner = false;
+                                          });
                                         }
-                                        Navigator.pop(context);
                                         showDialog(
                                           context: context, 
                                           builder: (context) => attendanceViewModel.isSuccessInOut ?
@@ -220,9 +243,7 @@ class HomePage extends StatelessWidget {
                                       content: 'Are you sure you want to time out?',
                                       onYes: () async{
                                         await attendanceViewModel.timeOut();
-                                        if(attendanceViewModel.isSuccessInOut){
-                                          await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
-                                        }
+                                        await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
                                         Navigator.pop(context);
                                         showDialog(
                                           context: context, 

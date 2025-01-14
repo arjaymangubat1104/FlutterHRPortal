@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_attendance_system/utils/loading_indicator.dart';
 import 'package:flutter_attendance_system/utils/prompt_dialog_box.dart';
 import 'package:provider/provider.dart';
 import '../viewmodel/auth_view_model.dart';
 
 class RegisterPage extends StatefulWidget {
 
-  RegisterPage({super.key});
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -30,255 +31,249 @@ class _RegisterPageState extends State<RegisterPage> {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false
+        automaticallyImplyLeading: false,
+        backgroundColor: _showSpinner ? Colors.black.withOpacity(0.5) : Colors.white,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Image.asset(
-              'lib/assets/logo.png',
-              height: 300,
-            ),
-            if (authViewModel.errorMessage != null)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  color: Colors.red[100],
-                  child: Padding(
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Image.asset(
+                  'lib/assets/logo.png',
+                  height: 300,
+                ),
+                if (authViewModel.errorMessage != null)
+                  Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline, 
-                          color: Colors.red
+                    child: Container(
+                      color: Colors.red[100],
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline, 
+                              color: Colors.red
+                            ),
+                            Text(
+                              authViewModel.errorMessage!,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 10
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          authViewModel.errorMessage!,
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 10
-                          ),
-                        ),
-                      ],
+                      ),
+                    ),
+                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Register',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Please enter your details to register',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _displayNameController,
+                  decoration: InputDecoration(
+                    labelText: 'Display Name',
+                    labelStyle: TextStyle(
+                      color: Colors.grey,
+                    ),
+                    hintText: 'Enter your display name',
+                    prefixIcon: Icon(
+                      Icons.text_fields_outlined
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey), // Default border color
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey), // Enabled border color
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 2.0), // Focused border color
                     ),
                   ),
                 ),
-              ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  'Register',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  'Please enter your details to register',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
+                SizedBox(height: 10),
+                 TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    labelStyle: TextStyle(
+                      color: Colors.grey,
+                    ),
+                    hintText: 'Enter your email',
+                    prefixIcon: Icon(
+                      Icons.email
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey), // Default border color
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey), // Enabled border color
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 2.0), // Focused border color
+                    ),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _displayNameController,
-              decoration: InputDecoration(
-                labelText: 'Display Name',
-                labelStyle: TextStyle(
-                  color: Colors.grey,
+                SizedBox(height: 10),
+                TextField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    labelStyle: TextStyle(
+                      color: Colors.grey,
+                    ),
+                    hintText: 'Enter your password',
+                    prefixIcon: Icon(
+                      Icons.lock
+                    ),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _isObscure = !_isObscure;
+                        });
+                      }, 
+                      icon: Icon(
+                        _isObscure ? Icons.visibility_off : Icons.visibility
+                      )
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey), // Default border color
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey), // Enabled border color
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 2.0), // Focused border color
+                    ),
+                  ),
+                  obscureText: _isObscure,
                 ),
-                hintText: 'Enter your display name',
-                prefixIcon: Icon(
-                  Icons.text_fields_outlined
-                ),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey), // Default border color
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey), // Enabled border color
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey, width: 2.0), // Focused border color
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-             TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                labelStyle: TextStyle(
-                  color: Colors.grey,
-                ),
-                hintText: 'Enter your email',
-                prefixIcon: Icon(
-                  Icons.email
-                ),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey), // Default border color
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey), // Enabled border color
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey, width: 2.0), // Focused border color
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                labelStyle: TextStyle(
-                  color: Colors.grey,
-                ),
-                hintText: 'Enter your password',
-                prefixIcon: Icon(
-                  Icons.lock
-                ),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _isObscure = !_isObscure;
-                    });
-                  }, 
-                  icon: Icon(
-                    _isObscure ? Icons.visibility_off : Icons.visibility
-                  )
-                ),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey), // Default border color
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey), // Enabled border color
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey, width: 2.0), // Focused border color
-                ),
-              ),
-              obscureText: _isObscure,
-            ),
-            SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                  setState(() {
-                    _showSpinner = true;
-                  });
-                  if (_emailController.text.isEmpty) {
-                    authViewModel.setErrorMessage('Email cannot be empty');
-                  } else if (_passwordController.text.isEmpty) {
-                    authViewModel.setErrorMessage('Password cannot be empty');
-                  } else if(_displayNameController.text.isEmpty) {
-                    authViewModel.setErrorMessage('Display Name cannot be empty');
-                  } else {
-                    try {
-                        await authViewModel.register(
-                          _emailController.text,
-                          _passwordController.text,
-                          _displayNameController.text,
-                        );
-                        if(authViewModel.isSuccessSignUp) {
-                          Navigator.pop(context);
-                          showDialog(
-                            context: context, 
-                            builder: (context){
-                              return PromptDialogBox(
-                                icon: Icons.check_circle,
-                                title: 'Successfully Registered', 
-                                content: 'Congrats! You have successfully registered', 
-                                buttonText: 'OK',
-                                isSuccess: authViewModel.isSuccessSignUp, 
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  authViewModel.isSuccessSignUp = false;
+                SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      setState(() {
+                        _showSpinner = true;
+                      });
+                      if (_emailController.text.isEmpty) {
+                        authViewModel.setErrorMessage('Email cannot be empty');
+                      } else if (_passwordController.text.isEmpty) {
+                        authViewModel.setErrorMessage('Password cannot be empty');
+                      } else if(_displayNameController.text.isEmpty) {
+                        authViewModel.setErrorMessage('Display Name cannot be empty');
+                      } else {
+                        try {
+                            await authViewModel.register(
+                              _emailController.text,
+                              _passwordController.text,
+                              _displayNameController.text,
+                            );
+                            if(authViewModel.isSuccessSignUp) {
+                              Navigator.pop(context);
+                              showDialog(
+                                context: context, 
+                                builder: (context){
+                                  return PromptDialogBox(
+                                    icon: Icons.check_circle,
+                                    title: 'Successfully Registered', 
+                                    content: 'Congrats! You have successfully registered', 
+                                    buttonText: 'OK',
+                                    isSuccess: authViewModel.isSuccessSignUp, 
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      authViewModel.isSuccessSignUp = false;
+                                    }
+                                  );
                                 }
                               );
                             }
-                          );
-                        }
-                        // Handle successful registration
-                      } catch (e) {
-                        // Handle registration error
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text('Registration Failed'),
-                            content: Text(e.toString()),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: Text('OK'),
-                              ),
-                            ],
-                          ),
-                        );
-                      } finally {
-                        setState(() {
-                          _showSpinner = false;
-                        });
+                            // Handle successful registration
+                          } finally {
+                            setState(() {
+                              _showSpinner = false;
+                            });
+                          }
+                        
                       }
-                    
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  minimumSize: Size(double.infinity, 56),
-                ),
-                child: Center(
-                  child: _showSpinner ? CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ) :
-                  Text(
-                    'Register',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepOrange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      minimumSize: Size(double.infinity, 56),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Register',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Already have an account?",
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    authViewModel.clearErrorMessage();
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    'Login',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
+                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Already have an account?",
+                      style: TextStyle(
+                        color: Colors.grey,
+                      ),
                     ),
-                  ),
+                    TextButton(
+                      onPressed: () {
+                        authViewModel.clearErrorMessage();
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Login',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          if (_showSpinner)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: Center(
+                child: CustomLoadingIndicator(),
+              ),
+            ),
+        ],
       ),
     );
   }
