@@ -14,14 +14,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool _showSpinner = false;
+
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
     final userModel = authViewModel.userModel;
     final timeDateViewModel = Provider.of<TimeDateViewModel>(context);
     final attendanceViewModel = Provider.of<AttendanceViewModel>(context);
-
-    bool _showSpinner = false;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async{
       await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: _showSpinner ? Colors.black.withOpacity(0.5) : Colors.deepOrange,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
