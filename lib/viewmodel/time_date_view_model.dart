@@ -7,6 +7,7 @@ class TimeDateViewModel extends ChangeNotifier{
   late Timer _timer;
   String _formattedDateTime = '';
   String _formattedDate = '';
+  final DateTime _dateTime = DateTime.now();
 
   TimeDateViewModel(){
     _formattedDateTime = _getCurrentTime();
@@ -16,6 +17,8 @@ class TimeDateViewModel extends ChangeNotifier{
 
   String get formattedDateTime => _formattedDateTime;
   String get formattedDate => _formattedDate;
+  DateTime get dateTime => _dateTime;
+
 
   String _getCurrentTime() {
     return DateFormat('hh:mm:ss a').format(DateTime.now());

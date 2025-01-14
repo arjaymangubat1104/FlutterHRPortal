@@ -51,7 +51,7 @@ class PromptDialogBox extends StatelessWidget {
             ElevatedButton(
               onPressed: () => onPressed(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueGrey,
+                backgroundColor: Colors.deepOrange,
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 textStyle: TextStyle(
                   fontSize: 16,

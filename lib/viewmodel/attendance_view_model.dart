@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/models/attendance_model.dart';
 import 'package:flutter_attendance_system/models/user_model.dart';
 import 'package:flutter_attendance_system/viewmodel/auth_view_model.dart';
+import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
 import 'package:intl/intl.dart';
 
 class AttendanceViewModel extends ChangeNotifier{
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AuthViewModel authViewModel;
+  final TimeDateViewModel timeDateViewModel;
 
-  AttendanceViewModel ({required this.authViewModel});
+  AttendanceViewModel ({required this.authViewModel, required this.timeDateViewModel});
 
   UserModel? _userModel;
   UserModel? get userModel => _userModel;
@@ -102,14 +104,16 @@ class AttendanceViewModel extends ChangeNotifier{
     }
   }
 
-  Future<void> fetchUserAttendance() async {
+  Future<void> fetchUserAttendance(DateTime date) async {
     try {
       UserModel? userModel = authViewModel.userModel;
       if (userModel == null) {
         throw Exception("User not logged in");
       }
+      String formattedDate = DateFormat('yyyy-MM-dd').format(date);
       QuerySnapshot attendanceQuery = await _firestore.collection('attendance')
         .where('user_id', isEqualTo: userModel.uid)
+        .where('attendance_date', isEqualTo: formattedDate)
         .orderBy('attendance_date', descending: true)
         .get();
       _attendanceList = attendanceQuery.docs.map((doc) {
@@ -122,6 +126,20 @@ class AttendanceViewModel extends ChangeNotifier{
       _errorMessage = e.toString();
       notifyListeners();
     }
+  }
+
+  String statusMessage() {
+    if (_attendanceList.isNotEmpty) {
+      String? timeIn = _attendanceList.first.timeIn;
+      String? timeOut = _attendanceList.first.timeOut;
+      if((timeIn != null && timeIn.isNotEmpty) && (timeOut == null || timeOut.isEmpty)) {
+        return 'You have timed in today, Pending time out...';
+      }
+      else if((timeIn != null && timeIn.isNotEmpty) && (timeOut != null && timeOut.isNotEmpty)) {
+        return 'You have timed in and out today';
+      }
+    }
+    return 'You have not timed in today';
   }
 
   // Method to get the latest time in and convert it to 12-hour format

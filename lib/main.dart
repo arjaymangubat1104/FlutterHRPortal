@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => AttendanceViewModel(
             authViewModel: Provider.of<AuthViewModel>(context, listen: false),
+            timeDateViewModel: Provider.of<TimeDateViewModel>(context, listen: false),
           ),
         ),
         // Add other providers here
