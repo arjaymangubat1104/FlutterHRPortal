@@ -4,7 +4,6 @@ import '../utils/loading_indicator.dart';
 import '../viewmodel/auth_view_model.dart';
 
 class LoginPage extends StatefulWidget {
-
   LoginPage({super.key});
 
   @override
@@ -33,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: _showSpinner ? Colors.black.withOpacity(0.5) : Colors.white,
+        backgroundColor: _showSpinner ? Colors.black.withOpacity(0.5) : null,
       ),
       body: Stack(
         children: [
@@ -55,16 +54,10 @@ class _LoginPageState extends State<LoginPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.error_outline, 
-                              color: Colors.red
-                            ),
+                            Icon(Icons.error_outline, color: Colors.red),
                             Text(
                               authViewModel.errorMessage!,
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 10
-                              ),
+                              style: TextStyle(color: Colors.red, fontSize: 10),
                             ),
                           ],
                         ),
@@ -105,17 +98,19 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.grey,
                     ),
                     hintText: 'Enter your email',
-                    prefixIcon: Icon(
-                      Icons.email
-                    ),
+                    prefixIcon: Icon(Icons.email),
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Default border color
+                      borderSide: BorderSide(
+                          color: Colors.grey), // Default border color
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Enabled border color
+                      borderSide: BorderSide(
+                          color: Colors.grey), // Enabled border color
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 2.0), // Focused border color
+                      borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 2.0), // Focused border color
                     ),
                   ),
                 ),
@@ -128,27 +123,28 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.grey,
                     ),
                     hintText: 'Enter your password',
-                    prefixIcon: Icon(
-                      Icons.lock
-                    ),
+                    prefixIcon: Icon(Icons.lock),
                     suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _isObscure = !_isObscure;
-                        });
-                      }, 
-                      icon: Icon(
-                        _isObscure ? Icons.visibility_off : Icons.visibility
-                      )
-                    ),
+                        onPressed: () {
+                          setState(() {
+                            _isObscure = !_isObscure;
+                          });
+                        },
+                        icon: Icon(_isObscure
+                            ? Icons.visibility_off
+                            : Icons.visibility)),
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Default border color
+                      borderSide: BorderSide(
+                          color: Colors.grey), // Default border color
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Enabled border color
+                      borderSide: BorderSide(
+                          color: Colors.grey), // Enabled border color
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 2.0), // Focused border color
+                      borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 2.0), // Focused border color
                     ),
                   ),
                   obscureText: _isObscure,
@@ -157,17 +153,16 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
-                      onPressed: (){
-                        authViewModel.clearErrorMessage();
-                        Navigator.pushNamed(context, '/forgot-password');
-                      }, 
-                      child: Text(
-                        'Forgot Password?',
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      )
-                    ),
+                        onPressed: () {
+                          authViewModel.clearErrorMessage();
+                          Navigator.pushNamed(context, '/forgot-password');
+                        },
+                        child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        )),
                   ],
                 ),
                 SizedBox(height: 20),
@@ -175,15 +170,16 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
-                      setState(() {
-                        _showSpinner = true;
-                      });
                       if (_emailController.text.isEmpty) {
                         authViewModel.setErrorMessage('Email cannot be empty');
                       } else if (_passwordController.text.isEmpty) {
-                        authViewModel.setErrorMessage('Password cannot be empty');
+                        authViewModel
+                            .setErrorMessage('Password cannot be empty');
                       } else {
                         try {
+                          setState(() {
+                            _showSpinner = true;
+                          });
                           await authViewModel.login(
                             _emailController.text,
                             _passwordController.text,

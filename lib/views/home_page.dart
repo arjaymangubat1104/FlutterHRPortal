@@ -23,36 +23,35 @@ class _HomePageState extends State<HomePage> {
     final timeDateViewModel = Provider.of<TimeDateViewModel>(context);
     final attendanceViewModel = Provider.of<AttendanceViewModel>(context);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
     });
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: _showSpinner ? Colors.black.withOpacity(0.5) : Colors.deepOrange,
+        backgroundColor: Colors.deepOrange,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
               'Flutter HR Portal',
               style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white
-              ),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
             ),
           ],
         ),
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
-            onPressed: () {
+            onPressed: () async {
               setState(() {
                 _showSpinner = true;
               });
-              try{
-                authViewModel.logout(context);
+              try {
+                await authViewModel.logout(context);
               } finally {
                 setState(() {
                   _showSpinner = false;
@@ -65,7 +64,8 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: [
           Container(
-            color: const Color.fromARGB(255, 224, 219, 219), // Set the background color of the body
+            color: const Color.fromARGB(
+                255, 224, 219, 219), // Set the background color of the body
             child: Column(
               children: [
                 Container(
@@ -83,213 +83,252 @@ class _HomePageState extends State<HomePage> {
               child: Material(
                 elevation: 20,
                 borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                child: Stack(
+                  children: [
+                    Container(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
                           children: [
-                            Text(
-                              'Welcome back'
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text('Welcome back'),
+                              ],
                             ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              userModel?.displayName ?? 'User',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold
-                              ),
-                            ),
-                            Text(
-                              ' - ${userModel?.uid ?? 'uid'}',
-                              style: TextStyle(
-                                fontSize: 10,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.access_time,
-                              size: 30,
-                              color: Colors.teal,
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              timeDateViewModel.formattedDateTime,
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.grey[700]
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10), 
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.calendar_today,
-                              size: 30,
-                              color: Colors.yellow,
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              timeDateViewModel.formattedDate,
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.grey[700]
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          children: [
-                            Text(
-                              attendanceViewModel.statusMessage(),
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[700]
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 150,
-                              height: 40,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context, 
-                                    builder: (context) => ConfimationDialogBox(
-                                      title: 'Confirm Time In',
-                                      content: 'Are you sure you want to time in?',
-                                      onYes: () async{
-                                        setState(() {
-                                          _showSpinner = true;
-                                        });
-                                        try{
-                                          await attendanceViewModel.timeIn();
-                                          await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
-                                          Navigator.pop(context);
-                                        } finally {
-                                          setState(() {
-                                            _showSpinner = false;
-                                          });
-                                        }
-                                        showDialog(
-                                          context: context, 
-                                          builder: (context) => attendanceViewModel.isSuccessInOut ?
-                                          PromptDialogBox(
-                                            icon: Icons.check_circle,
-                                            title: 'Time In Successful', 
-                                            content: 'You have successfully time in', 
-                                            buttonText: 'OK',
-                                            isSuccess: attendanceViewModel.isSuccessInOut, 
-                                            onPressed: () => Navigator.pop(context),
-                                          )
-                                          :
-                                          PromptDialogBox(
-                                            icon: Icons.error_outline,
-                                            title: 'Time In Failed', 
-                                            content: attendanceViewModel.errorMessage ?? 'You have failed to time in', 
-                                            buttonText: 'OK',
-                                            isSuccess: attendanceViewModel.isSuccessInOut, 
-                                            onPressed: () => Navigator.pop(context),
-                                          )
-                                        );
-                                      },
-                                      onNo: () => Navigator.pop(context),
-                                    )
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                ), 
-                                child: Text(
-                                  'TIME IN',
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  userModel?.displayName ?? 'User',
                                   style: TextStyle(
-                                    color: Colors.white
+                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  ' - ${userModel?.uid ?? 'uid'}',
+                                  style: TextStyle(
+                                    fontSize: 10,
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                            const SizedBox(width: 20),
-                            SizedBox(
-                              width: 150,
-                              height: 40,
-                              child: ElevatedButton(
-                                onPressed: () async{
-                                  showDialog(
-                                    context: context, 
-                                    builder: (context) => ConfimationDialogBox(
-                                      title: 'Confirm Time Out',
-                                      content: 'Are you sure you want to time out?',
-                                      onYes: () async{
-                                        await attendanceViewModel.timeOut();
-                                        await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
-                                        Navigator.pop(context);
-                                        showDialog(
-                                          context: context, 
-                                          builder: (context) => attendanceViewModel.isSuccessInOut ?
-                                          PromptDialogBox(
-                                            icon: Icons.check_circle,
-                                            title: 'Time Out Successful', 
-                                            content: 'You have successfully time out', 
-                                            buttonText: 'OK',
-                                            isSuccess: attendanceViewModel.isSuccessInOut, 
-                                            onPressed: () => Navigator.pop(context),
-                                          )
-                                          :
-                                          PromptDialogBox(
-                                            icon: Icons.error_outline,
-                                            title: 'Time Out Failed', 
-                                            content: attendanceViewModel.errorMessage ?? 'You have failed to time out', 
-                                            buttonText: 'OK',
-                                            isSuccess: attendanceViewModel.isSuccessInOut, 
-                                            onPressed: () => Navigator.pop(context),
-                                          )
-                                        );
-                                      },
-                                      onNo: () => Navigator.pop(context),
-                                    )
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                ), 
-                                child: Text(
-                                  'TIME OUT',
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.access_time,
+                                  size: 30,
+                                  color: Colors.teal,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  timeDateViewModel.formattedDateTime,
                                   style: TextStyle(
-                                    color: Colors.white
+                                      fontSize: 20, color: Colors.grey[700]),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.calendar_today,
+                                  size: 30,
+                                  color: Colors.yellow,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  timeDateViewModel.formattedDate,
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.grey[700]),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Text(
+                                  attendanceViewModel.statusMessage(),
+                                  style: TextStyle(
+                                      fontSize: 12, color: Colors.grey[700]),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 150,
+                                  height: 40,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              ConfimationDialogBox(
+                                                title: 'Confirm Time In',
+                                                content:
+                                                    'Are you sure you want to time in?',
+                                                onYes: () async {
+                                                  setState(() {
+                                                    _showSpinner = true;
+                                                  });
+                                                  try {
+                                                    await attendanceViewModel
+                                                        .timeIn();
+                                                    await attendanceViewModel
+                                                        .fetchUserAttendance(
+                                                            timeDateViewModel
+                                                                .dateTime);
+                                                    Navigator.pop(context);
+                                                  } finally {
+                                                    setState(() {
+                                                      _showSpinner = false;
+                                                    });
+                                                  }
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          attendanceViewModel
+                                                                  .isSuccessInOut
+                                                              ? PromptDialogBox(
+                                                                  icon: Icons
+                                                                      .check_circle,
+                                                                  title:
+                                                                      'Time In Successful',
+                                                                  content:
+                                                                      'You have successfully time in',
+                                                                  buttonText: 'OK',
+                                                                  isSuccess:
+                                                                      attendanceViewModel
+                                                                          .isSuccessInOut,
+                                                                  onPressed: () =>
+                                                                      Navigator.pop(
+                                                                          context),
+                                                                )
+                                                              : PromptDialogBox(
+                                                                  icon: Icons
+                                                                      .error_outline,
+                                                                  title:
+                                                                      'Time In Failed',
+                                                                  content: attendanceViewModel
+                                                                          .errorMessage ??
+                                                                      'You have failed to time in',
+                                                                  buttonText: 'OK',
+                                                                  isSuccess:
+                                                                      attendanceViewModel
+                                                                          .isSuccessInOut,
+                                                                  onPressed: () =>
+                                                                      Navigator.pop(
+                                                                          context),
+                                                                ));
+                                                },
+                                                onNo: () => Navigator.pop(context),
+                                              ));
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'TIME IN',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
+                                const SizedBox(width: 20),
+                                SizedBox(
+                                  width: 150,
+                                  height: 40,
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              ConfimationDialogBox(
+                                                title: 'Confirm Time Out',
+                                                content:
+                                                    'Are you sure you want to time out?',
+                                                onYes: () async {
+                                                  await attendanceViewModel
+                                                      .timeOut();
+                                                  await attendanceViewModel
+                                                      .fetchUserAttendance(
+                                                          timeDateViewModel
+                                                              .dateTime);
+                                                  Navigator.pop(context);
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          attendanceViewModel
+                                                                  .isSuccessInOut
+                                                              ? PromptDialogBox(
+                                                                  icon: Icons
+                                                                      .check_circle,
+                                                                  title:
+                                                                      'Time Out Successful',
+                                                                  content:
+                                                                      'You have successfully time out',
+                                                                  buttonText: 'OK',
+                                                                  isSuccess:
+                                                                      attendanceViewModel
+                                                                          .isSuccessInOut,
+                                                                  onPressed: () =>
+                                                                      Navigator.pop(
+                                                                          context),
+                                                                )
+                                                              : PromptDialogBox(
+                                                                  icon: Icons
+                                                                      .error_outline,
+                                                                  title:
+                                                                      'Time Out Failed',
+                                                                  content: attendanceViewModel
+                                                                          .errorMessage ??
+                                                                      'You have failed to time out',
+                                                                  buttonText: 'OK',
+                                                                  isSuccess:
+                                                                      attendanceViewModel
+                                                                          .isSuccessInOut,
+                                                                  onPressed: () =>
+                                                                      Navigator.pop(
+                                                                          context),
+                                                                ));
+                                                },
+                                                onNo: () => Navigator.pop(context),
+                                              ));
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'TIME OUT',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
                           ],
-                        )
-                      ],
+                        ),
+                      ),
                     ),
-                  ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Image.asset(
+                        'lib/assets/profile.png',
+                        width: 100,
+                        height: 100,
+                      )
+                    )
+                  ],
                 ),
               ),
             ),

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../viewmodel/auth_view_model.dart';
 
 class RegisterPage extends StatefulWidget {
-
   const RegisterPage({super.key});
 
   @override
@@ -23,8 +22,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   bool _showSpinner = false;
 
-  
-
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
@@ -32,7 +29,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: _showSpinner ? Colors.black.withOpacity(0.5) : Colors.white,
+        backgroundColor: _showSpinner ? Colors.black.withOpacity(0.5) : null,
       ),
       body: Stack(
         children: [
@@ -54,16 +51,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.error_outline, 
-                              color: Colors.red
-                            ),
+                            Icon(Icons.error_outline, color: Colors.red),
                             Text(
                               authViewModel.errorMessage!,
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 10
-                              ),
+                              style: TextStyle(color: Colors.red, fontSize: 10),
                             ),
                           ],
                         ),
@@ -75,7 +66,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   children: [
                     Text(
                       'Register',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -101,22 +93,24 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.grey,
                     ),
                     hintText: 'Enter your display name',
-                    prefixIcon: Icon(
-                      Icons.text_fields_outlined
-                    ),
+                    prefixIcon: Icon(Icons.text_fields_outlined),
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Default border color
+                      borderSide: BorderSide(
+                          color: Colors.grey), // Default border color
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Enabled border color
+                      borderSide: BorderSide(
+                          color: Colors.grey), // Enabled border color
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 2.0), // Focused border color
+                      borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 2.0), // Focused border color
                     ),
                   ),
                 ),
                 SizedBox(height: 10),
-                 TextField(
+                TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
@@ -124,17 +118,19 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.grey,
                     ),
                     hintText: 'Enter your email',
-                    prefixIcon: Icon(
-                      Icons.email
-                    ),
+                    prefixIcon: Icon(Icons.email),
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Default border color
+                      borderSide: BorderSide(
+                          color: Colors.grey), // Default border color
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Enabled border color
+                      borderSide: BorderSide(
+                          color: Colors.grey), // Enabled border color
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 2.0), // Focused border color
+                      borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 2.0), // Focused border color
                     ),
                   ),
                 ),
@@ -147,27 +143,28 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.grey,
                     ),
                     hintText: 'Enter your password',
-                    prefixIcon: Icon(
-                      Icons.lock
-                    ),
+                    prefixIcon: Icon(Icons.lock),
                     suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _isObscure = !_isObscure;
-                        });
-                      }, 
-                      icon: Icon(
-                        _isObscure ? Icons.visibility_off : Icons.visibility
-                      )
-                    ),
+                        onPressed: () {
+                          setState(() {
+                            _isObscure = !_isObscure;
+                          });
+                        },
+                        icon: Icon(_isObscure
+                            ? Icons.visibility_off
+                            : Icons.visibility)),
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Default border color
+                      borderSide: BorderSide(
+                          color: Colors.grey), // Default border color
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Enabled border color
+                      borderSide: BorderSide(
+                          color: Colors.grey), // Enabled border color
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 2.0), // Focused border color
+                      borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 2.0), // Focused border color
                     ),
                   ),
                   obscureText: _isObscure,
@@ -177,48 +174,49 @@ class _RegisterPageState extends State<RegisterPage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
-                      setState(() {
-                        _showSpinner = true;
-                      });
                       if (_emailController.text.isEmpty) {
                         authViewModel.setErrorMessage('Email cannot be empty');
                       } else if (_passwordController.text.isEmpty) {
-                        authViewModel.setErrorMessage('Password cannot be empty');
-                      } else if(_displayNameController.text.isEmpty) {
-                        authViewModel.setErrorMessage('Display Name cannot be empty');
+                        authViewModel
+                            .setErrorMessage('Password cannot be empty');
+                      } else if (_displayNameController.text.isEmpty) {
+                        authViewModel
+                            .setErrorMessage('Display Name cannot be empty');
                       } else {
                         try {
-                            await authViewModel.register(
-                              _emailController.text,
-                              _passwordController.text,
-                              _displayNameController.text,
-                            );
-                            if(authViewModel.isSuccessSignUp) {
-                              Navigator.pop(context);
-                              showDialog(
-                                context: context, 
-                                builder: (context){
+                          setState(() {
+                            _showSpinner = true;
+                          });
+                          await authViewModel.register(
+                            _emailController.text,
+                            _passwordController.text,
+                            _displayNameController.text,
+                          );
+                          if (authViewModel.isSuccessSignUp) {
+                            authViewModel.clearErrorMessage();
+                            Navigator.pop(context);
+                            showDialog(
+                                context: context,
+                                builder: (context) {
                                   return PromptDialogBox(
-                                    icon: Icons.check_circle,
-                                    title: 'Successfully Registered', 
-                                    content: 'Congrats! You have successfully registered', 
-                                    buttonText: 'OK',
-                                    isSuccess: authViewModel.isSuccessSignUp, 
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      authViewModel.isSuccessSignUp = false;
-                                    }
-                                  );
-                                }
-                              );
-                            }
-                            // Handle successful registration
-                          } finally {
-                            setState(() {
-                              _showSpinner = false;
-                            });
+                                      icon: Icons.check_circle,
+                                      title: 'Successfully Registered',
+                                      content:
+                                          'Congrats! You have successfully registered',
+                                      buttonText: 'OK',
+                                      isSuccess: authViewModel.isSuccessSignUp,
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        authViewModel.isSuccessSignUp = false;
+                                      });
+                                });
                           }
-                        
+                          // Handle successful registration
+                        } finally {
+                          setState(() {
+                            _showSpinner = false;
+                          });
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -239,7 +237,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-                 Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(

@@ -9,7 +9,7 @@ class PromptDialogBox extends StatelessWidget {
   final Function onPressed;
 
   const PromptDialogBox({
-    super.key, 
+    super.key,
     required this.icon,
     required this.title,
     required this.content,
@@ -39,9 +39,7 @@ class PromptDialogBox extends StatelessWidget {
       content: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            content
-          ),
+          Text(content),
         ],
       ),
       actions: [
@@ -52,7 +50,7 @@ class PromptDialogBox extends StatelessWidget {
               onPressed: () => onPressed(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepOrange,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 textStyle: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
