@@ -24,22 +24,13 @@ class _HomePageState extends State<HomePage> {
     final attendanceViewModel = Provider.of<AttendanceViewModel>(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      setState(() {
-        _showSpinner = true;
-      });
-      try {
-        await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
-      } finally {
-        setState(() {
-          _showSpinner = false;
-        });
-      }
+      await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
     });
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: _showSpinner ? Colors.black.withOpacity(0.5) : Colors.deepOrange,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
