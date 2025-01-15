@@ -15,13 +15,11 @@ import 'views/register_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: FirebaseOptions(
-      apiKey: 'AIzaSyC5iImd33g5q9u-TEQfd6ctpFVgMfjcLYQ', 
-      appId: '1:973475796713:ios:93711787d1aeec4e670278', 
-      messagingSenderId: '973475796713', 
-      projectId: 'flutterattendance-13ad7'
-    )
-  );
+      options: FirebaseOptions(
+          apiKey: 'AIzaSyC5iImd33g5q9u-TEQfd6ctpFVgMfjcLYQ',
+          appId: '1:973475796713:ios:93711787d1aeec4e670278',
+          messagingSenderId: '973475796713',
+          projectId: 'flutterattendance-13ad7'));
   runApp(const MyApp());
 }
 
@@ -37,7 +35,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => AttendanceViewModel(
             authViewModel: Provider.of<AuthViewModel>(context, listen: false),
-            timeDateViewModel: Provider.of<TimeDateViewModel>(context, listen: false),
+            timeDateViewModel:
+                Provider.of<TimeDateViewModel>(context, listen: false),
           ),
         ),
         // Add other providers here

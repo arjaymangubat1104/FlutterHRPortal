@@ -19,17 +19,23 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> register(String email, String password, String displayName) async {
+  Future<void> register(
+      String email, String password, String displayName) async {
     try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
       User? user = userCredential.user;
 
       // Store user information in Firestore
-      _userModel = UserModel(uid: user!.uid, email: email, displayName: displayName);
-      await _firestore.collection('users').doc(user.uid).set(_userModel!.toMap());
+      _userModel =
+          UserModel(uid: user!.uid, email: email, displayName: displayName);
+      await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .set(_userModel!.toMap());
 
       notifyListeners();
       _isSuccessSignUp = true;
@@ -42,7 +48,8 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> login(String email, String password, BuildContext context) async {
+  Future<void> login(
+      String email, String password, BuildContext context) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -51,9 +58,11 @@ class AuthViewModel extends ChangeNotifier {
       User? user = userCredential.user;
 
       // Fetch user information from Firestore
-      DocumentSnapshot userDoc = await _firestore.collection('users').doc(user!.uid).get();
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(user!.uid).get();
       if (userDoc.exists) {
-        _userModel = UserModel.fromFirebase(userDoc.data() as Map<String, dynamic>, user.uid);
+        _userModel = UserModel.fromFirebase(
+            userDoc.data() as Map<String, dynamic>, user.uid);
       }
 
       _errorMessage = null;
@@ -106,4 +115,3 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
   }
 }
-

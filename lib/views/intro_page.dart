@@ -21,7 +21,6 @@ class _IntroPageState extends State<IntroPage> {
 
   @override
   Widget build(BuildContext context) {
-
     final List<Widget> _pages = [
       const HomePage(),
       const FilesPage(),

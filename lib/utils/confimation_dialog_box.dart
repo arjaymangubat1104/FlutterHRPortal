@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ConfimationDialogBox extends StatelessWidget{
+class ConfimationDialogBox extends StatelessWidget {
   final String title;
   final String content;
   final Function onYes;
@@ -14,7 +14,7 @@ class ConfimationDialogBox extends StatelessWidget{
   });
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(title),
       content: Text(content),
@@ -22,11 +22,11 @@ class ConfimationDialogBox extends StatelessWidget{
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
+            OutlinedButton(
               onPressed: () => onNo(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.deepOrange),
+                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 textStyle: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -39,16 +39,16 @@ class ConfimationDialogBox extends StatelessWidget{
               child: Text(
                 'No',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.deepOrange,
                 ),
               ),
             ),
-            const SizedBox(width: 50),
+            const SizedBox(width: 20),
             ElevatedButton(
               onPressed: () => onYes(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                backgroundColor: Colors.deepOrange,
+                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 textStyle: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

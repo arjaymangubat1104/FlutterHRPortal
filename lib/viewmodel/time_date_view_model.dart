@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class TimeDateViewModel extends ChangeNotifier{
+class TimeDateViewModel extends ChangeNotifier {
   late Timer _timer;
   String _formattedDateTime = '';
   String _formattedDate = '';
   final DateTime _dateTime = DateTime.now();
 
-  TimeDateViewModel(){
+  TimeDateViewModel() {
     _formattedDateTime = _getCurrentTime();
     _formattedDate = _getcurrentDate();
     _timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _updateTime());
@@ -18,7 +18,6 @@ class TimeDateViewModel extends ChangeNotifier{
   String get formattedDateTime => _formattedDateTime;
   String get formattedDate => _formattedDate;
   DateTime get dateTime => _dateTime;
-
 
   String _getCurrentTime() {
     return DateFormat('hh:mm:ss a').format(DateTime.now());
