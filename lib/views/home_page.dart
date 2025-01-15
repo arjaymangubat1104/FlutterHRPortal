@@ -24,7 +24,16 @@ class _HomePageState extends State<HomePage> {
     final attendanceViewModel = Provider.of<AttendanceViewModel>(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
+      setState(() {
+        _showSpinner = true;
+      });
+      try {
+        await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
+      } finally {
+        setState(() {
+          _showSpinner = false;
+        });
+      }
     });
 
     return Scaffold(
@@ -103,7 +112,8 @@ class _HomePageState extends State<HomePage> {
                                 Text(
                                   userModel?.displayName ?? 'User',
                                   style: TextStyle(
-                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   ' - ${userModel?.uid ?? 'uid'}',
@@ -166,67 +176,70 @@ class _HomePageState extends State<HomePage> {
                                     onPressed: () {
                                       showDialog(
                                           context: context,
-                                          builder: (context) =>
-                                              ConfimationDialogBox(
-                                                title: 'Confirm Time In',
-                                                content:
-                                                    'Are you sure you want to time in?',
-                                                onYes: () async {
-                                                  setState(() {
-                                                    _showSpinner = true;
-                                                  });
-                                                  try {
-                                                    await attendanceViewModel
-                                                        .timeIn();
-                                                    await attendanceViewModel
-                                                        .fetchUserAttendance(
-                                                            timeDateViewModel
-                                                                .dateTime);
-                                                    Navigator.pop(context);
-                                                  } finally {
-                                                    setState(() {
-                                                      _showSpinner = false;
-                                                    });
-                                                  }
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (context) =>
-                                                          attendanceViewModel
-                                                                  .isSuccessInOut
-                                                              ? PromptDialogBox(
-                                                                  icon: Icons
-                                                                      .check_circle,
-                                                                  title:
-                                                                      'Time In Successful',
-                                                                  content:
-                                                                      'You have successfully time in',
-                                                                  buttonText: 'OK',
-                                                                  isSuccess:
-                                                                      attendanceViewModel
-                                                                          .isSuccessInOut,
-                                                                  onPressed: () =>
-                                                                      Navigator.pop(
-                                                                          context),
-                                                                )
-                                                              : PromptDialogBox(
-                                                                  icon: Icons
-                                                                      .error_outline,
-                                                                  title:
-                                                                      'Time In Failed',
-                                                                  content: attendanceViewModel
-                                                                          .errorMessage ??
-                                                                      'You have failed to time in',
-                                                                  buttonText: 'OK',
-                                                                  isSuccess:
-                                                                      attendanceViewModel
-                                                                          .isSuccessInOut,
-                                                                  onPressed: () =>
-                                                                      Navigator.pop(
-                                                                          context),
-                                                                ));
-                                                },
-                                                onNo: () => Navigator.pop(context),
-                                              ));
+                                          builder:
+                                              (context) => ConfimationDialogBox(
+                                                    title: 'Confirm Time In',
+                                                    content:
+                                                        'Are you sure you want to time in?',
+                                                    onYes: () async {
+                                                      setState(() {
+                                                        _showSpinner = true;
+                                                      });
+                                                      try {
+                                                        await attendanceViewModel
+                                                            .timeIn();
+                                                        await attendanceViewModel
+                                                            .fetchUserAttendance(
+                                                                timeDateViewModel
+                                                                    .dateTime);
+                                                        Navigator.pop(context);
+                                                      } finally {
+                                                        setState(() {
+                                                          _showSpinner = false;
+                                                        });
+                                                      }
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (context) =>
+                                                              attendanceViewModel
+                                                                      .isSuccessInOut
+                                                                  ? PromptDialogBox(
+                                                                      icon: Icons
+                                                                          .check_circle,
+                                                                      title:
+                                                                          'Time In Successful',
+                                                                      content:
+                                                                          'You have successfully time in',
+                                                                      buttonText:
+                                                                          'OK',
+                                                                      isSuccess:
+                                                                          attendanceViewModel
+                                                                              .isSuccessInOut,
+                                                                      onPressed:
+                                                                          () =>
+                                                                              Navigator.pop(context),
+                                                                    )
+                                                                  : PromptDialogBox(
+                                                                      icon: Icons
+                                                                          .error_outline,
+                                                                      title:
+                                                                          'Time In Failed',
+                                                                      content: attendanceViewModel
+                                                                              .errorMessage ??
+                                                                          'You have failed to time in',
+                                                                      buttonText:
+                                                                          'OK',
+                                                                      isSuccess:
+                                                                          attendanceViewModel
+                                                                              .isSuccessInOut,
+                                                                      onPressed:
+                                                                          () =>
+                                                                              Navigator.pop(context),
+                                                                    ));
+                                                    },
+                                                    onNo: () =>
+                                                        Navigator.pop(context),
+                                                  ));
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.green,
@@ -248,58 +261,61 @@ class _HomePageState extends State<HomePage> {
                                     onPressed: () async {
                                       showDialog(
                                           context: context,
-                                          builder: (context) =>
-                                              ConfimationDialogBox(
-                                                title: 'Confirm Time Out',
-                                                content:
-                                                    'Are you sure you want to time out?',
-                                                onYes: () async {
-                                                  await attendanceViewModel
-                                                      .timeOut();
-                                                  await attendanceViewModel
-                                                      .fetchUserAttendance(
-                                                          timeDateViewModel
-                                                              .dateTime);
-                                                  Navigator.pop(context);
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (context) =>
-                                                          attendanceViewModel
-                                                                  .isSuccessInOut
-                                                              ? PromptDialogBox(
-                                                                  icon: Icons
-                                                                      .check_circle,
-                                                                  title:
-                                                                      'Time Out Successful',
-                                                                  content:
-                                                                      'You have successfully time out',
-                                                                  buttonText: 'OK',
-                                                                  isSuccess:
-                                                                      attendanceViewModel
-                                                                          .isSuccessInOut,
-                                                                  onPressed: () =>
-                                                                      Navigator.pop(
-                                                                          context),
-                                                                )
-                                                              : PromptDialogBox(
-                                                                  icon: Icons
-                                                                      .error_outline,
-                                                                  title:
-                                                                      'Time Out Failed',
-                                                                  content: attendanceViewModel
-                                                                          .errorMessage ??
-                                                                      'You have failed to time out',
-                                                                  buttonText: 'OK',
-                                                                  isSuccess:
-                                                                      attendanceViewModel
-                                                                          .isSuccessInOut,
-                                                                  onPressed: () =>
-                                                                      Navigator.pop(
-                                                                          context),
-                                                                ));
-                                                },
-                                                onNo: () => Navigator.pop(context),
-                                              ));
+                                          builder:
+                                              (context) => ConfimationDialogBox(
+                                                    title: 'Confirm Time Out',
+                                                    content:
+                                                        'Are you sure you want to time out?',
+                                                    onYes: () async {
+                                                      await attendanceViewModel
+                                                          .timeOut();
+                                                      await attendanceViewModel
+                                                          .fetchUserAttendance(
+                                                              timeDateViewModel
+                                                                  .dateTime);
+                                                      Navigator.pop(context);
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (context) =>
+                                                              attendanceViewModel
+                                                                      .isSuccessInOut
+                                                                  ? PromptDialogBox(
+                                                                      icon: Icons
+                                                                          .check_circle,
+                                                                      title:
+                                                                          'Time Out Successful',
+                                                                      content:
+                                                                          'You have successfully time out',
+                                                                      buttonText:
+                                                                          'OK',
+                                                                      isSuccess:
+                                                                          attendanceViewModel
+                                                                              .isSuccessInOut,
+                                                                      onPressed:
+                                                                          () =>
+                                                                              Navigator.pop(context),
+                                                                    )
+                                                                  : PromptDialogBox(
+                                                                      icon: Icons
+                                                                          .error_outline,
+                                                                      title:
+                                                                          'Time Out Failed',
+                                                                      content: attendanceViewModel
+                                                                              .errorMessage ??
+                                                                          'You have failed to time out',
+                                                                      buttonText:
+                                                                          'OK',
+                                                                      isSuccess:
+                                                                          attendanceViewModel
+                                                                              .isSuccessInOut,
+                                                                      onPressed:
+                                                                          () =>
+                                                                              Navigator.pop(context),
+                                                                    ));
+                                                    },
+                                                    onNo: () =>
+                                                        Navigator.pop(context),
+                                                  ));
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.red,
@@ -320,14 +336,13 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Image.asset(
-                        'lib/assets/profile.png',
-                        width: 100,
-                        height: 100,
-                      )
-                    )
+                        top: 0,
+                        right: 0,
+                        child: Image.asset(
+                          'lib/assets/profile.png',
+                          width: 100,
+                          height: 100,
+                        ))
                   ],
                 ),
               ),
