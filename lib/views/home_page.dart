@@ -1,10 +1,9 @@
+import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/utils/confimation_dialog_box.dart';
 import 'package:flutter_attendance_system/utils/prompt_dialog_box.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_horizontal_calendar/horizontal_calendar.dart';
 import '../viewmodel/attendance_view_model.dart';
 import '../viewmodel/auth_view_model.dart';
 
@@ -18,24 +17,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool _showSpinner = false;
 
+
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
     final userModel = authViewModel.userModel;
     final timeDateViewModel = Provider.of<TimeDateViewModel>(context);
     final attendanceViewModel = Provider.of<AttendanceViewModel>(context);
-
-    String selectedDate = "";
-
-    @override
-    void initState() {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        setState(() {
-          selectedDate = DateFormat('dd MMMM, yyyy').format(DateTime.now());
-        });
-      });
-      super.initState();
-    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
@@ -138,19 +126,26 @@ class _HomePageState extends State<HomePage> {
                                   Text(
                                     timeDateViewModel.formattedDateTime,
                                     style: TextStyle(
-                                        fontSize: 20, 
-                                      ),
+                                      fontSize: 20,
+                                    ),
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 10),
-                              HorizontalCalender(
-                                onSelected: (DateTime date) {
-                                  setState(() {
-                                    selectedDate = DateFormat('dd MMMM, yyyy')
-                                        .format(date);
-                                  });
-                                },
+                              CalendarTimeline(
+                                shrink: true,
+                                shrinkWidth: 80,
+                                shrinkFontSize: 20, 
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1)),
+                                lastDate: DateTime.now().add(Duration(days: DateTime.daysPerWeek - DateTime.now().weekday)),
+                                onDateSelected: (date) => print(date),
+                                leftMargin: 20,
+                                monthColor: Colors.blueGrey,
+                                dayColor: Colors.teal[200],
+                                activeDayColor: Colors.white,
+                                activeBackgroundDayColor: Colors.redAccent,
+                                locale: 'en_ISO',
                               ),
                               const SizedBox(height: 5),
                               Row(
