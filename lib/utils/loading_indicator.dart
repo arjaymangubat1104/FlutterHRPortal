@@ -10,10 +10,10 @@ class CustomLoadingIndicator extends StatelessWidget {
       backgroundColor: Colors.black.withOpacity(0.5),
       child: SizedBox(
         width: 100,
-        height: 100,
+        height: 50,
         child: Center(
           child: SizedBox(
-            width: 50,
+            width: 100,
             height: 50,
             child: LoadingIndicator(
               indicatorType: Indicator.ballBeat,

@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_attendance_system/viewmodel/attendance_view_model.dart';
+import 'package:flutter_attendance_system/viewmodel/auth_view_model.dart';
+import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
+import 'package:flutter_attendance_system/views/attendance_page.dart';
+import 'package:flutter_attendance_system/views/files_page.dart';
+import 'package:flutter_attendance_system/views/home_page.dart';
+import 'package:flutter_attendance_system/views/intro_page.dart';
+import 'package:flutter_attendance_system/views/leave_page.dart';
+import 'package:flutter_attendance_system/views/login_page.dart';
+import 'package:flutter_attendance_system/views/news_page.dart';
+import 'package:flutter_attendance_system/views/ovetime_page.dart';
+import 'package:flutter_attendance_system/views/payslip_page.dart';
+import 'package:flutter_attendance_system/views/profile_page.dart';
+import 'package:flutter_attendance_system/views/register_page.dart';
+import 'package:flutter_attendance_system/views/team_page.dart';
+
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'viewmodel/attendance_view_model.dart';
-import 'viewmodel/auth_view_model.dart';
-import 'viewmodel/time_date_view_model.dart';
-import 'views/files_page.dart';
-import 'views/home_page.dart';
-import 'views/intro_page.dart';
-import 'views/login_page.dart';
-import 'views/profile_page.dart';
-import 'views/register_page.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,6 +63,12 @@ class MyApp extends StatelessWidget {
           '/intro': (context) => IntroPage(),
           '/files': (context) => FilesPage(),
           '/profile': (context) => ProfilePage(),
+          '/attendance': (context) => AttendancePage(),
+          '/overtime': (context) => OverTimePage(),
+          '/payslip': (context) => PayslipPage(),
+          '/leave': (context) => LeavePage(),
+          '/team': (context) => TeamPage(),
+          '/news': (context) => NewsPage(),
         },
       ),
     );
