@@ -139,7 +139,7 @@ class AttendanceViewModel extends ChangeNotifier{
         return 'You have timed in and out today';
       }
     }
-    return 'You have not timed in today';
+    return 'You have not yet timed in today';
   }
 
   // Method to get the latest time in and convert it to 12-hour format

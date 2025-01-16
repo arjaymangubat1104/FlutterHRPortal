@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  simple_horizontal_calendar
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
