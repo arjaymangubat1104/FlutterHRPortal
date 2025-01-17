@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/loading_indicator.dart';
 import '../viewmodel/auth_view_model.dart';
+import '../viewmodel/theme_view_model.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({super.key});
@@ -22,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
+    final themeViewModel = Provider.of<ThemeViewModel>(context);
 
     // Clear error message when the page is initialized
     // WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -160,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: Text(
                           'Forgot Password?',
                           style: TextStyle(
-                            color: Colors.black,
+                            color: themeViewModel.currentTheme.textColor,
                           ),
                         )),
                   ],
@@ -193,7 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepOrange,
+                      backgroundColor: themeViewModel.currentTheme.buttonColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -203,7 +205,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: Text(
                         'Login',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: themeViewModel.currentTheme.boxTextColor,
                           fontSize: 16,
                         ),
                       ),
@@ -227,7 +229,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: Text(
                         'Register',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: themeViewModel.currentTheme.textColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

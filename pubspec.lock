@@ -9,6 +9,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.35"
+  animated_analog_clock:
+    dependency: "direct main"
+    description:
+      name: animated_analog_clock
+      sha256: "00ef12809ad0a95d1f6e50264e5b109a65448d97ba677be23d766261fb3378ce"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   async:
     dependency: transitive
     description:
@@ -25,14 +33,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
-  calendar_timeline:
-    dependency: "direct main"
-    description:
-      name: calendar_timeline
-      sha256: "55f47db9791bc28e06f2211d475229d1e802aa4ef0266a2313b66c23a97a53e0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.3"
   characters:
     dependency: transitive
     description:
@@ -89,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  date_picker_timeline:
+    dependency: "direct main"
+    description:
+      name: date_picker_timeline
+      sha256: c05e6540fa3055c9036e6f99e758972e14be0e1010d5a6e7a1261d4a6f3292df
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.6"
   fake_async:
     dependency: transitive
     description:
@@ -280,14 +288,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.2"
-  scrollable_positioned_list:
-    dependency: transitive
-    description:
-      name: scrollable_positioned_list
-      sha256: "1b54d5f1329a1e263269abc9e2543d90806131aa14fe7c6062a8054d57249287"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.8"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -341,6 +341,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.3"
+  timezone:
+    dependency: transitive
+    description:
+      name: timezone
+      sha256: "2236ec079a174ce07434e89fcd3fcda430025eb7692244139a9cf54fdcf1fc7d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.4"
   typed_data:
     dependency: transitive
     description:

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_attendance_system/viewmodel/theme_view_model.dart';
 import 'package:flutter_attendance_system/views/files_page.dart';
 import 'package:flutter_attendance_system/views/home_page.dart';
 import 'package:flutter_attendance_system/views/profile_page.dart';
+import 'package:provider/provider.dart';
 
 class IntroPage extends StatefulWidget {
   const IntroPage({super.key});
@@ -21,6 +23,7 @@ class _IntroPageState extends State<IntroPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeViewModel = Provider.of<ThemeViewModel>(context);
     final List<Widget> _pages = [
       const HomePage(),
       const FilesPage(),
@@ -48,8 +51,8 @@ class _IntroPageState extends State<IntroPage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.white,
-        backgroundColor: Colors.deepOrange,
+        selectedItemColor: themeViewModel.currentTheme.backgroundColor,
+        backgroundColor: themeViewModel.currentTheme.themeColor,
         onTap: _onItemTapped,
       ),
     );
