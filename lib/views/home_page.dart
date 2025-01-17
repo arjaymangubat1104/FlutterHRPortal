@@ -1,4 +1,6 @@
-import 'package:calendar_timeline/calendar_timeline.dart';
+import 'package:animated_analog_clock/animated_analog_clock.dart';
+import 'package:date_picker_timeline/date_picker_timeline.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/utils/confimation_dialog_box.dart';
 import 'package:flutter_attendance_system/utils/prompt_dialog_box.dart';
@@ -6,6 +8,7 @@ import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
 import 'package:provider/provider.dart';
 import '../viewmodel/attendance_view_model.dart';
 import '../viewmodel/auth_view_model.dart';
+import '../viewmodel/theme_view_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,13 +20,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool _showSpinner = false;
 
-
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
     final userModel = authViewModel.userModel;
     final timeDateViewModel = Provider.of<TimeDateViewModel>(context);
     final attendanceViewModel = Provider.of<AttendanceViewModel>(context);
+    final themeViewModel = Provider.of<ThemeViewModel>(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
@@ -32,7 +35,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: themeViewModel.currentTheme.themeColor,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -41,7 +44,8 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white),
+                  color: themeViewModel.currentTheme.boxTextColor
+                ),
             ),
           ],
         ),
@@ -66,12 +70,11 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: [
           Container(
-            color: const Color.fromARGB(
-                255, 224, 219, 219), // Set the background color of the body
+            color: themeViewModel.currentTheme.pageBackgroundColor, // Set the background color of the body
             child: Column(
               children: [
                 Container(
-                  color: Colors.deepOrange,
+                  color: themeViewModel.currentTheme.themeColor,
                   height: 100,
                 ),
               ],
@@ -115,37 +118,40 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                               const SizedBox(height: 10),
+                              AnimatedAnalogClock(
+                                location: 'Asia/Manila',
+                                dialType: DialType.numbers,
+                                size: 125,
+                                // Gradient Background if you want
+                                backgroundColor: Colors.lightBlue,
+                                hourHandColor: Colors.black,
+                                minuteHandColor: Colors.black,
+                                secondHandColor: Colors.black,
+                                centerDotColor: Colors.amber,
+                                hourDashColor: Colors.lightBlue,
+                                minuteDashColor: Colors.blueAccent,
+                              ),
+                              const SizedBox(height: 10),
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(
-                                    Icons.access_time,
-                                    size: 30,
-                                    color: Colors.red,
-                                  ),
-                                  const SizedBox(width: 5),
                                   Text(
                                     timeDateViewModel.formattedDateTime,
                                     style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 15,
                                     ),
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 10),
-                              CalendarTimeline(
-                                shrink: true,
-                                shrinkWidth: 80,
-                                shrinkFontSize: 20, 
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1)),
-                                lastDate: DateTime.now().add(Duration(days: DateTime.daysPerWeek - DateTime.now().weekday)),
-                                onDateSelected: (date) => print(date),
-                                leftMargin: 20,
-                                monthColor: Colors.blueGrey,
-                                dayColor: Colors.teal[200],
-                                activeDayColor: Colors.white,
-                                activeBackgroundDayColor: Colors.redAccent,
-                                locale: 'en_ISO',
+                              DatePicker(
+                                DateTime.now(),
+                                initialSelectedDate: DateTime.now(),
+                                selectionColor: Colors.redAccent,
+                                selectedTextColor: Colors.white,
+                                monthTextStyle: TextStyle(fontSize: 10),
+                                dayTextStyle: TextStyle(fontSize: 10),
+                                dateTextStyle: TextStyle(fontSize: 15),
                               ),
                               const SizedBox(height: 5),
                               Row(
@@ -153,7 +159,9 @@ class _HomePageState extends State<HomePage> {
                                   Text(
                                     attendanceViewModel.statusMessage(),
                                     style: TextStyle(
-                                        fontSize: 12, color: Colors.grey[700]),
+                                        fontSize: 12, 
+                                        color: themeViewModel.currentTheme.textColor
+                                      ),
                                   ),
                                 ],
                               ),
@@ -243,7 +251,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       child: Text(
                                         'TIME IN',
-                                        style: TextStyle(color: Colors.white),
+                                        style: TextStyle(color: themeViewModel.currentTheme.boxTextColor),
                                       ),
                                     ),
                                   ),
@@ -319,7 +327,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       child: Text(
                                         'TIME OUT',
-                                        style: TextStyle(color: Colors.white),
+                                        style: TextStyle(color: themeViewModel.currentTheme.boxTextColor),
                                       ),
                                     ),
                                   ),
@@ -341,210 +349,154 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(context, '/attendance');
-                              },
-                              child: Material(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    children: [
-                                      Icon(
-                                        Icons.history_edu_rounded,
-                                        size: 60,
-                                        color: Colors.teal,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Material(
+                    color: themeViewModel.currentTheme.backgroundColor,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: () => Navigator.pushNamed(
+                                    context, '/attendance'),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.doc_chart,
+                                      size: 75,
+                                      color: themeViewModel.currentTheme.themeColor,
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      'ATTENDANCE',
+                                      style: TextStyle(
+                                        fontSize: 13, 
                                       ),
-                                      Text(
-                                        'Attendance',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                    )
+                                  ],
                                 ),
                               ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(context, '/overtime');
-                              },
-                              child: Material(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    children: [
-                                      Icon(
-                                        Icons.pending_actions,
-                                        size: 60,
-                                        color: Colors.teal,
+                              const SizedBox(width: 75),
+                              GestureDetector(
+                                onTap: () => Navigator.pushNamed(
+                                    context, '/leave'),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.calendar,
+                                      size: 75,
+                                      color: themeViewModel.currentTheme.themeColor,
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      'LEAVE',
+                                      style: TextStyle(
+                                        fontSize: 13, 
                                       ),
-                                      Text(
-                                        'Overtime',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                    )
+                                  ],
                                 ),
                               ),
-                            ),
+                              const SizedBox(width: 75),
+                              GestureDetector(
+                                onTap: () => Navigator.pushNamed(
+                                    context, '/overtime'),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.clock,
+                                      size: 75,
+                                      color: themeViewModel.currentTheme.themeColor,
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      'OVERTIME',
+                                      style: TextStyle(
+                                        fontSize: 13, 
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: () => Navigator.pushNamed(
+                                    context, '/payslip'),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.money_dollar,
+                                      size: 75,
+                                      color: themeViewModel.currentTheme.themeColor,
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      'PAYSLIP',
+                                      style: TextStyle(
+                                        fontSize: 13, 
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 75),
+                              GestureDetector(
+                                onTap: () => Navigator.pushNamed(
+                                    context, '/team'),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.group,
+                                      size: 75,
+                                      color: themeViewModel.currentTheme.themeColor,
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      'TEAM',
+                                      style: TextStyle(
+                                        fontSize: 13, 
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 75),
+                              GestureDetector(
+                                onTap: () => Navigator.pushNamed(
+                                    context, '/news'),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.news,
+                                      size: 75,
+                                      color: themeViewModel.currentTheme.themeColor,
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      'NEWS',
+                                      style: TextStyle(
+                                        fontSize: 13, 
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(context, '/payslip');
-                              },
-                              child: Material(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    children: [
-                                      Icon(
-                                        Icons.payment_rounded,
-                                        size: 60,
-                                        color: Colors.teal,
-                                      ),
-                                      Text(
-                                        'Paylsip',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(context, '/leave');
-                              },
-                              child: Material(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    children: [
-                                      Icon(
-                                        Icons.card_travel,
-                                        size: 60,
-                                        color: Colors.teal,
-                                      ),
-                                      Text(
-                                        'Leave',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(context, '/team');
-                              },
-                              child: Material(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    children: [
-                                      Icon(
-                                        Icons.groups,
-                                        size: 60,
-                                        color: Colors.teal,
-                                      ),
-                                      Text(
-                                        'Team',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(context, '/news');
-                              },
-                              child: Material(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    children: [
-                                      Icon(
-                                        Icons.newspaper,
-                                        size: 60,
-                                        color: Colors.teal,
-                                      ),
-                                      Text(
-                                        'News',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                )
               ],
             ),
           ),

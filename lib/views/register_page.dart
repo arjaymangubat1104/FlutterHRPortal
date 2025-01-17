@@ -3,6 +3,7 @@ import 'package:flutter_attendance_system/utils/loading_indicator.dart';
 import 'package:flutter_attendance_system/utils/prompt_dialog_box.dart';
 import 'package:provider/provider.dart';
 import '../viewmodel/auth_view_model.dart';
+import '../viewmodel/theme_view_model.dart';
 
 class RegisterPage extends StatefulWidget {
 
@@ -28,6 +29,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
+    final themeViewModel = Provider.of<ThemeViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -222,7 +224,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepOrange,
+                      backgroundColor: themeViewModel.currentTheme.buttonColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -232,7 +234,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: Text(
                         'Register',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: themeViewModel.currentTheme.boxTextColor,
                           fontSize: 16,
                         ),
                       ),
@@ -256,7 +258,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: Text(
                         'Login',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: themeViewModel.currentTheme.textColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/viewmodel/attendance_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/auth_view_model.dart';
+import 'package:flutter_attendance_system/viewmodel/theme_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
 import 'package:flutter_attendance_system/views/attendance_page.dart';
 import 'package:flutter_attendance_system/views/files_page.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
                 Provider.of<TimeDateViewModel>(context, listen: false),
           ),
         ),
+        ChangeNotifierProvider(create: (context) => ThemeViewModel()),
         // Add other providers here
       ],
       child: MaterialApp(

@@ -28,6 +28,7 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepOrange,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -36,36 +37,38 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
         ),
         title: Center(
           child: Text(
-            'Attendance'
+            'Attendance',
+            style: TextStyle(
+              color: Colors.white
+            ),
           )
         ),
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(text: 'Time In'),
-            Tab(text: 'Time Out'),
+            Tab(text: 'HISTORY'),
+            Tab(text: 'CALENDAR'),
           ],
+          indicatorColor: Colors.white,
+          unselectedLabelColor: Colors.white,
+          labelColor: Colors.white,
+          labelStyle: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
 
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                // Add your code here
-              },
-              child: Text('Time In'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Add your code here
-              },
-              child: Text('Time Out'),
-            ),
-          ],
-        ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          Center(
+            child: Text('History'),
+          ),
+          Center(
+            child: Text('Calendar'),
+          ),
+        ],
       ),
     );
   }
