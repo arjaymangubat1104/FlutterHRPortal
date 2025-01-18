@@ -38,11 +38,11 @@ class ThemeManager {
   );
 
   static final ThemeModel customTheme = ThemeModel(
-    themeColor: Colors.deepOrange,
+    themeColor: Colors.teal,
     textColor: Colors.black,
     boxTextColor: Colors.white,
     backgroundColor: Colors.white,
-    pageBackgroundColor: Colors.grey[800]!,
-    buttonColor: Colors.deepOrangeAccent,
+    pageBackgroundColor: Color.fromARGB(255, 224, 219, 219),
+    buttonColor: Colors.teal,
   );
 }

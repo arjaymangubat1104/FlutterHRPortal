@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_attendance_system/viewmodel/theme_view_model.dart';
+import 'package:provider/provider.dart';
 
 class ConfimationDialogBox extends StatelessWidget {
   final String title;
@@ -15,6 +17,7 @@ class ConfimationDialogBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeViewModel = Provider.of<ThemeViewModel>(context);
     return AlertDialog(
       title: Text(title),
       content: Text(content),
@@ -25,7 +28,7 @@ class ConfimationDialogBox extends StatelessWidget {
             OutlinedButton(
               onPressed: () => onNo(),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Colors.deepOrange),
+                side: BorderSide(color: themeViewModel.currentTheme.buttonColor),
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 textStyle: TextStyle(
                   fontSize: 16,
@@ -39,7 +42,7 @@ class ConfimationDialogBox extends StatelessWidget {
               child: Text(
                 'No',
                 style: TextStyle(
-                  color: Colors.deepOrange,
+                  color: themeViewModel.currentTheme.buttonColor,
                 ),
               ),
             ),
@@ -47,7 +50,7 @@ class ConfimationDialogBox extends StatelessWidget {
             ElevatedButton(
               onPressed: () => onYes(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
+                backgroundColor: themeViewModel.currentTheme.buttonColor,
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 textStyle: TextStyle(
                   fontSize: 16,

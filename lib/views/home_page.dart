@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                                 backgroundColor: Colors.lightBlue,
                                 hourHandColor: Colors.black,
                                 minuteHandColor: Colors.black,
-                                secondHandColor: Colors.black,
+                                secondHandColor: Colors.red,
                                 centerDotColor: Colors.amber,
                                 hourDashColor: Colors.lightBlue,
                                 minuteDashColor: Colors.blueAccent,
@@ -138,20 +138,23 @@ class _HomePageState extends State<HomePage> {
                                   Text(
                                     timeDateViewModel.formattedDateTime,
                                     style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 20,
                                     ),
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 10),
-                              DatePicker(
-                                DateTime.now(),
-                                initialSelectedDate: DateTime.now(),
-                                selectionColor: Colors.redAccent,
-                                selectedTextColor: Colors.white,
-                                monthTextStyle: TextStyle(fontSize: 10),
-                                dayTextStyle: TextStyle(fontSize: 10),
-                                dateTextStyle: TextStyle(fontSize: 15),
+                              IgnorePointer(
+                                child: DatePicker(
+                                  timeDateViewModel.mondayOfCurrentWeek,
+                                  initialSelectedDate: DateTime.now(),
+                                  selectionColor: Colors.red,
+                                  selectedTextColor: Colors.white,
+                                  monthTextStyle: TextStyle(fontSize: 10),
+                                  dayTextStyle: TextStyle(fontSize: 10),
+                                  dateTextStyle: TextStyle(fontSize: 15),
+                                  width: 45,
+                                ),
                               ),
                               const SizedBox(height: 5),
                               Row(
@@ -358,7 +361,7 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               GestureDetector(
                                 onTap: () => Navigator.pushNamed(
@@ -380,7 +383,7 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 75),
+                              const SizedBox(width: 25),
                               GestureDetector(
                                 onTap: () => Navigator.pushNamed(
                                     context, '/leave'),
@@ -401,7 +404,7 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 75),
+                              const SizedBox(width: 25),
                               GestureDetector(
                                 onTap: () => Navigator.pushNamed(
                                     context, '/overtime'),
@@ -426,7 +429,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           const SizedBox(height: 20),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               GestureDetector(
                                 onTap: () => Navigator.pushNamed(
@@ -448,7 +451,7 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 75),
+                              const SizedBox(width: 25),
                               GestureDetector(
                                 onTap: () => Navigator.pushNamed(
                                     context, '/team'),
@@ -469,7 +472,7 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 75),
+                              const SizedBox(width: 25),
                               GestureDetector(
                                 onTap: () => Navigator.pushNamed(
                                     context, '/news'),

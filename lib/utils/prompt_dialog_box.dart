@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_attendance_system/viewmodel/theme_view_model.dart';
+import 'package:provider/provider.dart';
 
 class PromptDialogBox extends StatelessWidget {
   final IconData icon;
@@ -20,6 +22,7 @@ class PromptDialogBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeViewModel = Provider.of<ThemeViewModel>(context);
     return AlertDialog(
       title: Column(
         children: [
@@ -49,7 +52,7 @@ class PromptDialogBox extends StatelessWidget {
             ElevatedButton(
               onPressed: () => onPressed(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
+                backgroundColor: themeViewModel.currentTheme.buttonColor,
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 textStyle: TextStyle(
                   fontSize: 16,

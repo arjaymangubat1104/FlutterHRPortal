@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/theme_model.dart';
 
 class ThemeViewModel extends ChangeNotifier {
-  ThemeModel _currentTheme = ThemeManager.lightTheme;
+  ThemeModel _currentTheme = ThemeManager.customTheme;
 
   ThemeModel get currentTheme => _currentTheme;
 
