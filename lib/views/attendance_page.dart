@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_attendance_system/utils/attendace_history_tile.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -14,7 +15,8 @@ class AttendancePage extends StatefulWidget {
 class _AttendancePageState extends State<AttendancePage>
     with TickerProviderStateMixin {
   late TabController _tabController, _monthTabController;
-  final List<String> _months = List.generate(12, (index) => DateFormat.MMMM().format(DateTime(0, index + 1)));
+  final List<String> _months = List.generate(
+      12, (index) => DateFormat.MMM().format(DateTime(0, index + 1)));
   final List<int> _years =
       List.generate(10, (index) => DateTime.now().year - index);
   int _selectedYear = DateTime.now().year;
@@ -122,7 +124,7 @@ class _AttendancePageState extends State<AttendancePage>
                               labelColor:
                                   themeViewModel.currentTheme.boxTextColor,
                               labelStyle: TextStyle(
-                                fontSize: 10,
+                                fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -195,7 +197,21 @@ class _AttendancePageState extends State<AttendancePage>
                             ],
                           ),
                         ),
-                      )
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: 20,
+                        itemBuilder: (context, index) {
+                          return AttendaceHistoryTile(
+                            date: '13 August 2021',
+                            attendanceStatus: 'Present',
+                            dropDownDate: 'Tuesday, 13 August 2021',
+                            timeIn: '08:00 AM',
+                            timeOut: '05:00 PM',
+                            status: 'On Time',
+                          );
+                        },
+                      ),
                     ],
                   ))
             ],
@@ -248,8 +264,8 @@ class _AttendancePageState extends State<AttendancePage>
                               children: [
                                 Text(
                                   '0',
-                                  style:
-                                      TextStyle(fontSize: 30, color: Colors.red),
+                                  style: TextStyle(
+                                      fontSize: 30, color: Colors.red),
                                 ),
                                 Text(
                                   'Absent',
