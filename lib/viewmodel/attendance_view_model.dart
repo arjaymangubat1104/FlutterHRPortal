@@ -128,6 +128,33 @@ class AttendanceViewModel extends ChangeNotifier{
     }
   }
 
+  Future<List<UserAttendanceModel>> fetchAllUserAttendanceByYearAndMonth(int year, int month) async {
+    try {
+      List<UserAttendanceModel> attendanceListByYearAndMonth = [];
+      UserModel? userModel = authViewModel.userModel;
+      if (userModel == null) {
+        throw Exception("User not logged in");
+      }
+      DateTime startDate = DateTime(year, month, 1);
+      DateTime endDate = DateTime(year, month + 1, 0); // Last day of the month
+      QuerySnapshot attendanceQuery = await _firestore.collection('attendance')
+        .where('user_id', isEqualTo: userModel.uid)
+        .where('attendance_date', isGreaterThanOrEqualTo: DateFormat('yyyy-MM-dd').format(startDate))
+        .where('attendance_date', isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
+        .orderBy('attendance_date', descending: true)
+        .get();
+      attendanceListByYearAndMonth = attendanceQuery.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        return UserAttendanceModel.fromJson(data);
+      }).toList();
+      return attendanceListByYearAndMonth;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return [];
+    }
+  }
+
   String statusMessage() {
     if (_attendanceList.isNotEmpty) {
       String? timeIn = _attendanceList.first.timeIn;

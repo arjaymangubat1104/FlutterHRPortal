@@ -1,6 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/viewmodel/theme_view_model.dart';
-import 'package:flutter_attendance_system/views/files_page.dart';
+import 'package:flutter_attendance_system/views/notification_page.dart';
 import 'package:flutter_attendance_system/views/home_page.dart';
 import 'package:flutter_attendance_system/views/profile_page.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +27,7 @@ class _IntroPageState extends State<IntroPage> {
     final themeViewModel = Provider.of<ThemeViewModel>(context);
     final List<Widget> _pages = [
       const HomePage(),
-      const FilesPage(),
+      const NotificationPage(),
       const ProfilePage()
     ];
 
@@ -38,15 +39,15 @@ class _IntroPageState extends State<IntroPage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
+            icon: Icon(CupertinoIcons.house),
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt_outlined),
+            icon: Icon(CupertinoIcons.bell),
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_2_outlined),
+            icon: Icon(CupertinoIcons.person),
             label: '',
           ),
         ],

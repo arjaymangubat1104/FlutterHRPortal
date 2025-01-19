@@ -1,38 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_attendance_system/models/attendance_model.dart';
 import 'package:flutter_attendance_system/utils/attendace_history_tile.dart';
+import 'package:flutter_attendance_system/viewmodel/attendance_view_model.dart';
+import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 import '../viewmodel/theme_view_model.dart';
 
 class AttendancePage extends StatefulWidget {
-  const AttendancePage({super.key});
+  final AttendanceViewModel attendanceViewModel;
+  final TimeDateViewModel timeDateViewModel;
+  const AttendancePage({super.key, required this.attendanceViewModel, required this.timeDateViewModel});
 
   @override
   State<AttendancePage> createState() => _AttendancePageState();
 }
 
-class _AttendancePageState extends State<AttendancePage>
-    with TickerProviderStateMixin {
+class _AttendancePageState extends State<AttendancePage> with TickerProviderStateMixin {
   late TabController _tabController, _monthTabController;
-  final List<String> _months = List.generate(
-      12, (index) => DateFormat.MMM().format(DateTime(0, index + 1)));
-  final List<int> _years =
-      List.generate(10, (index) => DateTime.now().year - index);
+  final List<DateTime> _months = List.generate(12, (index) => DateTime(0, index + 1));
+  final List<int> _years = List.generate(10, (index) => DateTime.now().year - index);
   int _selectedYear = DateTime.now().year;
+  int selectedMonth = DateTime.now().month;
+  List<UserAttendanceModel> attendanceListByYearAndMonth = [];
+
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _monthTabController = TabController(length: _months.length, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      _updateAttendaceListByYearAndMonth();
+    });
   }
-
   @override
   void dispose() {
     _tabController.dispose();
     _monthTabController.dispose();
     super.dispose();
+  }
+
+  void _updateAttendaceListByYearAndMonth() async{
+    attendanceListByYearAndMonth = await widget.attendanceViewModel.fetchAllUserAttendanceByYearAndMonth(_selectedYear, selectedMonth);
+    setState(() {
+      
+    });
   }
 
   @override
@@ -88,6 +102,8 @@ class _AttendancePageState extends State<AttendancePage>
                         children: [
                           DropdownButton<int>(
                             value: _selectedYear,
+                            dropdownColor: themeViewModel.currentTheme.themeColor,
+                            iconEnabledColor: themeViewModel.currentTheme.boxTextColor,
                             items: _years.map((year) {
                               return DropdownMenuItem<int>(
                                 value: year,
@@ -102,10 +118,9 @@ class _AttendancePageState extends State<AttendancePage>
                                 ),
                               );
                             }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedYear = value!;
-                              });
+                            onChanged: (value) async{
+                              _selectedYear = value!;
+                              _updateAttendaceListByYearAndMonth();
                             },
                           ),
                           Expanded(
@@ -113,7 +128,7 @@ class _AttendancePageState extends State<AttendancePage>
                               controller: _monthTabController,
                               isScrollable: true,
                               tabs: _months
-                                  .map((month) => Tab(text: month))
+                                  .map((month) => Tab(text: DateFormat.MMM().format(month)))
                                   .toList(),
                               dividerColor:
                                   themeViewModel.currentTheme.themeColor,
@@ -127,6 +142,10 @@ class _AttendancePageState extends State<AttendancePage>
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
+                              onTap: (index) async{
+                                selectedMonth = index + 1;
+                                _updateAttendaceListByYearAndMonth();
+                              },
                             ),
                           ),
                         ],
@@ -200,15 +219,15 @@ class _AttendancePageState extends State<AttendancePage>
                       ),
                       ListView.builder(
                         shrinkWrap: true,
-                        itemCount: 20,
+                        itemCount: attendanceListByYearAndMonth.length,
                         itemBuilder: (context, index) {
                           return AttendaceHistoryTile(
-                            date: '13 August 2021',
+                            date: attendanceListByYearAndMonth[index].attendanceDate.toString(),
                             attendanceStatus: 'Present',
-                            dropDownDate: 'Tuesday, 13 August 2021',
-                            timeIn: '08:00 AM',
-                            timeOut: '05:00 PM',
-                            status: 'On Time',
+                            dropDownDate: widget.timeDateViewModel.formatDateString(attendanceListByYearAndMonth[index].attendanceDate.toString()),  
+                            timeIn: attendanceListByYearAndMonth[index].timeIn.toString(),
+                            timeOut: attendanceListByYearAndMonth[index].timeOut.toString(),
+                            status: attendanceListByYearAndMonth[index].attendanceStatus.toString(),
                           );
                         },
                       ),

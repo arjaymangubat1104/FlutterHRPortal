@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class FilesPage extends StatelessWidget {
-  const FilesPage({super.key});
+class NotificationPage extends StatelessWidget {
+  const NotificationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Files'),
+        title: Text('Notification'),
       ),
       body: Center(
-        child: Text('Files Page'),
+        child: Text('Notification Page'),
       ),
     );
   }

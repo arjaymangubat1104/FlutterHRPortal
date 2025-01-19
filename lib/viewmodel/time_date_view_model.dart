@@ -37,6 +37,11 @@ class TimeDateViewModel extends ChangeNotifier {
     return monday;
   }
 
+  String formatDateString(String dateString) {
+    DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
+    return DateFormat('EEEE, d MMMM yyyy').format(dateTime);
+  }
+
   void _updateTime() {
     _formattedDateTime = _getCurrentTime();
     _formattedDate = _getcurrentDate();

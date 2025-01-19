@@ -4,12 +4,12 @@ import 'package:flutter_attendance_system/viewmodel/auth_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/theme_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
 import 'package:flutter_attendance_system/views/attendance_page.dart';
-import 'package:flutter_attendance_system/views/files_page.dart';
+import 'package:flutter_attendance_system/views/notification_page.dart';
 import 'package:flutter_attendance_system/views/home_page.dart';
 import 'package:flutter_attendance_system/views/intro_page.dart';
 import 'package:flutter_attendance_system/views/leave_page.dart';
 import 'package:flutter_attendance_system/views/login_page.dart';
-import 'package:flutter_attendance_system/views/news_page.dart';
+import 'package:flutter_attendance_system/views/schedule_page.dart';
 import 'package:flutter_attendance_system/views/ovetime_page.dart';
 import 'package:flutter_attendance_system/views/payslip_page.dart';
 import 'package:flutter_attendance_system/views/profile_page.dart';
@@ -63,14 +63,14 @@ class MyApp extends StatelessWidget {
           '/register': (context) => RegisterPage(),
           '/home': (context) => HomePage(),
           '/intro': (context) => IntroPage(),
-          '/files': (context) => FilesPage(),
+          '/notification': (context) => NotificationPage(),
           '/profile': (context) => ProfilePage(),
-          '/attendance': (context) => AttendancePage(),
+          //'/attendance': (context) => AttendancePage(),
           '/overtime': (context) => OverTimePage(),
           '/payslip': (context) => PayslipPage(),
           '/leave': (context) => LeavePage(),
           '/team': (context) => TeamPage(),
-          '/news': (context) => NewsPage(),
+          '/schedule': (context) => SchedulePage(),
         },
       ),
     );

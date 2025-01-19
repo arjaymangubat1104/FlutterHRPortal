@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/utils/confimation_dialog_box.dart';
 import 'package:flutter_attendance_system/utils/prompt_dialog_box.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
+import 'package:flutter_attendance_system/views/attendance_page.dart';
 import 'package:provider/provider.dart';
 import '../viewmodel/attendance_view_model.dart';
 import '../viewmodel/auth_view_model.dart';
@@ -29,7 +30,7 @@ class _HomePageState extends State<HomePage> {
     final themeViewModel = Provider.of<ThemeViewModel>(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await attendanceViewModel.fetchUserAttendance(timeDateViewModel.dateTime);
+      await attendanceViewModel.fetchUserAttendance(DateTime.now());
     });
 
     return Scaffold(
@@ -364,8 +365,13 @@ class _HomePageState extends State<HomePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               GestureDetector(
-                                onTap: () => Navigator.pushNamed(
-                                    context, '/attendance'),
+                                onTap: () => Navigator.push(
+                                    context, 
+                                    MaterialPageRoute(
+                                      builder: (context) => 
+                                        AttendancePage(attendanceViewModel: attendanceViewModel, timeDateViewModel: timeDateViewModel),
+                                    )
+                                  ),
                                 child: Column(
                                   children: [
                                     Icon(
@@ -475,17 +481,17 @@ class _HomePageState extends State<HomePage> {
                               const SizedBox(width: 25),
                               GestureDetector(
                                 onTap: () => Navigator.pushNamed(
-                                    context, '/news'),
+                                    context, '/schedule'),
                                 child: Column(
                                   children: [
                                     Icon(
-                                      CupertinoIcons.news,
+                                      CupertinoIcons.calendar_circle,
                                       size: 75,
                                       color: themeViewModel.currentTheme.themeColor,
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      'NEWS',
+                                      'SCHEDULE',
                                       style: TextStyle(
                                         fontSize: 13, 
                                       ),
