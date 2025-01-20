@@ -492,7 +492,7 @@ class _HomePageState extends State<HomePage> {
                                     const SizedBox(height: 5),
                                     Text(
                                       'SCHEDULE',
-                                      style: TextStyle(
+                                        style: TextStyle(
                                         fontSize: 13, 
                                       ),
                                     )
