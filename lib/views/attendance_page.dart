@@ -292,6 +292,7 @@ class _AttendancePageState extends State<AttendancePage>
                             status: attendanceListByYearAndMonth[index]
                                 .attendanceStatus
                                 .toString(),
+                            totalTime: attendanceListByYearAndMonth[index].totalTime ?? '',
                           );
                         },
                       ),

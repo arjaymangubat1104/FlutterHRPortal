@@ -10,6 +10,7 @@ class AttendaceHistoryTile extends StatelessWidget {
   final String timeIn;
   final String timeOut;
   final String status;
+  final String totalTime;
   final Function(String?)? onChanged;
 
   const AttendaceHistoryTile({
@@ -20,6 +21,7 @@ class AttendaceHistoryTile extends StatelessWidget {
     required this.timeIn,
     required this.timeOut,
     required this.status,
+    required this.totalTime,
     this.onChanged,
   });
 
@@ -120,14 +122,14 @@ class AttendaceHistoryTile extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    status,
+                    '$status: ',
                     style: TextStyle(
                         color: themeViewModel.currentTheme.themeColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    status,
+                    totalTime,
                     style: TextStyle(
                       color: Colors.black,
                     ),

@@ -18,7 +18,7 @@ class ScheduleViewModel extends ChangeNotifier {
     );
 
     try {
-      await _firestore.collection('users').doc(userId).collection('schedules').add(defaultSchedule.toJson());
+      await _firestore.collection('users').doc(userId).update(defaultSchedule.toJson());
       print('Default schedule saved successfully');
     } catch (e) {
       print('Error saving default schedule: $e');

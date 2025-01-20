@@ -72,6 +72,23 @@ class AttendanceViewModel extends ChangeNotifier{
     }
   }
 
+  Future<Duration> _fetchUserScheduledDuration(String userId) async {
+    // Fetch the user's schedule from Firestore (assuming you have a 'schedules' collection)
+    DocumentSnapshot scheduleDoc = await _firestore.collection('users').doc(userId).get();
+    if (scheduleDoc.exists) {
+      Map<String, dynamic> scheduleData = scheduleDoc.data() as Map<String, dynamic>;
+      String startTime = scheduleData['schedule_in'];
+      String endTime = scheduleData['schedule_out'];
+
+      DateTime startDateTime = DateFormat('HH:mm:ss').parse(startTime);
+      DateTime endDateTime = DateFormat('HH:mm:ss').parse(endTime);
+
+      return endDateTime.difference(startDateTime);
+    } else {
+      throw Exception("User schedule not found");
+    }
+  }
+
   Future<void> timeOut() async {
     try {
       _checkOutTime = DateTime.now();
@@ -92,6 +109,23 @@ class AttendanceViewModel extends ChangeNotifier{
         await _firestore.collection('attendance').doc(doc.id).update({
           'time_out': DateFormat('HH:mm:ss').format(_checkOutTime!),
         });
+
+        // Calculate hours worked
+        DateTime timeIn = DateFormat('HH:mm:ss').parse(data['time_in']);
+        DateTime timeOut = DateFormat('HH:mm:ss').parse(DateFormat('HH:mm:ss').format(_checkOutTime!));
+        Duration workedDuration = timeOut.difference(timeIn);
+
+        // Fetch user's schedule (assuming you have a method to get the user's schedule)
+        Duration scheduledDuration = await _fetchUserScheduledDuration(userModel.uid);
+
+        // Adjust worked hours based on the schedule
+        Duration adjustedWorkedDuration = workedDuration > scheduledDuration ? scheduledDuration : workedDuration;
+
+        // Update the attendance record with the worked hours
+        await _firestore.collection('attendance').doc(doc.id).update({
+          'total_time': adjustedWorkedDuration.inHours.toString(),
+        });
+
         _isSuccessInOut = true;
         notifyListeners();
       } else {
