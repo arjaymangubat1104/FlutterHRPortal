@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/models/attendance_model.dart';
 import 'package:flutter_attendance_system/utils/attendace_history_tile.dart';
+import 'package:flutter_attendance_system/utils/loading_indicator.dart';
 import 'package:flutter_attendance_system/viewmodel/attendance_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
 import 'package:provider/provider.dart';
@@ -11,30 +12,42 @@ import '../viewmodel/theme_view_model.dart';
 class AttendancePage extends StatefulWidget {
   final AttendanceViewModel attendanceViewModel;
   final TimeDateViewModel timeDateViewModel;
-  const AttendancePage({super.key, required this.attendanceViewModel, required this.timeDateViewModel});
+  const AttendancePage(
+      {super.key,
+      required this.attendanceViewModel,
+      required this.timeDateViewModel});
 
   @override
   State<AttendancePage> createState() => _AttendancePageState();
 }
 
-class _AttendancePageState extends State<AttendancePage> with TickerProviderStateMixin {
+class _AttendancePageState extends State<AttendancePage>
+    with TickerProviderStateMixin {
   late TabController _tabController, _monthTabController;
-  final List<DateTime> _months = List.generate(12, (index) => DateTime(0, index + 1));
-  final List<int> _years = List.generate(10, (index) => DateTime.now().year - index);
+  final List<DateTime> _months =
+      List.generate(12, (index) => DateTime(0, index + 1));
+  final List<int> _cutoffs = [
+    15,
+    30,
+  ];
+  final List<int> _years =
+      List.generate(10, (index) => DateTime.now().year - index);
   int _selectedYear = DateTime.now().year;
+  int _selectedCutoff = 15;
   int selectedMonth = DateTime.now().month;
   List<UserAttendanceModel> attendanceListByYearAndMonth = [];
-
+  bool _showSpinner = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _monthTabController = TabController(length: _months.length, vsync: this);
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       _updateAttendaceListByYearAndMonth();
     });
   }
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -42,11 +55,21 @@ class _AttendancePageState extends State<AttendancePage> with TickerProviderStat
     super.dispose();
   }
 
-  void _updateAttendaceListByYearAndMonth() async{
-    attendanceListByYearAndMonth = await widget.attendanceViewModel.fetchAllUserAttendanceByYearAndMonth(_selectedYear, selectedMonth);
-    setState(() {
-      
-    });
+  void _updateAttendaceListByYearAndMonth() async {
+    try {
+      setState(() {
+        _showSpinner = true;
+      });
+      attendanceListByYearAndMonth = await widget.attendanceViewModel
+          .fetchAllUserAttendanceByYearAndMonth(
+              _selectedYear, selectedMonth, _selectedCutoff);
+    } catch (e) {
+      print(e);
+    } finally {
+      setState(() {
+        _showSpinner = false;
+      });
+    }
   }
 
   @override
@@ -102,8 +125,10 @@ class _AttendancePageState extends State<AttendancePage> with TickerProviderStat
                         children: [
                           DropdownButton<int>(
                             value: _selectedYear,
-                            dropdownColor: themeViewModel.currentTheme.themeColor,
-                            iconEnabledColor: themeViewModel.currentTheme.boxTextColor,
+                            dropdownColor:
+                                themeViewModel.currentTheme.themeColor,
+                            iconEnabledColor:
+                                themeViewModel.currentTheme.boxTextColor,
                             items: _years.map((year) {
                               return DropdownMenuItem<int>(
                                 value: year,
@@ -118,8 +143,34 @@ class _AttendancePageState extends State<AttendancePage> with TickerProviderStat
                                 ),
                               );
                             }).toList(),
-                            onChanged: (value) async{
+                            onChanged: (value) async {
                               _selectedYear = value!;
+                              _updateAttendaceListByYearAndMonth();
+                            },
+                          ),
+                          const SizedBox(width: 20),
+                          DropdownButton<int>(
+                            value: _selectedCutoff,
+                            dropdownColor:
+                                themeViewModel.currentTheme.themeColor,
+                            iconEnabledColor:
+                                themeViewModel.currentTheme.boxTextColor,
+                            items: _cutoffs.map((cutoffs) {
+                              return DropdownMenuItem<int>(
+                                value: cutoffs,
+                                child: Text(
+                                  cutoffs.toString(),
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: themeViewModel
+                                        .currentTheme.boxTextColor,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (value) async {
+                              _selectedCutoff = value!;
                               _updateAttendaceListByYearAndMonth();
                             },
                           ),
@@ -128,7 +179,8 @@ class _AttendancePageState extends State<AttendancePage> with TickerProviderStat
                               controller: _monthTabController,
                               isScrollable: true,
                               tabs: _months
-                                  .map((month) => Tab(text: DateFormat.MMM().format(month)))
+                                  .map((month) =>
+                                      Tab(text: DateFormat.MMM().format(month)))
                                   .toList(),
                               dividerColor:
                                   themeViewModel.currentTheme.themeColor,
@@ -142,7 +194,7 @@ class _AttendancePageState extends State<AttendancePage> with TickerProviderStat
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
-                              onTap: (index) async{
+                              onTap: (index) async {
                                 selectedMonth = index + 1;
                                 _updateAttendaceListByYearAndMonth();
                               },
@@ -222,12 +274,24 @@ class _AttendancePageState extends State<AttendancePage> with TickerProviderStat
                         itemCount: attendanceListByYearAndMonth.length,
                         itemBuilder: (context, index) {
                           return AttendaceHistoryTile(
-                            date: attendanceListByYearAndMonth[index].attendanceDate.toString(),
+                            date: attendanceListByYearAndMonth[index]
+                                .attendanceDate
+                                .toString(),
                             attendanceStatus: 'Present',
-                            dropDownDate: widget.timeDateViewModel.formatDateString(attendanceListByYearAndMonth[index].attendanceDate.toString()),  
-                            timeIn: attendanceListByYearAndMonth[index].timeIn.toString(),
-                            timeOut: attendanceListByYearAndMonth[index].timeOut.toString(),
-                            status: attendanceListByYearAndMonth[index].attendanceStatus.toString(),
+                            dropDownDate: widget.timeDateViewModel
+                                .formatDateString(
+                                    attendanceListByYearAndMonth[index]
+                                        .attendanceDate
+                                        .toString()),
+                            timeIn: attendanceListByYearAndMonth[index]
+                                .timeIn
+                                .toString(),
+                            timeOut: attendanceListByYearAndMonth[index]
+                                .timeOut
+                                .toString(),
+                            status: attendanceListByYearAndMonth[index]
+                                .attendanceStatus
+                                .toString(),
                           );
                         },
                       ),
@@ -317,7 +381,14 @@ class _AttendancePageState extends State<AttendancePage> with TickerProviderStat
                     ),
                   ),
                 ),
-              )
+              ),
+              if (_showSpinner)
+                Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: Center(
+                    child: CustomLoadingIndicator(),
+                  ),
+                ),
             ],
           ),
         ],

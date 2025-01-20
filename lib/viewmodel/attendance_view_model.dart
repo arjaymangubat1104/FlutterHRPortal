@@ -128,15 +128,15 @@ class AttendanceViewModel extends ChangeNotifier{
     }
   }
 
-  Future<List<UserAttendanceModel>> fetchAllUserAttendanceByYearAndMonth(int year, int month) async {
+  Future<List<UserAttendanceModel>> fetchAllUserAttendanceByYearAndMonth(int year, int month, int cutoffs) async {
     try {
       List<UserAttendanceModel> attendanceListByYearAndMonth = [];
       UserModel? userModel = authViewModel.userModel;
       if (userModel == null) {
         throw Exception("User not logged in");
       }
-      DateTime startDate = DateTime(year, month, 1);
-      DateTime endDate = DateTime(year, month + 1, 0); // Last day of the month
+      DateTime startDate = cutoffs == 15 ? DateTime(year, month, 1) : DateTime(year, month, 16); // Start date of the month
+      DateTime endDate = cutoffs == 15 ? DateTime(year, month, 15) : DateTime(year, month + 1, 0); // Last day of the month
       QuerySnapshot attendanceQuery = await _firestore.collection('attendance')
         .where('user_id', isEqualTo: userModel.uid)
         .where('attendance_date', isGreaterThanOrEqualTo: DateFormat('yyyy-MM-dd').format(startDate))

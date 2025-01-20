@@ -10,9 +10,9 @@ class AttendaceHistoryTile extends StatelessWidget {
   final String timeIn;
   final String timeOut;
   final String status;
-  Function(String?)? onChanged;
+  final Function(String?)? onChanged;
 
-  AttendaceHistoryTile({
+  const AttendaceHistoryTile({
     super.key,
     required this.date,
     required this.attendanceStatus,

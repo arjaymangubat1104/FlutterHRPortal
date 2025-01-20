@@ -1,11 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_attendance_system/viewmodel/schedule_view_model.dart';
 import '../models/user_model.dart';
 
 class AuthViewModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final ScheduleViewModel _scheduleViewModel = ScheduleViewModel();
+
   UserModel? _userModel;
   String? _errorMessage;
   bool _isSuccessSignUp = false;
@@ -36,6 +39,7 @@ class AuthViewModel extends ChangeNotifier {
           .collection('users')
           .doc(user.uid)
           .set(_userModel!.toMap());
+      await _scheduleViewModel.saveDefaultSchedule(user.uid);
 
       notifyListeners();
       _isSuccessSignUp = true;
