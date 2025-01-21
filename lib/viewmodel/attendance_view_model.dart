@@ -73,9 +73,8 @@ class AttendanceViewModel extends ChangeNotifier {
         }
       }
       if(lateTime.isNotEmpty){
-        attendanceStatus = 'Late';
-      }
-
+        attendanceStatus = 'Late/Under Time';
+      } 
       UserAttendanceModel attendance = UserAttendanceModel(
         id: _firestore.collection('attendance').doc().id,
         userId: userModel.uid,
@@ -178,7 +177,8 @@ class AttendanceViewModel extends ChangeNotifier {
         await _firestore.collection('attendance').doc(doc.id).update({
           'total_time': adjustedWorkedDurationFormatted,
         });
-
+        
+        String underTime = '';
         DocumentSnapshot documentSnapshot =
             await _firestore.collection('users').doc(userModel.uid).get();
         Map<String, dynamic> userData =
@@ -189,42 +189,21 @@ class AttendanceViewModel extends ChangeNotifier {
             DateFormat('HH:mm:ss').parse(scheduleOut);
         DateTime timeOutDateTime = DateFormat('HH:mm:ss').parse(stringTimeout);
         if (timeOutDateTime.isBefore(scheduleOutDateTime)) {
-          String underTime = '';
           Duration durationOfUnderTime =
               scheduleOutDateTime.difference(timeOutDateTime);
           underTime = DateFormat('HH:mm:ss')
               .format(DateTime(0).add(durationOfUnderTime));
           await _firestore.collection('attendance').doc(doc.id).update({
             'under_time': underTime,
+            'attendance_status': 'Late/Under Time',
           });
         }
 
-        //Condition to check if the user is present
-        // if ((workedDuration > scheduledDuration) &&
-        //     data['under_time'].isEmpty &&
-        //     data['late_time'].isEmpty) {
-        //   await _firestore.collection('attendance').doc(doc.id).update({
-        //     'attendance_status': 'Present',
-        //   });
-        // } else if (data['late_time'].isNotEmpty &&
-        //     data['under_time'].isNotEmpty) {
-        //   await _firestore.collection('attendance').doc(doc.id).update({
-        //     'attendance_status':
-        //         getAdjustedWorkedDurationFormatted(workedDuration),
-        //   });
-        // } else if (data['late_time'].isNotEmpty) {
-        //   await _firestore.collection('attendance').doc(doc.id).update({
-        //     'attendance_status': 'Late',
-        //   });
-        // } else if (data['under_time'].isNotEmpty) {
-        //   await _firestore.collection('attendance').doc(doc.id).update({
-        //     'attendance_status': 'UnderTime',
-        //   });
-        // } else {
-        //   await _firestore.collection('attendance').doc(doc.id).update({
-        //     'attendance_status': 'Absent',
-        //   });
-        // }
+        if(data['late_time'].isEmpty && underTime == ''){
+            await _firestore.collection('attendance').doc(doc.id).update({
+              'attendance_status': 'Present',
+            });
+        }
 
         _isSuccessInOut = true;
         notifyListeners();
@@ -248,6 +227,35 @@ class AttendanceViewModel extends ChangeNotifier {
       return 'Absent';
     } else {
       return 'On Time';
+    }
+  }
+
+  Future<void> setAbsentIfNoAttendancePreviousDay(String userId) async {
+    try {
+      DateTime today = DateTime.now();
+      DateTime previousDay = today.subtract(Duration(days: 1));
+      String formattedPreviousDay = DateFormat('yyyy-MM-dd').format(previousDay);
+
+      QuerySnapshot attendanceQuery = await _firestore.collection('attendance')
+        .where('user_id', isEqualTo: userId)
+        .where('attendance_date', isEqualTo: formattedPreviousDay)
+        .get();
+
+      if (attendanceQuery.docs.isEmpty) {
+        UserAttendanceModel attendance = UserAttendanceModel(
+          id: _firestore.collection('attendance').doc().id,
+          userId: userId,
+          userName: '', // You may want to fetch the user's name if needed
+          attendanceStatus: 'Absent',
+          attendanceDate: formattedPreviousDay,
+          timeIn: '',
+          timeOut: '',
+        );
+        await _firestore.collection('attendance').doc(attendance.id).set(attendance.toJson());
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
     }
   }
 

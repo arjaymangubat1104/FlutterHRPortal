@@ -7,7 +7,8 @@ import '../models/user_model.dart';
 class AuthViewModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final ScheduleViewModel _scheduleViewModel = ScheduleViewModel();
+  final ScheduleViewModel scheduleViewModel = ScheduleViewModel();
+
 
   UserModel? _userModel;
   String? _errorMessage;
@@ -39,7 +40,7 @@ class AuthViewModel extends ChangeNotifier {
           .collection('users')
           .doc(user.uid)
           .set(_userModel!.toMap());
-      await _scheduleViewModel.saveDefaultSchedule(user.uid);
+      await scheduleViewModel.saveDefaultSchedule(user.uid);
 
       notifyListeners();
       _isSuccessSignUp = true;

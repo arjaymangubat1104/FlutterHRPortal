@@ -39,14 +39,12 @@ class AttendaceHistoryTile extends StatelessWidget {
       switch (value) {
         case 'Present':
           return Colors.green;
-        case 'Absent':
+        case 'Leave':
           return Colors.red;
-        case 'Late':
+        case 'Late/Under Time':
           return Colors.orange;
-        case 'Under Time':
-          return Colors.blue;
         default:
-          return Colors.black;
+          return Colors.grey; // Default color
       }
     }
 
@@ -85,7 +83,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   Text(
                     'Date:',
                     style: TextStyle(
-                        color: themeViewModel.currentTheme.themeColor,
+                        color: themeViewModel.currentTheme.boxTextColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
@@ -102,7 +100,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   Text(
                     'Time In:',
                     style: TextStyle(
-                        color: themeViewModel.currentTheme.themeColor,
+                        color: themeViewModel.currentTheme.boxTextColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
@@ -119,7 +117,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   Text(
                     'Time Out:',
                     style: TextStyle(
-                        color: themeViewModel.currentTheme.themeColor,
+                        color: themeViewModel.currentTheme.boxTextColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
@@ -136,12 +134,12 @@ class AttendaceHistoryTile extends StatelessWidget {
                   Text(
                     'Total Time: ',
                     style: TextStyle(
-                        color: themeViewModel.currentTheme.themeColor,
+                        color: themeViewModel.currentTheme.boxTextColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    '${totalTimeComponents['hours']} hour/s ${totalTimeComponents['minutes']} minute/s ${totalTimeComponents['seconds']} second/s',
+                    '${totalTimeComponents['hours']} h ${totalTimeComponents['minutes']} m',
                     style: TextStyle(
                       color: Colors.black,
                     ),
@@ -153,12 +151,12 @@ class AttendaceHistoryTile extends StatelessWidget {
                   Text(
                     'Late: ',
                     style: TextStyle(
-                        color: themeViewModel.currentTheme.themeColor,
+                        color: themeViewModel.currentTheme.boxTextColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    '${lateHoursComponents['hours']} hour/s ${lateHoursComponents['minutes']} minute/s ${lateHoursComponents['seconds']} second/s',
+                    '${lateHoursComponents['hours']} h ${lateHoursComponents['minutes']} m',
                     style: TextStyle(
                       color: Colors.black,
                     ),
@@ -170,12 +168,12 @@ class AttendaceHistoryTile extends StatelessWidget {
                   Text(
                     'Under Time: ',
                     style: TextStyle(
-                        color: themeViewModel.currentTheme.themeColor,
+                        color: themeViewModel.currentTheme.boxTextColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    '${underTimeComponents['hours']} hour/s ${underTimeComponents['minutes']} minute/s ${underTimeComponents['seconds']} second/s',
+                    '${underTimeComponents['hours']} h ${underTimeComponents['minutes']} m',
                     style: TextStyle(
                       color: Colors.black,
                     ),
@@ -187,12 +185,12 @@ class AttendaceHistoryTile extends StatelessWidget {
                   Text(
                     'Over Time: ',
                     style: TextStyle(
-                        color: themeViewModel.currentTheme.themeColor,
+                        color: themeViewModel.currentTheme.boxTextColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    '${totalTimeComponents['hours']} hour/s ${totalTimeComponents['minutes']} minute/s ${totalTimeComponents['seconds']} second/s',
+                    '${totalTimeComponents['hours']} h ${totalTimeComponents['minutes']} m',
                     style: TextStyle(
                       color: Colors.black,
                     ),

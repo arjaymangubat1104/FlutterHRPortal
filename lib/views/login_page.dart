@@ -5,7 +5,7 @@ import '../viewmodel/auth_view_model.dart';
 import '../viewmodel/theme_view_model.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();

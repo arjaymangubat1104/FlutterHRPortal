@@ -231,22 +231,6 @@ class _AttendancePageState extends State<AttendancePage>
                                       ),
                                     ],
                                   ),
-                                  // Column(
-                                  //   children: [
-                                  //     Text(
-                                  //       '0',
-                                  //       style: TextStyle(
-                                  //           fontSize: 30, color: Colors.red),
-                                  //     ),
-                                  //     Text(
-                                  //       'Absent',
-                                  //       style: TextStyle(
-                                  //           fontSize: 15,
-                                  //           fontWeight: FontWeight.bold,
-                                  //           color: Colors.grey[600]),
-                                  //     ),
-                                  //   ],
-                                  // ),
                                   Column(
                                     children: [
                                       Text(
@@ -255,7 +239,7 @@ class _AttendancePageState extends State<AttendancePage>
                                             fontSize: 30, color: Colors.orange),
                                       ),
                                       Text(
-                                        'Late',
+                                        'Late/Under Time',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -268,10 +252,10 @@ class _AttendancePageState extends State<AttendancePage>
                                       Text(
                                         '0',
                                         style: TextStyle(
-                                            fontSize: 30, color: Colors.blue),
+                                            fontSize: 30, color: Colors.red),
                                       ),
                                       Text(
-                                        'Undertime',
+                                        'Absent',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -365,22 +349,6 @@ class _AttendancePageState extends State<AttendancePage>
                                 ),
                               ],
                             ),
-                            // Column(
-                            //   children: [
-                            //     Text(
-                            //       '0',
-                            //       style: TextStyle(
-                            //           fontSize: 30, color: Colors.red),
-                            //     ),
-                            //     Text(
-                            //       'Absent',
-                            //       style: TextStyle(
-                            //           fontSize: 15,
-                            //           fontWeight: FontWeight.bold,
-                            //           color: Colors.grey[600]),
-                            //     ),
-                            //   ],
-                            // ),
                             Column(
                               children: [
                                 Text(
@@ -389,7 +357,7 @@ class _AttendancePageState extends State<AttendancePage>
                                       fontSize: 30, color: Colors.orange),
                                 ),
                                 Text(
-                                  'Late',
+                                  'Late/Under Time',
                                   style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -402,10 +370,10 @@ class _AttendancePageState extends State<AttendancePage>
                                 Text(
                                   '0',
                                   style: TextStyle(
-                                      fontSize: 30, color: Colors.blue),
+                                      fontSize: 30, color: Colors.red),
                                 ),
                                 Text(
-                                  'Underime',
+                                  'Absent',
                                   style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
