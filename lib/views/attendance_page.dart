@@ -231,15 +231,31 @@ class _AttendancePageState extends State<AttendancePage>
                                       ),
                                     ],
                                   ),
+                                  // Column(
+                                  //   children: [
+                                  //     Text(
+                                  //       '0',
+                                  //       style: TextStyle(
+                                  //           fontSize: 30, color: Colors.red),
+                                  //     ),
+                                  //     Text(
+                                  //       'Absent',
+                                  //       style: TextStyle(
+                                  //           fontSize: 15,
+                                  //           fontWeight: FontWeight.bold,
+                                  //           color: Colors.grey[600]),
+                                  //     ),
+                                  //   ],
+                                  // ),
                                   Column(
                                     children: [
                                       Text(
                                         '0',
                                         style: TextStyle(
-                                            fontSize: 30, color: Colors.red),
+                                            fontSize: 30, color: Colors.orange),
                                       ),
                                       Text(
-                                        'Absent',
+                                        'Late',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -252,10 +268,10 @@ class _AttendancePageState extends State<AttendancePage>
                                       Text(
                                         '0',
                                         style: TextStyle(
-                                            fontSize: 30, color: Colors.orange),
+                                            fontSize: 30, color: Colors.blue),
                                       ),
                                       Text(
-                                        'Late',
+                                        'Undertime',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -277,7 +293,9 @@ class _AttendancePageState extends State<AttendancePage>
                             date: attendanceListByYearAndMonth[index]
                                 .attendanceDate
                                 .toString(),
-                            attendanceStatus: 'Present',
+                            attendanceStatus: attendanceListByYearAndMonth[index]
+                                .attendanceStatus
+                                .toString(),
                             dropDownDate: widget.timeDateViewModel
                                 .formatDateString(
                                     attendanceListByYearAndMonth[index]
@@ -293,6 +311,9 @@ class _AttendancePageState extends State<AttendancePage>
                                 .attendanceStatus
                                 .toString(),
                             totalTime: attendanceListByYearAndMonth[index].totalTime ?? '',
+                            lateTime: attendanceListByYearAndMonth[index].lateTime ?? '',
+                            underTime: attendanceListByYearAndMonth[index].underTime ?? '',
+
                           );
                         },
                       ),
@@ -344,15 +365,31 @@ class _AttendancePageState extends State<AttendancePage>
                                 ),
                               ],
                             ),
+                            // Column(
+                            //   children: [
+                            //     Text(
+                            //       '0',
+                            //       style: TextStyle(
+                            //           fontSize: 30, color: Colors.red),
+                            //     ),
+                            //     Text(
+                            //       'Absent',
+                            //       style: TextStyle(
+                            //           fontSize: 15,
+                            //           fontWeight: FontWeight.bold,
+                            //           color: Colors.grey[600]),
+                            //     ),
+                            //   ],
+                            // ),
                             Column(
                               children: [
                                 Text(
                                   '0',
                                   style: TextStyle(
-                                      fontSize: 30, color: Colors.red),
+                                      fontSize: 30, color: Colors.orange),
                                 ),
                                 Text(
-                                  'Absent',
+                                  'Late',
                                   style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -365,10 +402,10 @@ class _AttendancePageState extends State<AttendancePage>
                                 Text(
                                   '0',
                                   style: TextStyle(
-                                      fontSize: 30, color: Colors.orange),
+                                      fontSize: 30, color: Colors.blue),
                                 ),
                                 Text(
-                                  'Late',
+                                  'Underime',
                                   style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
