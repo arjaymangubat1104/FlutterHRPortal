@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../viewmodel/attendance_view_model.dart';
 import '../viewmodel/theme_view_model.dart';
 
 class AttendaceHistoryTile extends StatelessWidget {
@@ -11,6 +12,8 @@ class AttendaceHistoryTile extends StatelessWidget {
   final String timeOut;
   final String status;
   final String totalTime;
+  final String lateTime;
+  final String underTime;
   final Function(String?)? onChanged;
 
   const AttendaceHistoryTile({
@@ -22,12 +25,15 @@ class AttendaceHistoryTile extends StatelessWidget {
     required this.timeOut,
     required this.status,
     required this.totalTime,
+    required this.lateTime,
+    required this.underTime,
     this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
     final themeViewModel = Provider.of<ThemeViewModel>(context);
+    final attendanceViewModel = Provider.of<AttendanceViewModel>(context);
 
     Color changeColor(String value) {
       switch (value) {
@@ -37,16 +43,22 @@ class AttendaceHistoryTile extends StatelessWidget {
           return Colors.red;
         case 'Late':
           return Colors.orange;
+        case 'Under Time':
+          return Colors.blue;
         default:
           return Colors.black;
       }
     }
 
+    Map<String, int> totalTimeComponents = attendanceViewModel.getDurationComponents(totalTime);
+    Map<String, int> lateHoursComponents = attendanceViewModel.getDurationComponents(lateTime);
+    Map<String, int> underTimeComponents = attendanceViewModel.getDurationComponents(underTime);
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Material(
+          color: changeColor(attendanceStatus),
           child: ExpansionTile(
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -57,13 +69,13 @@ class AttendaceHistoryTile extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       color: themeViewModel.currentTheme.textColor),
                 ),
-                Text(
-                  attendanceStatus,
-                  style: TextStyle(
-                    color: changeColor(attendanceStatus),
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
+                // Text(
+                //   attendanceStatus,
+                //   style: TextStyle(
+                //     color: changeColor(attendanceStatus),
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // )
               ],
             ),
             childrenPadding: EdgeInsets.only(bottom: 15, left: 15),
@@ -122,14 +134,65 @@ class AttendaceHistoryTile extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    '$status: ',
+                    'Total Time: ',
                     style: TextStyle(
                         color: themeViewModel.currentTheme.themeColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    totalTime,
+                    '${totalTimeComponents['hours']} hour/s ${totalTimeComponents['minutes']} minute/s ${totalTimeComponents['seconds']} second/s',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text(
+                    'Late: ',
+                    style: TextStyle(
+                        color: themeViewModel.currentTheme.themeColor,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    '${lateHoursComponents['hours']} hour/s ${lateHoursComponents['minutes']} minute/s ${lateHoursComponents['seconds']} second/s',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text(
+                    'Under Time: ',
+                    style: TextStyle(
+                        color: themeViewModel.currentTheme.themeColor,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    '${underTimeComponents['hours']} hour/s ${underTimeComponents['minutes']} minute/s ${underTimeComponents['seconds']} second/s',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text(
+                    'Over Time: ',
+                    style: TextStyle(
+                        color: themeViewModel.currentTheme.themeColor,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    '${totalTimeComponents['hours']} hour/s ${totalTimeComponents['minutes']} minute/s ${totalTimeComponents['seconds']} second/s',
                     style: TextStyle(
                       color: Colors.black,
                     ),

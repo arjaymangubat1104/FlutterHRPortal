@@ -8,6 +8,8 @@ class UserAttendanceModel {
   String? timeIn;
   String? timeOut;
   String? totalTime;
+  String? lateTime;
+  String? underTime;
 
   UserAttendanceModel({
     required this.id,
@@ -19,6 +21,8 @@ class UserAttendanceModel {
     required this.timeIn,
     required this.timeOut,
     this.totalTime,
+    this.lateTime,
+    this.underTime,
   });
 
   factory UserAttendanceModel.fromJson(Map<String, dynamic> json) {
@@ -32,6 +36,8 @@ class UserAttendanceModel {
       timeIn: json['time_in'],
       timeOut: json['time_out'],
       totalTime: json['total_time'],
+      lateTime: json['late_time'],
+      underTime: json['under_time'],
     );
   }
 
@@ -46,6 +52,8 @@ class UserAttendanceModel {
       'time_in': timeIn,
       'time_out': timeOut,
       'total_time': totalTime,
+      'late_time': lateTime,
+      'under_time': underTime,
     };
   }
   
