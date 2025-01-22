@@ -36,6 +36,9 @@ class _AttendancePageState extends State<AttendancePage>
   int _selectedCutoff = 15;
   int selectedMonth = DateTime.now().month;
   List<UserAttendanceModel> attendanceListByYearAndMonth = [];
+  int presentCounter = 0;
+  int lateUndertimeCounter = 0;
+
   bool _showSpinner = false;
 
   @override
@@ -45,7 +48,9 @@ class _AttendancePageState extends State<AttendancePage>
     _monthTabController = TabController(length: _months.length, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _updateAttendaceListByYearAndMonth();
+      //await widget.attendanceViewModel.setAbsentIfNoAttendancePreviousDay(widget.attendanceViewModel.authViewModel.userModel!.uid);
     });
+
   }
 
   @override
@@ -63,6 +68,9 @@ class _AttendancePageState extends State<AttendancePage>
       attendanceListByYearAndMonth = await widget.attendanceViewModel
           .fetchAllUserAttendanceByYearAndMonth(
               _selectedYear, selectedMonth, _selectedCutoff);
+      presentCounter = await widget.attendanceViewModel
+          .countPresents(_selectedYear, selectedMonth, _selectedCutoff);
+      lateUndertimeCounter = await widget.attendanceViewModel.countLateOrUndertime(_selectedYear, selectedMonth, _selectedCutoff);
     } catch (e) {
       print(e);
     } finally {
@@ -216,7 +224,7 @@ class _AttendancePageState extends State<AttendancePage>
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        '0',
+                                        presentCounter.toString(),
                                         style: TextStyle(
                                           fontSize: 30,
                                           color: Colors.green,
@@ -234,7 +242,7 @@ class _AttendancePageState extends State<AttendancePage>
                                   Column(
                                     children: [
                                       Text(
-                                        '0',
+                                        lateUndertimeCounter.toString(),
                                         style: TextStyle(
                                             fontSize: 30, color: Colors.orange),
                                       ),
@@ -247,22 +255,22 @@ class _AttendancePageState extends State<AttendancePage>
                                       ),
                                     ],
                                   ),
-                                  Column(
-                                    children: [
-                                      Text(
-                                        '0',
-                                        style: TextStyle(
-                                            fontSize: 30, color: Colors.red),
-                                      ),
-                                      Text(
-                                        'Absent',
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey[600]),
-                                      ),
-                                    ],
-                                  ),
+                                  // Column(
+                                  //   children: [
+                                  //     Text(
+                                  //       '0',
+                                  //       style: TextStyle(
+                                  //           fontSize: 30, color: Colors.red),
+                                  //     ),
+                                  //     Text(
+                                  //       'Absent',
+                                  //       style: TextStyle(
+                                  //           fontSize: 15,
+                                  //           fontWeight: FontWeight.bold,
+                                  //           color: Colors.grey[600]),
+                                  //     ),
+                                  //   ],
+                                  // ),
                                 ],
                               )
                             ],
