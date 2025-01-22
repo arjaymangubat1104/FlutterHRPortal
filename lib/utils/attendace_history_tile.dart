@@ -39,15 +39,14 @@ class AttendaceHistoryTile extends StatelessWidget {
       switch (value) {
         case 'Present':
           return Colors.green;
-        case 'Leave':
+        case 'Absent':
           return Colors.red;
         case 'Late/Under Time':
           return Colors.orange;
         default:
-          return Colors.grey; // Default color
+          return Colors.white; // Default color
       }
     }
-
     Map<String, int> totalTimeComponents = attendanceViewModel.getDurationComponents(totalTime);
     Map<String, int> lateHoursComponents = attendanceViewModel.getDurationComponents(lateTime);
     Map<String, int> underTimeComponents = attendanceViewModel.getDurationComponents(underTime);
@@ -83,7 +82,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   Text(
                     'Date:',
                     style: TextStyle(
-                        color: themeViewModel.currentTheme.boxTextColor,
+                        color: themeViewModel.currentTheme.textColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
@@ -100,7 +99,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   Text(
                     'Time In:',
                     style: TextStyle(
-                        color: themeViewModel.currentTheme.boxTextColor,
+                        color: themeViewModel.currentTheme.textColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
@@ -117,7 +116,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   Text(
                     'Time Out:',
                     style: TextStyle(
-                        color: themeViewModel.currentTheme.boxTextColor,
+                        color: themeViewModel.currentTheme.textColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
@@ -134,7 +133,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   Text(
                     'Total Time: ',
                     style: TextStyle(
-                        color: themeViewModel.currentTheme.boxTextColor,
+                        color: themeViewModel.currentTheme.textColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
@@ -151,7 +150,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   Text(
                     'Late: ',
                     style: TextStyle(
-                        color: themeViewModel.currentTheme.boxTextColor,
+                        color: themeViewModel.currentTheme.textColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
@@ -168,7 +167,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   Text(
                     'Under Time: ',
                     style: TextStyle(
-                        color: themeViewModel.currentTheme.boxTextColor,
+                        color: themeViewModel.currentTheme.textColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),
@@ -185,7 +184,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   Text(
                     'Over Time: ',
                     style: TextStyle(
-                        color: themeViewModel.currentTheme.boxTextColor,
+                        color: themeViewModel.currentTheme.textColor,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 10),

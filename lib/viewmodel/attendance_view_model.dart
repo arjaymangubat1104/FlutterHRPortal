@@ -259,6 +259,69 @@ class AttendanceViewModel extends ChangeNotifier {
     }
   }
 
+  Future<int> countPresents(int year, int month, int cutoffs) async {
+    try {
+      UserModel? userModel = authViewModel.userModel;
+      if (userModel == null) {
+        throw Exception("User not logged in");
+      }
+      DateTime startDate = cutoffs == 15
+          ? DateTime(year, month, 1)
+          : DateTime(year, month, 16); // Start date of the month
+      DateTime endDate = cutoffs == 15
+          ? DateTime(year, month, 15)
+          : DateTime(year, month + 1, 0); // Last day of the month
+      QuerySnapshot attendanceQuery = await _firestore
+          .collection('attendance')
+          .where('user_id', isEqualTo: userModel.uid)
+          .where('attendance_status', isEqualTo: 'Present')
+          .where('attendance_date',
+              isGreaterThanOrEqualTo:
+                  DateFormat('yyyy-MM-dd').format(startDate))
+          .where('attendance_date',
+              isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
+          .orderBy('attendance_date', descending: true)
+          .get();
+      return attendanceQuery.docs.length;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return 0;
+    }
+  }
+
+  Future<int> countLateOrUndertime(int year, int month, int cutoffs) async {
+    try {
+      UserModel? userModel = authViewModel.userModel;
+      if (userModel == null) {
+        throw Exception("User not logged in");
+      }
+      print(userModel.uid);
+      DateTime startDate = cutoffs == 15
+          ? DateTime(year, month, 1)
+          : DateTime(year, month, 16); // Start date of the month
+      DateTime endDate = cutoffs == 15
+          ? DateTime(year, month, 15)
+          : DateTime(year, month + 1, 0); // Last day of the month
+      QuerySnapshot attendanceQuery = await _firestore
+          .collection('attendance')
+          .where('user_id', isEqualTo: userModel.uid)
+          .where('attendance_status', isEqualTo: 'Late/Under Time')
+          .where('attendance_date',
+              isGreaterThanOrEqualTo:
+                  DateFormat('yyyy-MM-dd').format(startDate))
+          .where('attendance_date',
+              isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
+          .orderBy('attendance_date', descending: true)
+          .get();
+      return attendanceQuery.docs.length;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return 0;
+    }
+  }
+
   String getAdjustedWorkedDurationFormatted(Duration _adjustedWorkedDuration) {
     if (_adjustedWorkedDuration != null) {
       int hours = _adjustedWorkedDuration!.inHours;
