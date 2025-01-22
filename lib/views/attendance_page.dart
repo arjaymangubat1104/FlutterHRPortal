@@ -33,7 +33,7 @@ class _AttendancePageState extends State<AttendancePage>
   final List<int> _years =
       List.generate(10, (index) => DateTime.now().year - index);
   int _selectedYear = DateTime.now().year;
-  int _selectedCutoff = 15;
+  int _selectedCutoff = DateTime.now().day < 15 ? 15 : 30;
   int selectedMonth = DateTime.now().month;
   List<UserAttendanceModel> attendanceListByYearAndMonth = [];
   int presentCounter = 0;
@@ -247,7 +247,7 @@ class _AttendancePageState extends State<AttendancePage>
                                             fontSize: 30, color: Colors.orange),
                                       ),
                                       Text(
-                                        'Late/Under Time',
+                                        'Late/Undertime',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -365,7 +365,7 @@ class _AttendancePageState extends State<AttendancePage>
                                       fontSize: 30, color: Colors.orange),
                                 ),
                                 Text(
-                                  'Late/Under Time',
+                                  'Late/Undertime',
                                   style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,

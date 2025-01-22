@@ -41,7 +41,7 @@ class AttendaceHistoryTile extends StatelessWidget {
           return Colors.green;
         case 'Absent':
           return Colors.red;
-        case 'Late/Under Time':
+        case 'Late/Undertime':
           return Colors.orange;
         default:
           return Colors.white; // Default color
@@ -165,7 +165,7 @@ class AttendaceHistoryTile extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    'Under Time: ',
+                    'Undertime: ',
                     style: TextStyle(
                         color: themeViewModel.currentTheme.textColor,
                         fontWeight: FontWeight.bold),
@@ -182,7 +182,7 @@ class AttendaceHistoryTile extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    'Over Time: ',
+                    'Overtime: ',
                     style: TextStyle(
                         color: themeViewModel.currentTheme.textColor,
                         fontWeight: FontWeight.bold),

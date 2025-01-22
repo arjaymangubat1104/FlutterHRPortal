@@ -73,7 +73,7 @@ class AttendanceViewModel extends ChangeNotifier {
         }
       }
       if(lateTime.isNotEmpty){
-        attendanceStatus = 'Late/Under Time';
+        attendanceStatus = 'Late/Undertime';
       } 
       UserAttendanceModel attendance = UserAttendanceModel(
         id: _firestore.collection('attendance').doc().id,
@@ -195,7 +195,7 @@ class AttendanceViewModel extends ChangeNotifier {
               .format(DateTime(0).add(durationOfUnderTime));
           await _firestore.collection('attendance').doc(doc.id).update({
             'under_time': underTime,
-            'attendance_status': 'Late/Under Time',
+            'attendance_status': 'Late/Undertime',
           });
         }
 
@@ -280,7 +280,6 @@ class AttendanceViewModel extends ChangeNotifier {
                   DateFormat('yyyy-MM-dd').format(startDate))
           .where('attendance_date',
               isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
-          .orderBy('attendance_date', descending: true)
           .get();
       return attendanceQuery.docs.length;
     } catch (e) {
@@ -306,17 +305,17 @@ class AttendanceViewModel extends ChangeNotifier {
       QuerySnapshot attendanceQuery = await _firestore
           .collection('attendance')
           .where('user_id', isEqualTo: userModel.uid)
-          .where('attendance_status', isEqualTo: 'Late/Under Time')
+          .where('attendance_status', isEqualTo: 'Late/Undertime')
           .where('attendance_date',
               isGreaterThanOrEqualTo:
                   DateFormat('yyyy-MM-dd').format(startDate))
           .where('attendance_date',
               isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
-          .orderBy('attendance_date', descending: true)
           .get();
       return attendanceQuery.docs.length;
     } catch (e) {
       _errorMessage = e.toString();
+      print(_errorMessage);
       notifyListeners();
       return 0;
     }
