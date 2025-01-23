@@ -220,8 +220,10 @@ class _RegisterPageState extends State<RegisterPage> {
                               _showSpinner = false;
                             });
                           }
-                        
                       }
+                      setState(() {
+                        _showSpinner = false;
+                      });
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: themeViewModel.currentTheme.buttonColor,

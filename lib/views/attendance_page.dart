@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/models/attendance_model.dart';
 import 'package:flutter_attendance_system/utils/attendace_history_tile.dart';
+import 'package:flutter_attendance_system/utils/calendar_tile.dart';
 import 'package:flutter_attendance_system/utils/loading_indicator.dart';
 import 'package:flutter_attendance_system/viewmodel/attendance_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 import '../viewmodel/theme_view_model.dart';
 
@@ -38,6 +40,8 @@ class _AttendancePageState extends State<AttendancePage>
   List<UserAttendanceModel> attendanceListByYearAndMonth = [];
   int presentCounter = 0;
   int lateUndertimeCounter = 0;
+  DateTime today = DateTime.now();
+  DateTime selectedDay = DateTime.now();
 
   bool _showSpinner = false;
 
@@ -48,9 +52,7 @@ class _AttendancePageState extends State<AttendancePage>
     _monthTabController = TabController(length: _months.length, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _updateAttendaceListByYearAndMonth();
-      //await widget.attendanceViewModel.setAbsentIfNoAttendancePreviousDay(widget.attendanceViewModel.authViewModel.userModel!.uid);
     });
-
   }
 
   @override
@@ -67,10 +69,13 @@ class _AttendancePageState extends State<AttendancePage>
       });
       attendanceListByYearAndMonth = await widget.attendanceViewModel
           .fetchAllUserAttendanceByYearAndMonth(
-              _selectedYear, selectedMonth, _selectedCutoff);
+              year: _selectedYear,
+              month: selectedMonth,
+              cutoffs: _selectedCutoff);
       presentCounter = await widget.attendanceViewModel
           .countPresents(_selectedYear, selectedMonth, _selectedCutoff);
-      lateUndertimeCounter = await widget.attendanceViewModel.countLateOrUndertime(_selectedYear, selectedMonth, _selectedCutoff);
+      lateUndertimeCounter = await widget.attendanceViewModel
+          .countLateOrUndertime(_selectedYear, selectedMonth, _selectedCutoff);
     } catch (e) {
       print(e);
     } finally {
@@ -105,6 +110,12 @@ class _AttendancePageState extends State<AttendancePage>
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
+          onTap: (index) async {
+            _updateAttendaceListByYearAndMonth();
+              attendanceListByYearAndMonth = await widget.attendanceViewModel
+                  .fetchAllUserAttendanceByYearAndMonth(
+                      year: today.year, month: today.month);
+          },
         ),
       ),
       body: TabBarView(
@@ -285,9 +296,10 @@ class _AttendancePageState extends State<AttendancePage>
                             date: attendanceListByYearAndMonth[index]
                                 .attendanceDate
                                 .toString(),
-                            attendanceStatus: attendanceListByYearAndMonth[index]
-                                .attendanceStatus
-                                .toString(),
+                            attendanceStatus:
+                                attendanceListByYearAndMonth[index]
+                                    .attendanceStatus
+                                    .toString(),
                             dropDownDate: widget.timeDateViewModel
                                 .formatDateString(
                                     attendanceListByYearAndMonth[index]
@@ -302,15 +314,27 @@ class _AttendancePageState extends State<AttendancePage>
                             status: attendanceListByYearAndMonth[index]
                                 .attendanceStatus
                                 .toString(),
-                            totalTime: attendanceListByYearAndMonth[index].totalTime ?? '',
-                            lateTime: attendanceListByYearAndMonth[index].lateTime ?? '',
-                            underTime: attendanceListByYearAndMonth[index].underTime ?? '',
-
+                            totalTime:
+                                attendanceListByYearAndMonth[index].totalTime ??
+                                    '',
+                            lateTime:
+                                attendanceListByYearAndMonth[index].lateTime ??
+                                    '',
+                            underTime:
+                                attendanceListByYearAndMonth[index].underTime ??
+                                    '',
                           );
                         },
                       ),
                     ],
-                  ))
+                  )),
+              if (_showSpinner)
+                Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: Center(
+                    child: CustomLoadingIndicator(),
+                  ),
+                ),
             ],
           ),
           Stack(
@@ -330,70 +354,76 @@ class _AttendancePageState extends State<AttendancePage>
                 top: 20,
                 left: 20,
                 right: 20,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Material(
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Material(
+                        child: Column(
                           children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Text(
-                                  '0',
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                    color: Colors.green,
-                                  ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      presentCounter.toString(),
+                                      style: TextStyle(
+                                        fontSize: 30,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Present',
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey[600]),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  'Present',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey[600]),
+                                Column(
+                                  children: [
+                                    Text(
+                                      lateUndertimeCounter.toString(),
+                                      style: TextStyle(
+                                          fontSize: 30, color: Colors.orange),
+                                    ),
+                                    Text(
+                                      'Late/Undertime',
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey[600]),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Text(
-                                  '0',
-                                  style: TextStyle(
-                                      fontSize: 30, color: Colors.orange),
-                                ),
-                                Text(
-                                  'Late/Undertime',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey[600]),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Text(
-                                  '0',
-                                  style: TextStyle(
-                                      fontSize: 30, color: Colors.red),
-                                ),
-                                Text(
-                                  'Absent',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey[600]),
+                                Column(
+                                  children: [
+                                    Text(
+                                      '0',
+                                      style: TextStyle(
+                                          fontSize: 30, color: Colors.red),
+                                    ),
+                                    Text(
+                                      'Absent',
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey[600]),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ],
-                        )
-                      ],
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 20),
+                    CalendarTile()
+                  ],
                 ),
               ),
               if (_showSpinner)
