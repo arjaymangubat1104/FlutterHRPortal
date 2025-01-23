@@ -217,19 +217,6 @@ class AttendanceViewModel extends ChangeNotifier {
     }
   }
 
-  String timeStatus(
-    Duration workedDuration,
-    Duration scheduledDuration,
-  ) {
-    if (workedDuration > scheduledDuration) {
-      return 'Present';
-    } else if (workedDuration < scheduledDuration) {
-      return 'Absent';
-    } else {
-      return 'On Time';
-    }
-  }
-
   Future<void> setAbsentIfNoAttendancePreviousDay(String userId) async {
     try {
       DateTime today = DateTime.now();
@@ -385,7 +372,7 @@ class AttendanceViewModel extends ChangeNotifier {
   }
 
   Future<List<UserAttendanceModel>> fetchAllUserAttendanceByYearAndMonth(
-      int year, int month, int cutoffs) async {
+      {required int year, required int month, int? cutoffs}) async {
     try {
       List<UserAttendanceModel> attendanceListByYearAndMonth = [];
       UserModel? userModel = authViewModel.userModel;

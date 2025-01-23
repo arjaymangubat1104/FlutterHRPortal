@@ -44,7 +44,7 @@ class AttendaceHistoryTile extends StatelessWidget {
         case 'Late/Undertime':
           return Colors.orange;
         default:
-          return Colors.white; // Default color
+          return Colors.grey; // Default color
       }
     }
     Map<String, int> totalTimeComponents = attendanceViewModel.getDurationComponents(totalTime);
@@ -138,7 +138,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    '${totalTimeComponents['hours']} h ${totalTimeComponents['minutes']} m',
+                     totalTime == '' ? '' :'${totalTimeComponents['hours']} h ${totalTimeComponents['minutes']} m',
                     style: TextStyle(
                       color: Colors.black,
                     ),
@@ -155,7 +155,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    '${lateHoursComponents['hours']} h ${lateHoursComponents['minutes']} m',
+                    lateTime == '' ? '' : '${lateHoursComponents['hours']} h ${lateHoursComponents['minutes']} m',
                     style: TextStyle(
                       color: Colors.black,
                     ),
@@ -172,7 +172,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    '${underTimeComponents['hours']} h ${underTimeComponents['minutes']} m',
+                    underTime == '' ? '' : '${underTimeComponents['hours']} h ${underTimeComponents['minutes']} m',
                     style: TextStyle(
                       color: Colors.black,
                     ),
@@ -189,7 +189,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    '${totalTimeComponents['hours']} h ${totalTimeComponents['minutes']} m',
+                    totalTime == '' ? '' : '${totalTimeComponents['hours']} h ${totalTimeComponents['minutes']} m',
                     style: TextStyle(
                       color: Colors.black,
                     ),
