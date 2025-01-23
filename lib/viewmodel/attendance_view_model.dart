@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/models/attendance_model.dart';
 import 'package:flutter_attendance_system/models/user_model.dart';
@@ -47,7 +48,7 @@ class AttendanceViewModel extends ChangeNotifier {
 
       QuerySnapshot attendanceQuery = await _firestore
           .collection('attendance')
-          .where('user_id', isEqualTo: userModel.uid)
+          .where('user_id', isEqualTo: userModel!.uid)
           .where('attendance_date',
               isEqualTo: DateFormat('yyyy-MM-dd').format(_checkInTime!))
           .get();
@@ -97,6 +98,59 @@ class AttendanceViewModel extends ChangeNotifier {
       _errorMessage = e.toString();
       _isSuccessInOut = false;
       notifyListeners();
+    }
+  }
+
+  Future<int> countDaysWithNoLoggedAttendance() async {
+    try {
+      // Fetch the user's schedule
+      UserModel? userModel = authViewModel.userModel;
+      DocumentSnapshot scheduleDoc = await _firestore.collection('users').doc(userModel!.uid).get();
+      if (!scheduleDoc.exists) {
+        throw Exception("User schedule not found");
+      }
+      DateTime now = DateTime.now();
+      Map<String, dynamic> scheduleData = scheduleDoc.data() as Map<String, dynamic>;
+      int scheduleStartDate = int.parse(scheduleData['schedule_start_date']);
+      int scheduleEndDate = int.parse(scheduleData['schedule_end_date']);
+      List<String> scheduledDaysOfWeek = [];
+      Map<int, String> daysOfWeek = {
+        1: 'Monday',
+        2: 'Tuesday',
+        3: 'Wednesday',
+        4: 'Thursday',
+        5: 'Friday',
+        6: 'Saturday',
+        7: 'Sunday',
+      };
+      for (int i = scheduleStartDate; i <= scheduleEndDate; i++) {
+        scheduledDaysOfWeek.add(daysOfWeek[i]!);
+      }
+
+      // Generate the list of days in the current month
+      DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
+      DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+
+      int count = 0;
+
+      for (DateTime day = firstDayOfMonth; day.isBefore(lastDayOfMonth) || day.isAtSameMomentAs(lastDayOfMonth); day = day.add(Duration(days: 1))) {
+        if (scheduledDaysOfWeek.contains(DateFormat('EEEE').format(day))) {
+          QuerySnapshot attendanceQuery = await _firestore.collection('attendance')
+            .where('user_id', isEqualTo: userModel.uid)
+            .where('attendance_date', isEqualTo: DateFormat('yyyy-MM-dd').format(day))
+            .get();
+
+          if (attendanceQuery.docs.isEmpty) {
+            count++;
+          }
+        }
+      }
+
+      return count;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return 0;
     }
   }
 

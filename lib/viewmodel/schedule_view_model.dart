@@ -8,8 +8,8 @@ class ScheduleViewModel extends ChangeNotifier {
 
   Future<void> saveDefaultSchedule(String userId) async {
     ScheduleModel defaultSchedule = ScheduleModel(
-      scheduleStartDayOfTheWeek: 'Monday', // example start date
-      scheduleEndDayofTheWeek: 'Friday', // example end date
+      scheduleStartDayOfTheWeek: '1', // example start date
+      scheduleEndDayofTheWeek: '5', // example end date
       scheduleType: 'Regular',
       breakStartTime: '12:00:00',
       breakEndTime: '13:00:00',

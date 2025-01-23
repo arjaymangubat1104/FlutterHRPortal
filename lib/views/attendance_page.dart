@@ -40,6 +40,7 @@ class _AttendancePageState extends State<AttendancePage>
   List<UserAttendanceModel> attendanceListByYearAndMonth = [];
   int presentCounter = 0;
   int lateUndertimeCounter = 0;
+  int absentCounter = 0;
   DateTime today = DateTime.now();
   DateTime selectedDay = DateTime.now();
 
@@ -76,6 +77,7 @@ class _AttendancePageState extends State<AttendancePage>
           .countPresents(_selectedYear, selectedMonth, _selectedCutoff);
       lateUndertimeCounter = await widget.attendanceViewModel
           .countLateOrUndertime(_selectedYear, selectedMonth, _selectedCutoff);
+      absentCounter = await widget.attendanceViewModel.countDaysWithNoLoggedAttendance();
     } catch (e) {
       print(e);
     } finally {
@@ -402,7 +404,7 @@ class _AttendancePageState extends State<AttendancePage>
                                 Column(
                                   children: [
                                     Text(
-                                      '0',
+                                      absentCounter.toString(),
                                       style: TextStyle(
                                           fontSize: 30, color: Colors.red),
                                     ),

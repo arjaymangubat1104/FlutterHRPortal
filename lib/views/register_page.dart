@@ -249,8 +249,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     Text(
                       "Already have an account?",
                       style: TextStyle(
-                        color: Colors.grey,
-                      ),
+                        color: Colors.grey,                      ),
                     ),
                     TextButton(
                       onPressed: () {

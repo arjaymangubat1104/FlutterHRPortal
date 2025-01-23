@@ -94,7 +94,7 @@ class _CalendarTileState extends State<CalendarTile> {
       child: Container(
         color: themeViewModel.currentTheme.backgroundColor,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(bottom: 15),
           child: TableCalendar(
             headerStyle: HeaderStyle(
               formatButtonVisible: false,
