@@ -32,10 +32,6 @@ class _LoginPageState extends State<LoginPage> {
     // });
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: _showSpinner ? Colors.black.withOpacity(0.5) : null,
-      ),
       body: Stack(
         children: [
           Padding(
@@ -240,8 +236,13 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           if (_showSpinner)
-            Container(
+            ModalBarrier(
               color: Colors.black.withOpacity(0.5),
+              dismissible: false,
+            ),
+          if (_showSpinner)
+            Dialog.fullscreen(
+              backgroundColor: Colors.black.withOpacity(0.5),
               child: Center(
                 child: CustomLoadingIndicator(),
               ),

@@ -14,10 +14,11 @@ import '../viewmodel/theme_view_model.dart';
 class AttendancePage extends StatefulWidget {
   final AttendanceViewModel attendanceViewModel;
   final TimeDateViewModel timeDateViewModel;
-  const AttendancePage(
-      {super.key,
-      required this.attendanceViewModel,
-      required this.timeDateViewModel});
+  const AttendancePage({
+    super.key,
+    required this.attendanceViewModel,
+    required this.timeDateViewModel,
+  });
 
   @override
   State<AttendancePage> createState() => _AttendancePageState();
@@ -38,8 +39,11 @@ class _AttendancePageState extends State<AttendancePage>
   int _selectedCutoff = DateTime.now().day < 15 ? 15 : 30;
   int selectedMonth = DateTime.now().month;
   List<UserAttendanceModel> attendanceListByYearAndMonth = [];
+  List<UserAttendanceModel> attendanceListCalendar = [];
   int presentCounter = 0;
+  int presentCounterCalendar = 0;
   int lateUndertimeCounter = 0;
+  int lateUndertimeCounterCalendar = 0;
   int absentCounter = 0;
   DateTime today = DateTime.now();
   DateTime selectedDay = DateTime.now();
@@ -73,11 +77,19 @@ class _AttendancePageState extends State<AttendancePage>
               year: _selectedYear,
               month: selectedMonth,
               cutoffs: _selectedCutoff);
-      presentCounter = await widget.attendanceViewModel
-          .countPresents(_selectedYear, selectedMonth, _selectedCutoff);
+      presentCounter = await widget.attendanceViewModel.countPresents(
+          year: _selectedYear, month: selectedMonth, cutoffs: _selectedCutoff);
       lateUndertimeCounter = await widget.attendanceViewModel
-          .countLateOrUndertime(_selectedYear, selectedMonth, _selectedCutoff);
-      absentCounter = await widget.attendanceViewModel.countDaysWithNoLoggedAttendance();
+          .countLateOrUndertime(
+              year: _selectedYear,
+              month: selectedMonth,
+              cutoffs: _selectedCutoff);
+      absentCounter =
+          await widget.attendanceViewModel.countDaysWithNoLoggedAttendance();
+      presentCounterCalendar = await widget.attendanceViewModel
+          .countPresents(year: today.year, month: today.month);
+      lateUndertimeCounterCalendar = await widget.attendanceViewModel
+          .countLateOrUndertime(year: today.year, month: today.month);
     } catch (e) {
       print(e);
     } finally {
@@ -112,12 +124,12 @@ class _AttendancePageState extends State<AttendancePage>
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
-          onTap: (index) async {
-            _updateAttendaceListByYearAndMonth();
-              attendanceListByYearAndMonth = await widget.attendanceViewModel
-                  .fetchAllUserAttendanceByYearAndMonth(
-                      year: today.year, month: today.month);
-          },
+          // onTap: (index) async {
+          //   _updateAttendaceListByYearAndMonth();
+          //     attendanceListByYearAndMonth = await widget.attendanceViewModel
+          //         .fetchAllUserAttendanceByYearAndMonth(
+          //             year: today.year, month: today.month);
+          // },
         ),
       ),
       body: TabBarView(
@@ -331,8 +343,13 @@ class _AttendancePageState extends State<AttendancePage>
                     ],
                   )),
               if (_showSpinner)
-                Container(
+                ModalBarrier(
                   color: Colors.black.withOpacity(0.5),
+                  dismissible: false,
+                ),
+              if (_showSpinner)
+                Dialog.fullscreen(
+                  backgroundColor: Colors.black.withOpacity(0.5),
                   child: Center(
                     child: CustomLoadingIndicator(),
                   ),
@@ -370,7 +387,7 @@ class _AttendancePageState extends State<AttendancePage>
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      presentCounter.toString(),
+                                      presentCounterCalendar.toString(),
                                       style: TextStyle(
                                         fontSize: 30,
                                         color: Colors.green,
@@ -388,7 +405,7 @@ class _AttendancePageState extends State<AttendancePage>
                                 Column(
                                   children: [
                                     Text(
-                                      lateUndertimeCounter.toString(),
+                                      lateUndertimeCounterCalendar.toString(),
                                       style: TextStyle(
                                           fontSize: 30, color: Colors.orange),
                                     ),
@@ -424,13 +441,98 @@ class _AttendancePageState extends State<AttendancePage>
                       ),
                     ),
                     const SizedBox(height: 20),
-                    CalendarTile()
+                    CalendarTile(
+                      onDaySelected: (day) {
+                        selectedDay = day;
+                        // setState(() {
+
+                        // });
+                      },
+                    ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Material(
+                        color: themeViewModel.currentTheme.themeColor,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 20),
+                          child: Expanded(
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Date: ',
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: themeViewModel
+                                              .currentTheme.boxTextColor),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text('Friday, January 24 2025',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: themeViewModel
+                                                .currentTheme.boxTextColor))
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Time in: ',
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: themeViewModel
+                                              .currentTheme.boxTextColor),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text('08:00:00',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: themeViewModel
+                                                .currentTheme.boxTextColor))
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Time out: ',
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: themeViewModel
+                                              .currentTheme.boxTextColor),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text('17:00:00',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: themeViewModel
+                                                .currentTheme.boxTextColor))
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
               if (_showSpinner)
-                Container(
+                ModalBarrier(
                   color: Colors.black.withOpacity(0.5),
+                  dismissible: false,
+                ),
+              if (_showSpinner)
+                Dialog.fullscreen(
+                  backgroundColor: Colors.black.withOpacity(0.5),
                   child: Center(
                     child: CustomLoadingIndicator(),
                   ),

@@ -3,6 +3,7 @@ import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/utils/confimation_dialog_box.dart';
+import 'package:flutter_attendance_system/utils/loading_indicator.dart';
 import 'package:flutter_attendance_system/utils/prompt_dialog_box.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
 import 'package:flutter_attendance_system/views/attendance_page.dart';
@@ -45,8 +46,7 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: themeViewModel.currentTheme.boxTextColor
-                ),
+                  color: themeViewModel.currentTheme.boxTextColor),
             ),
           ],
         ),
@@ -71,7 +71,8 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: [
           Container(
-            color: themeViewModel.currentTheme.pageBackgroundColor, // Set the background color of the body
+            color: themeViewModel.currentTheme
+                .pageBackgroundColor, // Set the background color of the body
             child: Column(
               children: [
                 Container(
@@ -163,9 +164,9 @@ class _HomePageState extends State<HomePage> {
                                   Text(
                                     attendanceViewModel.statusMessage(),
                                     style: TextStyle(
-                                        fontSize: 12, 
-                                        color: themeViewModel.currentTheme.textColor
-                                      ),
+                                        fontSize: 12,
+                                        color: themeViewModel
+                                            .currentTheme.textColor),
                                   ),
                                 ],
                               ),
@@ -255,7 +256,9 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       child: Text(
                                         'TIME IN',
-                                        style: TextStyle(color: themeViewModel.currentTheme.boxTextColor),
+                                        style: TextStyle(
+                                            color: themeViewModel
+                                                .currentTheme.boxTextColor),
                                       ),
                                     ),
                                   ),
@@ -331,7 +334,9 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       child: Text(
                                         'TIME OUT',
-                                        style: TextStyle(color: themeViewModel.currentTheme.boxTextColor),
+                                        style: TextStyle(
+                                            color: themeViewModel
+                                                .currentTheme.boxTextColor),
                                       ),
                                     ),
                                   ),
@@ -366,24 +371,26 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               GestureDetector(
                                 onTap: () => Navigator.push(
-                                    context, 
+                                    context,
                                     MaterialPageRoute(
-                                      builder: (context) => 
-                                        AttendancePage(attendanceViewModel: attendanceViewModel, timeDateViewModel: timeDateViewModel),
-                                    )
-                                  ),
+                                      builder: (context) => AttendancePage(
+                                          attendanceViewModel:
+                                              attendanceViewModel,
+                                          timeDateViewModel: timeDateViewModel),
+                                    )),
                                 child: Column(
                                   children: [
                                     Icon(
                                       CupertinoIcons.doc_chart,
                                       size: 75,
-                                      color: themeViewModel.currentTheme.themeColor,
+                                      color: themeViewModel
+                                          .currentTheme.themeColor,
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
                                       'ATTENDANCE',
                                       style: TextStyle(
-                                        fontSize: 13, 
+                                        fontSize: 13,
                                       ),
                                     )
                                   ],
@@ -391,20 +398,21 @@ class _HomePageState extends State<HomePage> {
                               ),
                               const SizedBox(width: 25),
                               GestureDetector(
-                                onTap: () => Navigator.pushNamed(
-                                    context, '/leave'),
+                                onTap: () =>
+                                    Navigator.pushNamed(context, '/leave'),
                                 child: Column(
                                   children: [
                                     Icon(
                                       CupertinoIcons.calendar,
                                       size: 75,
-                                      color: themeViewModel.currentTheme.themeColor,
+                                      color: themeViewModel
+                                          .currentTheme.themeColor,
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
                                       'LEAVE',
                                       style: TextStyle(
-                                        fontSize: 13, 
+                                        fontSize: 13,
                                       ),
                                     )
                                   ],
@@ -412,20 +420,21 @@ class _HomePageState extends State<HomePage> {
                               ),
                               const SizedBox(width: 25),
                               GestureDetector(
-                                onTap: () => Navigator.pushNamed(
-                                    context, '/overtime'),
+                                onTap: () =>
+                                    Navigator.pushNamed(context, '/overtime'),
                                 child: Column(
                                   children: [
                                     Icon(
                                       CupertinoIcons.clock,
                                       size: 75,
-                                      color: themeViewModel.currentTheme.themeColor,
+                                      color: themeViewModel
+                                          .currentTheme.themeColor,
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
                                       'OVERTIME',
                                       style: TextStyle(
-                                        fontSize: 13, 
+                                        fontSize: 13,
                                       ),
                                     )
                                   ],
@@ -438,20 +447,21 @@ class _HomePageState extends State<HomePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               GestureDetector(
-                                onTap: () => Navigator.pushNamed(
-                                    context, '/payslip'),
+                                onTap: () =>
+                                    Navigator.pushNamed(context, '/payslip'),
                                 child: Column(
                                   children: [
                                     Icon(
                                       CupertinoIcons.money_dollar,
                                       size: 75,
-                                      color: themeViewModel.currentTheme.themeColor,
+                                      color: themeViewModel
+                                          .currentTheme.themeColor,
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
                                       'PAYSLIP',
                                       style: TextStyle(
-                                        fontSize: 13, 
+                                        fontSize: 13,
                                       ),
                                     )
                                   ],
@@ -459,20 +469,21 @@ class _HomePageState extends State<HomePage> {
                               ),
                               const SizedBox(width: 25),
                               GestureDetector(
-                                onTap: () => Navigator.pushNamed(
-                                    context, '/team'),
+                                onTap: () =>
+                                    Navigator.pushNamed(context, '/team'),
                                 child: Column(
                                   children: [
                                     Icon(
                                       CupertinoIcons.group,
                                       size: 75,
-                                      color: themeViewModel.currentTheme.themeColor,
+                                      color: themeViewModel
+                                          .currentTheme.themeColor,
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
                                       'TEAM',
                                       style: TextStyle(
-                                        fontSize: 13, 
+                                        fontSize: 13,
                                       ),
                                     )
                                   ],
@@ -480,20 +491,21 @@ class _HomePageState extends State<HomePage> {
                               ),
                               const SizedBox(width: 25),
                               GestureDetector(
-                                onTap: () => Navigator.pushNamed(
-                                    context, '/schedule'),
+                                onTap: () =>
+                                    Navigator.pushNamed(context, '/schedule'),
                                 child: Column(
                                   children: [
                                     Icon(
                                       CupertinoIcons.calendar_circle,
                                       size: 75,
-                                      color: themeViewModel.currentTheme.themeColor,
+                                      color: themeViewModel
+                                          .currentTheme.themeColor,
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
                                       'SCHEDULE',
-                                        style: TextStyle(
-                                        fontSize: 13, 
+                                      style: TextStyle(
+                                        fontSize: 13,
                                       ),
                                     )
                                   ],
@@ -509,6 +521,18 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
+          if (_showSpinner)
+            ModalBarrier(
+              color: Colors.black.withOpacity(0.5),
+              dismissible: false,
+            ),
+          if (_showSpinner)
+            Dialog.fullscreen(
+              backgroundColor: Colors.black.withOpacity(0.5),
+              child: Center(
+                child: CustomLoadingIndicator(),
+              ),
+            ),
         ],
       ),
     );
