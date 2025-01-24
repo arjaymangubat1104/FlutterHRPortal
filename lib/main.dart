@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
           create: (context) => AttendanceViewModel(
             authViewModel: Provider.of<AuthViewModel>(context, listen: false),
             timeDateViewModel:
-                Provider.of<TimeDateViewModel>(context, listen: false),
+                Provider.of<TimeDateViewModel>(context, listen: false)
           ),
         ),
         ChangeNotifierProvider(create: (context) => ThemeViewModel()),

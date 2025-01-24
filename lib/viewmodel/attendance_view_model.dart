@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/models/attendance_model.dart';
 import 'package:flutter_attendance_system/models/user_model.dart';
 import 'package:flutter_attendance_system/viewmodel/auth_view_model.dart';
+import 'package:flutter_attendance_system/viewmodel/schedule_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
 import 'package:intl/intl.dart';
 
@@ -11,6 +11,7 @@ class AttendanceViewModel extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AuthViewModel authViewModel;
   final TimeDateViewModel timeDateViewModel;
+  final ScheduleViewModel scheduleViewModel = ScheduleViewModel();
 
   AttendanceViewModel(
       {required this.authViewModel, required this.timeDateViewModel});
@@ -48,7 +49,7 @@ class AttendanceViewModel extends ChangeNotifier {
 
       QuerySnapshot attendanceQuery = await _firestore
           .collection('attendance')
-          .where('user_id', isEqualTo: userModel!.uid)
+          .where('user_id', isEqualTo: userModel.uid)
           .where('attendance_date',
               isEqualTo: DateFormat('yyyy-MM-dd').format(_checkInTime!))
           .get();
@@ -68,14 +69,14 @@ class AttendanceViewModel extends ChangeNotifier {
         String timeIn = DateFormat('HH:mm:ss').format(_checkInTime!);
         DateTime scheduleInDateTime = DateFormat('HH:mm:ss').parse(scheduleIn);
         DateTime timeInDateTime = DateFormat('HH:mm:ss').parse(timeIn);
-        if(timeInDateTime.isAfter(scheduleInDateTime)){
+        if (timeInDateTime.isAfter(scheduleInDateTime)) {
           lateTime = DateFormat('HH:mm:ss').format(
-            DateTime(0).add(timeInDateTime.difference(scheduleInDateTime)));
+              DateTime(0).add(timeInDateTime.difference(scheduleInDateTime)));
         }
       }
-      if(lateTime.isNotEmpty){
+      if (lateTime.isNotEmpty) {
         attendanceStatus = 'Late/Undertime';
-      } 
+      }
       UserAttendanceModel attendance = UserAttendanceModel(
         id: _firestore.collection('attendance').doc().id,
         userId: userModel.uid,
@@ -105,47 +106,34 @@ class AttendanceViewModel extends ChangeNotifier {
     try {
       // Fetch the user's schedule
       UserModel? userModel = authViewModel.userModel;
-      DocumentSnapshot scheduleDoc = await _firestore.collection('users').doc(userModel!.uid).get();
-      if (!scheduleDoc.exists) {
-        throw Exception("User schedule not found");
-      }
+    
       DateTime now = DateTime.now();
-      Map<String, dynamic> scheduleData = scheduleDoc.data() as Map<String, dynamic>;
-      int scheduleStartDate = int.parse(scheduleData['schedule_start_date']);
-      int scheduleEndDate = int.parse(scheduleData['schedule_end_date']);
-      List<String> scheduledDaysOfWeek = [];
-      Map<int, String> daysOfWeek = {
-        1: 'Monday',
-        2: 'Tuesday',
-        3: 'Wednesday',
-        4: 'Thursday',
-        5: 'Friday',
-        6: 'Saturday',
-        7: 'Sunday',
-      };
-      for (int i = scheduleStartDate; i <= scheduleEndDate; i++) {
-        scheduledDaysOfWeek.add(daysOfWeek[i]!);
-      }
-
+      
+      List<String> scheduledDaysOfWeek = await scheduleViewModel.getUserSchedule(userModel!.uid);
+      
       // Generate the list of days in the current month
       DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
       DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
 
       int count = 0;
 
-      for (DateTime day = firstDayOfMonth; day.isBefore(lastDayOfMonth) || day.isAtSameMomentAs(lastDayOfMonth); day = day.add(Duration(days: 1))) {
-        if (scheduledDaysOfWeek.contains(DateFormat('EEEE').format(day))) {
-          QuerySnapshot attendanceQuery = await _firestore.collection('attendance')
-            .where('user_id', isEqualTo: userModel.uid)
-            .where('attendance_date', isEqualTo: DateFormat('yyyy-MM-dd').format(day))
-            .get();
+      for (DateTime day = firstDayOfMonth;
+          day.isBefore(lastDayOfMonth) || day.isAtSameMomentAs(lastDayOfMonth);
+          day = day.add(Duration(days: 1))) {
+        if (scheduledDaysOfWeek.contains(DateFormat('EEEE').format(day)) && day.isBefore(now)) {
+          QuerySnapshot attendanceQuery = await _firestore
+              .collection('attendance')
+              .where('user_id', isEqualTo: userModel.uid)
+              .where('attendance_date',
+                  isEqualTo: DateFormat('yyyy-MM-dd').format(day))
+              .get();
 
           if (attendanceQuery.docs.isEmpty) {
             count++;
           }
         }
       }
-
+      notifyListeners();
       return count;
     } catch (e) {
       _errorMessage = e.toString();
@@ -154,43 +142,43 @@ class AttendanceViewModel extends ChangeNotifier {
     }
   }
 
-  Future<Duration> _fetchBreakTimeDuration(String userId) async {
-    DocumentSnapshot scheduleDoc =
-        await _firestore.collection('users').doc(userId).get();
-    if (scheduleDoc.exists) {
-      Map<String, dynamic> scheduleData =
-          scheduleDoc.data() as Map<String, dynamic>;
-      String breakStartTime = scheduleData['break_start'];
-      String breakEndTime = scheduleData['break_end'];
+  // Future<Duration> _fetchBreakTimeDuration(String userId) async {
+  //   DocumentSnapshot scheduleDoc =
+  //       await _firestore.collection('users').doc(userId).get();
+  //   if (scheduleDoc.exists) {
+  //     Map<String, dynamic> scheduleData =
+  //         scheduleDoc.data() as Map<String, dynamic>;
+  //     String breakStartTime = scheduleData['break_start'];
+  //     String breakEndTime = scheduleData['break_end'];
 
-      DateTime breakStartDateTime =
-          DateFormat('HH:mm:ss').parse(breakStartTime);
-      DateTime breakEndDateTime = DateFormat('HH:mm:ss').parse(breakEndTime);
+  //     DateTime breakStartDateTime =
+  //         DateFormat('HH:mm:ss').parse(breakStartTime);
+  //     DateTime breakEndDateTime = DateFormat('HH:mm:ss').parse(breakEndTime);
 
-      return breakEndDateTime.difference(breakStartDateTime);
-    } else {
-      throw Exception("User schedule not found");
-    }
-  }
+  //     return breakEndDateTime.difference(breakStartDateTime);
+  //   } else {
+  //     throw Exception("User schedule not found");
+  //   }
+  // }
 
-  Future<Duration> _fetchUserScheduledDuration(String userId) async {
-    // Fetch the user's schedule from Firestore (assuming you have a 'schedules' collection)
-    DocumentSnapshot scheduleDoc =
-        await _firestore.collection('users').doc(userId).get();
-    if (scheduleDoc.exists) {
-      Map<String, dynamic> scheduleData =
-          scheduleDoc.data() as Map<String, dynamic>;
-      String startTime = scheduleData['schedule_in'];
-      String endTime = scheduleData['schedule_out'];
+  // Future<Duration> _fetchUserScheduledDuration(String userId) async {
+  //   // Fetch the user's schedule from Firestore (assuming you have a 'schedules' collection)
+  //   DocumentSnapshot scheduleDoc =
+  //       await _firestore.collection('users').doc(userId).get();
+  //   if (scheduleDoc.exists) {
+  //     Map<String, dynamic> scheduleData =
+  //         scheduleDoc.data() as Map<String, dynamic>;
+  //     String startTime = scheduleData['schedule_in'];
+  //     String endTime = scheduleData['schedule_out'];
 
-      DateTime startDateTime = DateFormat('HH:mm:ss').parse(startTime);
-      DateTime endDateTime = DateFormat('HH:mm:ss').parse(endTime);
+  //     DateTime startDateTime = DateFormat('HH:mm:ss').parse(startTime);
+  //     DateTime endDateTime = DateFormat('HH:mm:ss').parse(endTime);
 
-      return endDateTime.difference(startDateTime);
-    } else {
-      throw Exception("User schedule not found");
-    }
-  }
+  //     return endDateTime.difference(startDateTime);
+  //   } else {
+  //     throw Exception("User schedule not found");
+  //   }
+  // }
 
   Future<void> timeOut() async {
     try {
@@ -222,8 +210,8 @@ class AttendanceViewModel extends ChangeNotifier {
         Duration workedDuration = timeOut.difference(timeIn);
 
         // Fetch user's schedule (assuming you have a method to get the user's schedule)
-        Duration scheduledDuration =
-            await _fetchUserScheduledDuration(userModel.uid);
+        // Duration scheduledDuration =
+        //     await _fetchUserScheduledDuration(userModel.uid);
 
         // Update the attendance record with the worked hours
         String adjustedWorkedDurationFormatted =
@@ -231,7 +219,7 @@ class AttendanceViewModel extends ChangeNotifier {
         await _firestore.collection('attendance').doc(doc.id).update({
           'total_time': adjustedWorkedDurationFormatted,
         });
-        
+
         String underTime = '';
         DocumentSnapshot documentSnapshot =
             await _firestore.collection('users').doc(userModel.uid).get();
@@ -253,10 +241,10 @@ class AttendanceViewModel extends ChangeNotifier {
           });
         }
 
-        if(data['late_time'].isEmpty && underTime == ''){
-            await _firestore.collection('attendance').doc(doc.id).update({
-              'attendance_status': 'Present',
-            });
+        if (data['late_time'].isEmpty && underTime == '') {
+          await _firestore.collection('attendance').doc(doc.id).update({
+            'attendance_status': 'Present',
+          });
         }
 
         _isSuccessInOut = true;
@@ -275,12 +263,14 @@ class AttendanceViewModel extends ChangeNotifier {
     try {
       DateTime today = DateTime.now();
       DateTime previousDay = today.subtract(Duration(days: 1));
-      String formattedPreviousDay = DateFormat('yyyy-MM-dd').format(previousDay);
+      String formattedPreviousDay =
+          DateFormat('yyyy-MM-dd').format(previousDay);
 
-      QuerySnapshot attendanceQuery = await _firestore.collection('attendance')
-        .where('user_id', isEqualTo: userId)
-        .where('attendance_date', isEqualTo: formattedPreviousDay)
-        .get();
+      QuerySnapshot attendanceQuery = await _firestore
+          .collection('attendance')
+          .where('user_id', isEqualTo: userId)
+          .where('attendance_date', isEqualTo: formattedPreviousDay)
+          .get();
 
       if (attendanceQuery.docs.isEmpty) {
         UserAttendanceModel attendance = UserAttendanceModel(
@@ -292,7 +282,10 @@ class AttendanceViewModel extends ChangeNotifier {
           timeIn: '',
           timeOut: '',
         );
-        await _firestore.collection('attendance').doc(attendance.id).set(attendance.toJson());
+        await _firestore
+            .collection('attendance')
+            .doc(attendance.id)
+            .set(attendance.toJson());
       }
     } catch (e) {
       _errorMessage = e.toString();
@@ -300,18 +293,23 @@ class AttendanceViewModel extends ChangeNotifier {
     }
   }
 
-  Future<int> countPresents(int year, int month, int cutoffs) async {
+  Future<int> countPresents(
+      {required int year, required int month, int? cutoffs}) async {
     try {
       UserModel? userModel = authViewModel.userModel;
       if (userModel == null) {
         throw Exception("User not logged in");
       }
-      DateTime startDate = cutoffs == 15
-          ? DateTime(year, month, 1)
-          : DateTime(year, month, 16); // Start date of the month
-      DateTime endDate = cutoffs == 15
-          ? DateTime(year, month, 15)
-          : DateTime(year, month + 1, 0); // Last day of the month
+      DateTime startDate = DateTime(year, month, 1); // Start date of the month
+      DateTime endDate = DateTime(year, month + 1, 0); // Last day of the month
+      if (cutoffs != null) {
+        startDate = cutoffs == 15
+            ? DateTime(year, month, 1)
+            : DateTime(year, month, 16); // Start date of the month
+        endDate = cutoffs == 15
+            ? DateTime(year, month, 15)
+            : DateTime(year, month + 1, 0); // Last day of the month
+      }
       QuerySnapshot attendanceQuery = await _firestore
           .collection('attendance')
           .where('user_id', isEqualTo: userModel.uid)
@@ -330,19 +328,24 @@ class AttendanceViewModel extends ChangeNotifier {
     }
   }
 
-  Future<int> countLateOrUndertime(int year, int month, int cutoffs) async {
+  Future<int> countLateOrUndertime(
+      {required int year, required int month, int? cutoffs}) async {
     try {
       UserModel? userModel = authViewModel.userModel;
       if (userModel == null) {
         throw Exception("User not logged in");
       }
       print(userModel.uid);
-      DateTime startDate = cutoffs == 15
-          ? DateTime(year, month, 1)
-          : DateTime(year, month, 16); // Start date of the month
-      DateTime endDate = cutoffs == 15
-          ? DateTime(year, month, 15)
-          : DateTime(year, month + 1, 0); // Last day of the month
+      DateTime startDate = DateTime(year, month, 1); // Start date of the month
+      DateTime endDate = DateTime(year, month + 1, 0); // Last day of the month
+      if (cutoffs != null) {
+        startDate = cutoffs == 15
+            ? DateTime(year, month, 1)
+            : DateTime(year, month, 16); // Start date of the month
+        endDate = cutoffs == 15
+            ? DateTime(year, month, 15)
+            : DateTime(year, month + 1, 0); // Last day of the month
+      }
       QuerySnapshot attendanceQuery = await _firestore
           .collection('attendance')
           .where('user_id', isEqualTo: userModel.uid)
@@ -363,13 +366,10 @@ class AttendanceViewModel extends ChangeNotifier {
   }
 
   String getAdjustedWorkedDurationFormatted(Duration _adjustedWorkedDuration) {
-    if (_adjustedWorkedDuration != null) {
-      int hours = _adjustedWorkedDuration!.inHours;
-      int minutes = _adjustedWorkedDuration!.inMinutes.remainder(60);
-      int seconds = _adjustedWorkedDuration!.inSeconds.remainder(60);
-      return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
-    }
-    return '00:00';
+    int hours = _adjustedWorkedDuration.inHours;
+    int minutes = _adjustedWorkedDuration.inMinutes.remainder(60);
+    int seconds = _adjustedWorkedDuration.inSeconds.remainder(60);
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
   Duration stringToDuration(String durationString) {
@@ -433,12 +433,16 @@ class AttendanceViewModel extends ChangeNotifier {
       if (userModel == null) {
         throw Exception("User not logged in");
       }
-      DateTime startDate = cutoffs == 15
-          ? DateTime(year, month, 1)
-          : DateTime(year, month, 16); // Start date of the month
-      DateTime endDate = cutoffs == 15
-          ? DateTime(year, month, 15)
-          : DateTime(year, month + 1, 0); // Last day of the month
+      DateTime startDate = DateTime(year, month, 1); // Start date of the month
+      DateTime endDate = DateTime(year, month + 1, 0); // Last day of the month
+      if (cutoffs != null) {
+        startDate = cutoffs == 15
+            ? DateTime(year, month, 1)
+            : DateTime(year, month, 16); // Start date of the month
+        endDate = cutoffs == 15
+            ? DateTime(year, month, 15)
+            : DateTime(year, month + 1, 0); // Last day of the month
+      }
       QuerySnapshot attendanceQuery = await _firestore
           .collection('attendance')
           .where('user_id', isEqualTo: userModel.uid)
