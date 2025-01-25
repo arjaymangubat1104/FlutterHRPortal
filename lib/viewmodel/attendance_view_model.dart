@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/models/attendance_model.dart';
 import 'package:flutter_attendance_system/models/user_model.dart';
@@ -21,9 +22,6 @@ class AttendanceViewModel extends ChangeNotifier {
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
-
-  List<UserAttendanceModel> _attendanceList = [];
-  List<UserAttendanceModel> get attendanceList => _attendanceList;
 
   bool _isSuccessInOut = false;
   bool _isSuccessFetch = false;
@@ -399,9 +397,11 @@ class AttendanceViewModel extends ChangeNotifier {
       'seconds': seconds,
     };
   }
+  
 
-  Future<void> fetchUserAttendance(DateTime date) async {
+  Future<List<UserAttendanceModel>> fetchUserAttendance(DateTime date) async {
     try {
+      List<UserAttendanceModel> attendanceList = [];
       UserModel? userModel = authViewModel.userModel;
       if (userModel == null) {
         throw Exception("User not logged in");
@@ -413,15 +413,17 @@ class AttendanceViewModel extends ChangeNotifier {
           .where('attendance_date', isEqualTo: formattedDate)
           .orderBy('attendance_date', descending: true)
           .get();
-      _attendanceList = attendanceQuery.docs.map((doc) {
+      attendanceList = attendanceQuery.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         return UserAttendanceModel.fromJson(data);
       }).toList();
       notifyListeners();
       _isSuccessFetch = true;
+      return attendanceList;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      return [];
     }
   }
 
@@ -433,6 +435,15 @@ class AttendanceViewModel extends ChangeNotifier {
       if (userModel == null) {
         throw Exception("User not logged in");
       }
+      _firestore.collection('attendance')
+      .where('user_id', isEqualTo: userModel.uid)
+      .snapshots()
+      .listen((snapshot) {
+        attendanceListByYearAndMonth = snapshot.docs.map((doc) {
+              return UserAttendanceModel.fromJson(doc.data());
+            }).toList();
+        notifyListeners();
+      });
       DateTime startDate = DateTime(year, month, 1); // Start date of the month
       DateTime endDate = DateTime(year, month + 1, 0); // Last day of the month
       if (cutoffs != null) {
@@ -465,42 +476,7 @@ class AttendanceViewModel extends ChangeNotifier {
     }
   }
 
-  String statusMessage() {
-    if (_attendanceList.isNotEmpty) {
-      String? timeIn = _attendanceList.first.timeIn;
-      String? timeOut = _attendanceList.first.timeOut;
-      if ((timeIn != null && timeIn.isNotEmpty) &&
-          (timeOut == null || timeOut.isEmpty)) {
-        return 'You have timed in today, Pending time out...';
-      } else if ((timeIn != null && timeIn.isNotEmpty) &&
-          (timeOut != null && timeOut.isNotEmpty)) {
-        return 'You have timed in and out today';
-      }
-    }
-    return 'You have not yet timed in today';
-  }
+  
 
   // Method to get the latest time in and convert it to 12-hour format
-  String getLatestTimeIn() {
-    if (_attendanceList.isNotEmpty) {
-      String? timeIn = _attendanceList.first.timeIn;
-      if (timeIn != null && timeIn.isNotEmpty) {
-        DateTime parsedTime = DateFormat('HH:mm:ss').parse(timeIn);
-        return DateFormat('hh:mm:ss a').format(parsedTime);
-      }
-    }
-    return 'Pending time in...';
-  }
-
-  // Method to get the latest time out and convert it to 12-hour format
-  String getLatestTimeOut() {
-    if (_attendanceList.isNotEmpty) {
-      String? timeOut = _attendanceList.first.timeOut;
-      if (timeOut != null && timeOut.isNotEmpty) {
-        DateTime parsedTime = DateFormat('HH:mm:ss').parse(timeOut);
-        return DateFormat('hh:mm:ss a').format(parsedTime);
-      }
-    }
-    return 'Pending time out...';
-  }
 }

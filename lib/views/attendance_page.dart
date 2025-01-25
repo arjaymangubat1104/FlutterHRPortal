@@ -4,6 +4,8 @@ import 'package:flutter_attendance_system/utils/attendace_history_tile.dart';
 import 'package:flutter_attendance_system/utils/calendar_tile.dart';
 import 'package:flutter_attendance_system/utils/loading_indicator.dart';
 import 'package:flutter_attendance_system/viewmodel/attendance_view_model.dart';
+import 'package:flutter_attendance_system/viewmodel/auth_view_model.dart';
+import 'package:flutter_attendance_system/viewmodel/schedule_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -40,6 +42,7 @@ class _AttendancePageState extends State<AttendancePage>
   int selectedMonth = DateTime.now().month;
   List<UserAttendanceModel> attendanceListByYearAndMonth = [];
   List<UserAttendanceModel> attendanceListCalendar = [];
+  List<UserAttendanceModel> attendanceList = [];
   int presentCounter = 0;
   int presentCounterCalendar = 0;
   int lateUndertimeCounter = 0;
@@ -47,6 +50,7 @@ class _AttendancePageState extends State<AttendancePage>
   int absentCounter = 0;
   DateTime today = DateTime.now();
   DateTime selectedDay = DateTime.now();
+  List<String> scheduleDays = [];
 
   bool _showSpinner = false;
 
@@ -57,7 +61,10 @@ class _AttendancePageState extends State<AttendancePage>
     _monthTabController = TabController(length: _months.length, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _updateAttendaceListByYearAndMonth();
+      attendanceList = await widget.attendanceViewModel.fetchUserAttendance(selectedDay);
+       attendanceListCalendar = await widget.attendanceViewModel.fetchAllUserAttendanceByYearAndMonth(year: today.year, month: today.month);
     });
+    _getScheduleDays();
   }
 
   @override
@@ -66,6 +73,9 @@ class _AttendancePageState extends State<AttendancePage>
     _monthTabController.dispose();
     super.dispose();
   }
+
+  
+
 
   void _updateAttendaceListByYearAndMonth() async {
     try {
@@ -97,6 +107,52 @@ class _AttendancePageState extends State<AttendancePage>
         _showSpinner = false;
       });
     }
+  }
+
+  void _getScheduleDays() async {
+    final scheduelViewModel =
+        Provider.of<ScheduleViewModel>(context, listen: false);
+    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    scheduleDays = await scheduelViewModel
+        .getUserSchedule(authViewModel.userModel?.uid ?? '');
+  }
+
+  List<dynamic> _getEventsForDay(DateTime day) {
+    (context);
+    final events = attendanceListCalendar.where((attendance) {
+      return isSameDay(DateTime.parse(attendance.attendanceDate ?? ''), day);
+    }).toList();
+
+    if (scheduleDays.contains(DateFormat('EEEE').format(day)) &&
+        day.isBefore(today)) {
+      if (events.isEmpty &&
+          day.month == today.month &&
+          day.year == today.year) {
+
+        final userId = widget.attendanceViewModel.authViewModel.userModel?.uid ?? '';
+        final formattedDate = DateFormat('yyyy-MM-dd').format(day);
+
+        // Set attendance status to "Absent" if no attendance is found
+        final absentAttendance = UserAttendanceModel(
+          id: '',
+          userId: userId,
+          userName: '', // You may want to fetch the user's name if needed
+          attendanceStatus: 'Absent',
+          attendanceDate: formattedDate,
+          timeIn: '',
+          timeOut: '',
+        );
+
+        // Add the absent attendance to the list
+        attendanceListCalendar.add(absentAttendance);
+        events.add(absentAttendance);
+
+        // Optionally, you can save this to Firestore if needed
+        //attendanceViewModel.saveAttendance(absentAttendance);
+      }
+    }
+
+    return events;
   }
 
   @override
@@ -442,12 +498,26 @@ class _AttendancePageState extends State<AttendancePage>
                     ),
                     const SizedBox(height: 20),
                     CalendarTile(
-                      onDaySelected: (day) {
-                        selectedDay = day;
-                        // setState(() {
-
-                        // });
+                      events: _getEventsForDay,
+                      onDaySelectedCallback: (DateTime day) {
+                        setState(() {
+                          selectedDay = day;
+                        });
                       },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Activity',
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: themeViewModel.currentTheme.textColor),
+                          ),
+                        ],
+                      ),
                     ),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
@@ -471,7 +541,7 @@ class _AttendancePageState extends State<AttendancePage>
                                               .currentTheme.boxTextColor),
                                     ),
                                     const SizedBox(width: 10),
-                                    Text('Friday, January 24 2025',
+                                    Text('2021-09-01',
                                         style: TextStyle(
                                             fontSize: 15,
                                             color: themeViewModel

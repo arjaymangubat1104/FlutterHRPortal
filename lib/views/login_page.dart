@@ -32,12 +32,14 @@ class _LoginPageState extends State<LoginPage> {
     // });
 
     return Scaffold(
-      body: Stack(
+      body: 
+      Stack(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
+                const SizedBox(height: 100),
                 Image.asset(
                   'lib/assets/logo.png',
                   height: 300,
