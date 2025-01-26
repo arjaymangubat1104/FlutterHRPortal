@@ -47,15 +47,17 @@ class AttendaceHistoryTile extends StatelessWidget {
           return Colors.grey; // Default color
       }
     }
+
     Map<String, int> totalTimeComponents = attendanceViewModel.getDurationComponents(totalTime);
     Map<String, int> lateHoursComponents = attendanceViewModel.getDurationComponents(lateTime);
     Map<String, int> underTimeComponents = attendanceViewModel.getDurationComponents(underTime);
+
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Material(
-          color: changeColor(attendanceStatus),
+          color: themeViewModel.currentTheme.backgroundColor,
           child: ExpansionTile(
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -66,13 +68,13 @@ class AttendaceHistoryTile extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       color: themeViewModel.currentTheme.textColor),
                 ),
-                // Text(
-                //   attendanceStatus,
-                //   style: TextStyle(
-                //     color: changeColor(attendanceStatus),
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // )
+                Text(
+                  attendanceStatus,
+                  style: TextStyle(
+                    color: changeColor(attendanceStatus),
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
               ],
             ),
             childrenPadding: EdgeInsets.only(bottom: 15, left: 15),

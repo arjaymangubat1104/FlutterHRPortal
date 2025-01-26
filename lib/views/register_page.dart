@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_attendance_system/utils/loading_indicator.dart';
-import 'package:flutter_attendance_system/utils/prompt_dialog_box.dart';
+import 'package:flutter_attendance_system/widgets/loading_indicator.dart';
+import 'package:flutter_attendance_system/widgets/prompt_dialog_box.dart';
 import 'package:provider/provider.dart';
 import '../viewmodel/auth_view_model.dart';
 import '../viewmodel/theme_view_model.dart';

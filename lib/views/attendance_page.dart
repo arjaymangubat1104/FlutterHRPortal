@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/models/attendance_model.dart';
-import 'package:flutter_attendance_system/utils/attendace_history_tile.dart';
-import 'package:flutter_attendance_system/utils/calendar_tile.dart';
-import 'package:flutter_attendance_system/utils/loading_indicator.dart';
+import 'package:flutter_attendance_system/widgets/attendace_history_tile.dart';
+import 'package:flutter_attendance_system/widgets/calendar_tile.dart';
+import 'package:flutter_attendance_system/widgets/loading_indicator.dart';
 import 'package:flutter_attendance_system/viewmodel/attendance_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/auth_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/schedule_view_model.dart';
@@ -156,7 +156,6 @@ class _AttendancePageState extends State<AttendancePage>
     }
 
   }
-  
 
 
   List<dynamic> _getEventsForDay(DateTime day) {

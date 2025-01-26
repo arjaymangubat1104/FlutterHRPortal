@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../utils/loading_indicator.dart';
+import '../widgets/loading_indicator.dart';
 import '../viewmodel/auth_view_model.dart';
 import '../viewmodel/theme_view_model.dart';
 

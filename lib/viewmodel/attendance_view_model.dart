@@ -140,44 +140,6 @@ class AttendanceViewModel extends ChangeNotifier {
     }
   }
 
-  // Future<Duration> _fetchBreakTimeDuration(String userId) async {
-  //   DocumentSnapshot scheduleDoc =
-  //       await _firestore.collection('users').doc(userId).get();
-  //   if (scheduleDoc.exists) {
-  //     Map<String, dynamic> scheduleData =
-  //         scheduleDoc.data() as Map<String, dynamic>;
-  //     String breakStartTime = scheduleData['break_start'];
-  //     String breakEndTime = scheduleData['break_end'];
-
-  //     DateTime breakStartDateTime =
-  //         DateFormat('HH:mm:ss').parse(breakStartTime);
-  //     DateTime breakEndDateTime = DateFormat('HH:mm:ss').parse(breakEndTime);
-
-  //     return breakEndDateTime.difference(breakStartDateTime);
-  //   } else {
-  //     throw Exception("User schedule not found");
-  //   }
-  // }
-
-  // Future<Duration> _fetchUserScheduledDuration(String userId) async {
-  //   // Fetch the user's schedule from Firestore (assuming you have a 'schedules' collection)
-  //   DocumentSnapshot scheduleDoc =
-  //       await _firestore.collection('users').doc(userId).get();
-  //   if (scheduleDoc.exists) {
-  //     Map<String, dynamic> scheduleData =
-  //         scheduleDoc.data() as Map<String, dynamic>;
-  //     String startTime = scheduleData['schedule_in'];
-  //     String endTime = scheduleData['schedule_out'];
-
-  //     DateTime startDateTime = DateFormat('HH:mm:ss').parse(startTime);
-  //     DateTime endDateTime = DateFormat('HH:mm:ss').parse(endTime);
-
-  //     return endDateTime.difference(startDateTime);
-  //   } else {
-  //     throw Exception("User schedule not found");
-  //   }
-  // }
-
   Future<void> timeOut() async {
     try {
       _checkOutTime = DateTime.now();
@@ -257,40 +219,6 @@ class AttendanceViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> setAbsentIfNoAttendancePreviousDay(String userId) async {
-    try {
-      DateTime today = DateTime.now();
-      DateTime previousDay = today.subtract(Duration(days: 1));
-      String formattedPreviousDay =
-          DateFormat('yyyy-MM-dd').format(previousDay);
-
-      QuerySnapshot attendanceQuery = await _firestore
-          .collection('attendance')
-          .where('user_id', isEqualTo: userId)
-          .where('attendance_date', isEqualTo: formattedPreviousDay)
-          .get();
-
-      if (attendanceQuery.docs.isEmpty) {
-        UserAttendanceModel attendance = UserAttendanceModel(
-          id: _firestore.collection('attendance').doc().id,
-          userId: userId,
-          userName: '', // You may want to fetch the user's name if needed
-          attendanceStatus: 'Absent',
-          attendanceDate: formattedPreviousDay,
-          timeIn: '',
-          timeOut: '',
-        );
-        await _firestore
-            .collection('attendance')
-            .doc(attendance.id)
-            .set(attendance.toJson());
-      }
-    } catch (e) {
-      _errorMessage = e.toString();
-      notifyListeners();
-    }
-  }
-
   Future<int> countPresents(
       {required int year, required int month, int? cutoffs}) async {
     try {
@@ -363,10 +291,10 @@ class AttendanceViewModel extends ChangeNotifier {
     }
   }
 
-  String getAdjustedWorkedDurationFormatted(Duration _adjustedWorkedDuration) {
-    int hours = _adjustedWorkedDuration.inHours;
-    int minutes = _adjustedWorkedDuration.inMinutes.remainder(60);
-    int seconds = _adjustedWorkedDuration.inSeconds.remainder(60);
+  String getAdjustedWorkedDurationFormatted(Duration adjustedWorkedDuration) {
+    int hours = adjustedWorkedDuration.inHours;
+    int minutes = adjustedWorkedDuration.inMinutes.remainder(60);
+    int seconds = adjustedWorkedDuration.inSeconds.remainder(60);
     return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
@@ -476,7 +404,4 @@ class AttendanceViewModel extends ChangeNotifier {
     }
   }
 
-  
-
-  // Method to get the latest time in and convert it to 12-hour format
 }
