@@ -42,7 +42,8 @@ class _AttendancePageState extends State<AttendancePage>
   int selectedMonth = DateTime.now().month;
   List<UserAttendanceModel> attendanceListByYearAndMonth = [];
   List<UserAttendanceModel> attendanceListCalendar = [];
-  List<UserAttendanceModel> attendanceList = [];
+  List<UserAttendanceModel> activityAttendanceListCalendar = [];
+
   int presentCounter = 0;
   int presentCounterCalendar = 0;
   int lateUndertimeCounter = 0;
@@ -61,8 +62,14 @@ class _AttendancePageState extends State<AttendancePage>
     _monthTabController = TabController(length: _months.length, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _updateAttendaceListByYearAndMonth();
-      attendanceList = await widget.attendanceViewModel.fetchUserAttendance(selectedDay);
-       attendanceListCalendar = await widget.attendanceViewModel.fetchAllUserAttendanceByYearAndMonth(year: today.year, month: today.month);
+      attendanceListCalendar = await widget.attendanceViewModel
+          .fetchAllUserAttendanceByYearAndMonth(
+              year: today.year, month: today.month);
+      activityAttendanceListCalendar = await widget.attendanceViewModel
+          .fetchAllUserAttendanceByYearAndMonth(
+              year: today.year, month: today.month);
+      _addNoLoggedAcivity();
+      
     });
     _getScheduleDays();
   }
@@ -74,8 +81,16 @@ class _AttendancePageState extends State<AttendancePage>
     super.dispose();
   }
 
-  
-
+  //create a method that returns index of the user model attendance date in attendancelistCalendar
+  int _getAttendanceIndex(DateTime date) {
+    for (int i = 0; i < activityAttendanceListCalendar.length; i++) {
+      if (DateFormat('yyyy-MM-dd').format(date) ==
+          activityAttendanceListCalendar[i].attendanceDate) {
+        return i;
+      }
+    }
+    return -1;
+  }
 
   void _updateAttendaceListByYearAndMonth() async {
     try {
@@ -116,6 +131,33 @@ class _AttendancePageState extends State<AttendancePage>
     scheduleDays = await scheduelViewModel
         .getUserSchedule(authViewModel.userModel?.uid ?? '');
   }
+  
+  void _addNoLoggedAcivity(){
+    //get first day of the month
+    final firstDayOfMonth = DateTime(today.year, today.month, 1).day;
+    // get last day of the month
+    final lastDayOfMonth = DateTime(today.year, today.month + 1, 0).day;
+    for (var i = firstDayOfMonth; i <= lastDayOfMonth; i++) {
+      final date = DateTime(today.year, today.month, i);
+      final formattedDate = DateFormat('yyyy-MM-dd').format(date);
+      final hasAttendance = activityAttendanceListCalendar.any((attendance) =>
+          attendance.attendanceDate == formattedDate);
+      if (!hasAttendance) {
+        activityAttendanceListCalendar.add(UserAttendanceModel(
+          id: '',
+          userId: widget.attendanceViewModel.authViewModel.userModel?.uid ?? '',
+          userName: '', // You may want to fetch the user's name if needed
+          attendanceStatus: 'No Logged Activity',
+          attendanceDate: formattedDate,
+          timeIn: '',
+          timeOut: '',
+        ));
+      }
+    }
+
+  }
+  
+
 
   List<dynamic> _getEventsForDay(DateTime day) {
     (context);
@@ -126,32 +168,31 @@ class _AttendancePageState extends State<AttendancePage>
     if (scheduleDays.contains(DateFormat('EEEE').format(day)) &&
         day.isBefore(today)) {
       if (events.isEmpty &&
-          day.month == today.month &&
-          day.year == today.year) {
+            day.month == today.month &&
+            day.year == today.year) {
+          final userId =
+              widget.attendanceViewModel.authViewModel.userModel?.uid ?? '';
+          final formattedDate = DateFormat('yyyy-MM-dd').format(day);
 
-        final userId = widget.attendanceViewModel.authViewModel.userModel?.uid ?? '';
-        final formattedDate = DateFormat('yyyy-MM-dd').format(day);
+          // Set attendance status to "Absent" if no attendance is found
+          final absentAttendance = UserAttendanceModel(
+            id: '',
+            userId: userId,
+            userName: '', // You may want to fetch the user's name if needed
+            attendanceStatus: 'Absent',
+            attendanceDate: formattedDate,
+            timeIn: '',
+            timeOut: '',
+          );
 
-        // Set attendance status to "Absent" if no attendance is found
-        final absentAttendance = UserAttendanceModel(
-          id: '',
-          userId: userId,
-          userName: '', // You may want to fetch the user's name if needed
-          attendanceStatus: 'Absent',
-          attendanceDate: formattedDate,
-          timeIn: '',
-          timeOut: '',
-        );
+          // Add the absent attendance to the list
+          attendanceListCalendar.add(absentAttendance);
+          events.add(absentAttendance);
 
-        // Add the absent attendance to the list
-        attendanceListCalendar.add(absentAttendance);
-        events.add(absentAttendance);
-
-        // Optionally, you can save this to Firestore if needed
-        //attendanceViewModel.saveAttendance(absentAttendance);
-      }
+          // Optionally, you can save this to Firestore if needed
+          //attendanceViewModel.saveAttendance(absentAttendance);
+        }
     }
-
     return events;
   }
 
@@ -499,7 +540,7 @@ class _AttendancePageState extends State<AttendancePage>
                     const SizedBox(height: 20),
                     CalendarTile(
                       events: _getEventsForDay,
-                      onDaySelectedCallback: (DateTime day) {
+                      onDaySelectedCallback: (DateTime day) async {
                         setState(() {
                           selectedDay = day;
                         });
@@ -526,68 +567,66 @@ class _AttendancePageState extends State<AttendancePage>
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 20),
-                          child: Expanded(
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Date: ',
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Date: ',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: themeViewModel
+                                            .currentTheme.boxTextColor),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(_getAttendanceIndex(selectedDay) == -1 ? '' : DateFormat('EEEE, d MMMM yyyy').format(DateTime.parse(activityAttendanceListCalendar[_getAttendanceIndex(selectedDay)].attendanceDate!)),
                                       style: TextStyle(
                                           fontSize: 15,
-                                          fontWeight: FontWeight.bold,
                                           color: themeViewModel
-                                              .currentTheme.boxTextColor),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text('2021-09-01',
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: themeViewModel
-                                                .currentTheme.boxTextColor))
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Time in: ',
+                                              .currentTheme.boxTextColor))
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Time in: ',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: themeViewModel
+                                            .currentTheme.boxTextColor),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(_getAttendanceIndex(selectedDay) == -1 ? '' : activityAttendanceListCalendar[_getAttendanceIndex(selectedDay)].timeIn ?? '',
                                       style: TextStyle(
                                           fontSize: 15,
-                                          fontWeight: FontWeight.bold,
                                           color: themeViewModel
-                                              .currentTheme.boxTextColor),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text('08:00:00',
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: themeViewModel
-                                                .currentTheme.boxTextColor))
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Time out: ',
+                                              .currentTheme.boxTextColor))
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Time out: ',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: themeViewModel
+                                            .currentTheme.boxTextColor),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(_getAttendanceIndex(selectedDay) == - 1 ? '' : activityAttendanceListCalendar[_getAttendanceIndex(selectedDay)].timeOut ?? '',
                                       style: TextStyle(
                                           fontSize: 15,
-                                          fontWeight: FontWeight.bold,
                                           color: themeViewModel
-                                              .currentTheme.boxTextColor),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text('17:00:00',
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: themeViewModel
-                                                .currentTheme.boxTextColor))
-                                  ],
-                                ),
-                              ],
-                            ),
+                                              .currentTheme.boxTextColor))
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ),
