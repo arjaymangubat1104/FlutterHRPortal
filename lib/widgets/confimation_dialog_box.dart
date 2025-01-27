@@ -9,6 +9,7 @@ class ConfimationDialogBox extends StatelessWidget {
   final Function onNo;
 
   const ConfimationDialogBox({
+    super.key, 
     required this.title,
     required this.content,
     required this.onYes,
