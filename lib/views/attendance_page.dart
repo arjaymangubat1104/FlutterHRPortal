@@ -4,12 +4,9 @@ import 'package:flutter_attendance_system/widgets/attendace_history_tile.dart';
 import 'package:flutter_attendance_system/widgets/calendar_tile.dart';
 import 'package:flutter_attendance_system/widgets/loading_indicator.dart';
 import 'package:flutter_attendance_system/viewmodel/attendance_view_model.dart';
-import 'package:flutter_attendance_system/viewmodel/auth_view_model.dart';
-import 'package:flutter_attendance_system/viewmodel/schedule_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 import '../viewmodel/theme_view_model.dart';
 
@@ -41,8 +38,6 @@ class _AttendancePageState extends State<AttendancePage>
   int _selectedCutoff = DateTime.now().day < 15 ? 15 : 30;
   int selectedMonth = DateTime.now().month;
   List<UserAttendanceModel> attendanceListByYearAndMonth = [];
-  List<UserAttendanceModel> attendanceListCalendar = [];
-  List<UserAttendanceModel> activityAttendanceListCalendar = [];
 
   int presentCounter = 0;
   int presentCounterCalendar = 0;
@@ -51,7 +46,6 @@ class _AttendancePageState extends State<AttendancePage>
   int absentCounter = 0;
   DateTime today = DateTime.now();
   DateTime selectedDay = DateTime.now();
-  List<String> scheduleDays = [];
 
   bool _showSpinner = false;
 
@@ -62,16 +56,15 @@ class _AttendancePageState extends State<AttendancePage>
     _monthTabController = TabController(length: _months.length, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _updateAttendaceListByYearAndMonth();
-      attendanceListCalendar = await widget.attendanceViewModel
+      widget.attendanceViewModel.attendanceListCalendar =
+          await widget.attendanceViewModel.fetchAllUserAttendanceByYearAndMonth(
+              year: today.year, month: today.month);
+      widget.attendanceViewModel.activityAttendanceListCalendar = await widget.attendanceViewModel
           .fetchAllUserAttendanceByYearAndMonth(
               year: today.year, month: today.month);
-      activityAttendanceListCalendar = await widget.attendanceViewModel
-          .fetchAllUserAttendanceByYearAndMonth(
-              year: today.year, month: today.month);
-      _addNoLoggedAcivity();
-      
+      widget.attendanceViewModel.addNoLoggedAcivity();
     });
-    _getScheduleDays();
+    widget.attendanceViewModel.getScheduleDays();
   }
 
   @override
@@ -79,17 +72,6 @@ class _AttendancePageState extends State<AttendancePage>
     _tabController.dispose();
     _monthTabController.dispose();
     super.dispose();
-  }
-
-  //create a method that returns index of the user model attendance date in attendancelistCalendar
-  int _getAttendanceIndex(DateTime date) {
-    for (int i = 0; i < activityAttendanceListCalendar.length; i++) {
-      if (DateFormat('yyyy-MM-dd').format(date) ==
-          activityAttendanceListCalendar[i].attendanceDate) {
-        return i;
-      }
-    }
-    return -1;
   }
 
   void _updateAttendaceListByYearAndMonth() async {
@@ -124,76 +106,7 @@ class _AttendancePageState extends State<AttendancePage>
     }
   }
 
-  void _getScheduleDays() async {
-    final scheduelViewModel =
-        Provider.of<ScheduleViewModel>(context, listen: false);
-    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
-    scheduleDays = await scheduelViewModel
-        .getUserSchedule(authViewModel.userModel?.uid ?? '');
-  }
   
-  void _addNoLoggedAcivity(){
-    //get first day of the month
-    final firstDayOfMonth = DateTime(today.year, today.month, 1).day;
-    // get last day of the month
-    final lastDayOfMonth = DateTime(today.year, today.month + 1, 0).day;
-    for (var i = firstDayOfMonth; i <= lastDayOfMonth; i++) {
-      final date = DateTime(today.year, today.month, i);
-      final formattedDate = DateFormat('yyyy-MM-dd').format(date);
-      final hasAttendance = activityAttendanceListCalendar.any((attendance) =>
-          attendance.attendanceDate == formattedDate);
-      if (!hasAttendance) {
-        activityAttendanceListCalendar.add(UserAttendanceModel(
-          id: '',
-          userId: widget.attendanceViewModel.authViewModel.userModel?.uid ?? '',
-          userName: '', // You may want to fetch the user's name if needed
-          attendanceStatus: 'No Logged Activity',
-          attendanceDate: formattedDate,
-          timeIn: '',
-          timeOut: '',
-        ));
-      }
-    }
-
-  }
-
-
-  List<dynamic> _getEventsForDay(DateTime day) {
-    (context);
-    final events = attendanceListCalendar.where((attendance) {
-      return isSameDay(DateTime.parse(attendance.attendanceDate ?? ''), day);
-    }).toList();
-
-    if (scheduleDays.contains(DateFormat('EEEE').format(day)) &&
-        day.isBefore(today)) {
-      if (events.isEmpty &&
-            day.month == today.month &&
-            day.year == today.year) {
-          final userId =
-              widget.attendanceViewModel.authViewModel.userModel?.uid ?? '';
-          final formattedDate = DateFormat('yyyy-MM-dd').format(day);
-
-          // Set attendance status to "Absent" if no attendance is found
-          final absentAttendance = UserAttendanceModel(
-            id: '',
-            userId: userId,
-            userName: '', // You may want to fetch the user's name if needed
-            attendanceStatus: 'Absent',
-            attendanceDate: formattedDate,
-            timeIn: '',
-            timeOut: '',
-          );
-
-          // Add the absent attendance to the list
-          attendanceListCalendar.add(absentAttendance);
-          events.add(absentAttendance);
-
-          // Optionally, you can save this to Firestore if needed
-          //attendanceViewModel.saveAttendance(absentAttendance);
-        }
-    }
-    return events;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -538,7 +451,8 @@ class _AttendancePageState extends State<AttendancePage>
                     ),
                     const SizedBox(height: 20),
                     CalendarTile(
-                      events: _getEventsForDay,
+                      events:
+                          widget.attendanceViewModel.getEventsForDay(context),
                       onDaySelectedCallback: (DateTime day) async {
                         setState(() {
                           selectedDay = day;
@@ -580,7 +494,20 @@ class _AttendancePageState extends State<AttendancePage>
                                             .currentTheme.boxTextColor),
                                   ),
                                   const SizedBox(width: 10),
-                                  Text(_getAttendanceIndex(selectedDay) == -1 ? '' : DateFormat('EEEE, d MMMM yyyy').format(DateTime.parse(activityAttendanceListCalendar[_getAttendanceIndex(selectedDay)].attendanceDate!)),
+                                  Text(
+                                      widget.attendanceViewModel
+                                                  .getAttendanceIndex(
+                                                      selectedDay) ==
+                                              -1
+                                          ? ''
+                                          : DateFormat('EEEE, d MMMM yyyy')
+                                              .format(DateTime.parse(
+                                                  widget.attendanceViewModel.activityAttendanceListCalendar[
+                                                          widget
+                                                              .attendanceViewModel
+                                                              .getAttendanceIndex(
+                                                                  selectedDay)]
+                                                      .attendanceDate!)),
                                       style: TextStyle(
                                           fontSize: 15,
                                           color: themeViewModel
@@ -599,7 +526,18 @@ class _AttendancePageState extends State<AttendancePage>
                                             .currentTheme.boxTextColor),
                                   ),
                                   const SizedBox(width: 10),
-                                  Text(_getAttendanceIndex(selectedDay) == -1 ? '' : activityAttendanceListCalendar[_getAttendanceIndex(selectedDay)].timeIn ?? '',
+                                  Text(
+                                      widget.attendanceViewModel
+                                                  .getAttendanceIndex(
+                                                      selectedDay) ==
+                                              -1
+                                          ? ''
+                                          : widget.attendanceViewModel.activityAttendanceListCalendar[
+                                                      widget.attendanceViewModel
+                                                          .getAttendanceIndex(
+                                                              selectedDay)]
+                                                  .timeIn ??
+                                              '',
                                       style: TextStyle(
                                           fontSize: 15,
                                           color: themeViewModel
@@ -618,7 +556,18 @@ class _AttendancePageState extends State<AttendancePage>
                                             .currentTheme.boxTextColor),
                                   ),
                                   const SizedBox(width: 10),
-                                  Text(_getAttendanceIndex(selectedDay) == - 1 ? '' : activityAttendanceListCalendar[_getAttendanceIndex(selectedDay)].timeOut ?? '',
+                                  Text(
+                                      widget.attendanceViewModel
+                                                  .getAttendanceIndex(
+                                                      selectedDay) ==
+                                              -1
+                                          ? ''
+                                          : widget.attendanceViewModel.activityAttendanceListCalendar[
+                                                      widget.attendanceViewModel
+                                                          .getAttendanceIndex(
+                                                              selectedDay)]
+                                                  .timeOut ??
+                                              '',
                                       style: TextStyle(
                                           fontSize: 15,
                                           color: themeViewModel

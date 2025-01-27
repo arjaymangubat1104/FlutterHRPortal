@@ -7,6 +7,7 @@ import 'package:flutter_attendance_system/viewmodel/auth_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/schedule_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
 import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class AttendanceViewModel extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -31,6 +32,37 @@ class AttendanceViewModel extends ChangeNotifier {
 
   set isSuccessInOut(bool value) {
     _isSuccessInOut = value;
+    notifyListeners();
+  }
+
+  List<UserAttendanceModel> _attendanceListCalendar = [];
+  List<UserAttendanceModel> get attendanceListCalendar => _attendanceListCalendar;
+
+  set attendanceListCalendar(List<UserAttendanceModel> value) {
+    _attendanceListCalendar = value;
+    notifyListeners();
+  }
+  
+  List<String> _scheduleDays = [];
+  List<String> get scheduleDays => _scheduleDays;
+  
+  set scheduleDays(List<String> value) {
+    _scheduleDays = value;
+    notifyListeners();
+  }
+  
+  List<UserAttendanceModel> _activityAttendanceListCalendar = [];
+  List<UserAttendanceModel> get activityAttendanceListCalendar => _activityAttendanceListCalendar;
+
+  set activityAttendanceListCalendar(List<UserAttendanceModel> value) {
+    _activityAttendanceListCalendar = value;
+    notifyListeners();
+  }
+
+  List<UserAttendanceModel> _attendanceList = [];
+  List<UserAttendanceModel> get attendanceList => _attendanceList;
+  set attendanceList(List<UserAttendanceModel> value) {
+    _attendanceList = value;
     notifyListeners();
   }
 
@@ -327,9 +359,8 @@ class AttendanceViewModel extends ChangeNotifier {
   }
   
 
-  Future<List<UserAttendanceModel>> fetchUserAttendance(DateTime date) async {
+  Future<void> fetchUserAttendance(DateTime date) async {
     try {
-      List<UserAttendanceModel> attendanceList = [];
       UserModel? userModel = authViewModel.userModel;
       if (userModel == null) {
         throw Exception("User not logged in");
@@ -341,17 +372,15 @@ class AttendanceViewModel extends ChangeNotifier {
           .where('attendance_date', isEqualTo: formattedDate)
           .orderBy('attendance_date', descending: true)
           .get();
-      attendanceList = attendanceQuery.docs.map((doc) {
+      _attendanceList = attendanceQuery.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         return UserAttendanceModel.fromJson(data);
       }).toList();
       notifyListeners();
       _isSuccessFetch = true;
-      return attendanceList;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
-      return [];
     }
   }
 
@@ -403,5 +432,104 @@ class AttendanceViewModel extends ChangeNotifier {
       return [];
     }
   }
+
+  List<Object?> Function(DateTime) getEventsForDay(BuildContext context) {
+    return (DateTime day) {
+      final events = attendanceListCalendar.where((attendance) {
+        return isSameDay(DateTime.parse(attendance.attendanceDate ?? ''), day);
+      }).toList();
+      
+      if (scheduleDays.contains(DateFormat('EEEE').format(day)) &&
+          day.isBefore(DateTime.now())) {
+        if (events.isEmpty &&
+              day.month == DateTime.now().month &&
+              day.year == DateTime.now().year) {
+            final userId =
+                authViewModel.userModel?.uid ?? '';
+            final formattedDate = DateFormat('yyyy-MM-dd').format(day);
+
+            // Set attendance status to "Absent" if no attendance is found
+            final absentAttendance = UserAttendanceModel(
+              id: '',
+              userId: userId,
+              userName: '', // You may want to fetch the user's name if needed
+              attendanceStatus: 'Absent',
+              attendanceDate: formattedDate,
+              timeIn: '',
+              timeOut: '',
+            );
+
+            // Add the absent attendance to the list
+            attendanceListCalendar.add(absentAttendance);
+            events.add(absentAttendance);
+
+            // Optionally, you can save this to Firestore if needed
+            //attendanceViewModel.saveAttendance(absentAttendance);
+          }
+      }
+      return events;
+    };
+  }
+
+  void getScheduleDays() async{
+    _scheduleDays = await scheduleViewModel
+        .getUserSchedule(authViewModel.userModel?.uid ?? '');
+  }
+
+  //create a method that returns index of the user model attendance date in attendancelistCalendar
+  int getAttendanceIndex(DateTime date) {
+    for (int i = 0; i < activityAttendanceListCalendar.length; i++) {
+      if (DateFormat('yyyy-MM-dd').format(date) ==
+          activityAttendanceListCalendar[i].attendanceDate) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  void addNoLoggedAcivity() {
+    //get first day of the month
+    final today = DateTime.now();
+    final firstDayOfMonth = DateTime(today.year, today.month, 1).day;
+    // get last day of the month
+    final lastDayOfMonth = DateTime(today.year, today.month + 1, 0).day;
+    for (var i = firstDayOfMonth; i <= lastDayOfMonth; i++) {
+      final date = DateTime(today.year, today.month, i);
+      final formattedDate = DateFormat('yyyy-MM-dd').format(date);
+      final hasAttendance = activityAttendanceListCalendar
+          .any((attendance) => attendance.attendanceDate == formattedDate);
+      if (!hasAttendance) {
+        activityAttendanceListCalendar.add(UserAttendanceModel(
+          id: '',
+          userId: authViewModel.userModel?.uid ?? '',
+          userName: '', // You may want to fetch the user's name if needed
+          attendanceStatus: 'No Logged Activity',
+          attendanceDate: formattedDate,
+          timeIn: '',
+          timeOut: '',
+        ));
+      }
+    }
+  }
+
+  String statusMessage() {
+    if (attendanceList.isNotEmpty) {
+      String? timeIn = attendanceList.first.timeIn;
+      String? timeOut = attendanceList.first.timeOut;
+      if ((timeIn != null && timeIn.isNotEmpty) &&
+          (timeOut == null || timeOut.isEmpty)) {
+        return 'You have timed in today, Pending time out...';
+      } else if ((timeIn != null && timeIn.isNotEmpty) &&
+          (timeOut != null && timeOut.isNotEmpty)) {
+        return 'You have timed in and out today';
+      }
+    }
+    return 'You have not yet timed in today';
+  }
+
+  
+
+
+
 
 }

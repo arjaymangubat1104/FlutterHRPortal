@@ -2,12 +2,11 @@ import 'package:animated_analog_clock/animated_analog_clock.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_attendance_system/models/attendance_model.dart';
+import 'package:flutter_attendance_system/views/attendance_page.dart';
 import 'package:flutter_attendance_system/widgets/confimation_dialog_box.dart';
 import 'package:flutter_attendance_system/widgets/loading_indicator.dart';
 import 'package:flutter_attendance_system/widgets/prompt_dialog_box.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
-import 'package:flutter_attendance_system/views/attendance_page.dart';
 import 'package:provider/provider.dart';
 import '../viewmodel/attendance_view_model.dart';
 import '../viewmodel/auth_view_model.dart';
@@ -22,22 +21,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool _showSpinner = false;
-  List<UserAttendanceModel> _attendanceList = [];
-
-  String statusMessage() {
-    if (_attendanceList.isNotEmpty) {
-      String? timeIn = _attendanceList.first.timeIn;
-      String? timeOut = _attendanceList.first.timeOut;
-      if ((timeIn != null && timeIn.isNotEmpty) &&
-          (timeOut == null || timeOut.isEmpty)) {
-        return 'You have timed in today, Pending time out...';
-      } else if ((timeIn != null && timeIn.isNotEmpty) &&
-          (timeOut != null && timeOut.isNotEmpty)) {
-        return 'You have timed in and out today';
-      }
-    }
-    return 'You have not yet timed in today';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +31,7 @@ class _HomePageState extends State<HomePage> {
     final themeViewModel = Provider.of<ThemeViewModel>(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _attendanceList =
-          await attendanceViewModel.fetchUserAttendance(DateTime.now());
+      await attendanceViewModel.fetchUserAttendance(DateTime.now());
     });
 
     return Scaffold(
@@ -180,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                               Row(
                                 children: [
                                   Text(
-                                    statusMessage(),
+                                    attendanceViewModel.statusMessage(),
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: themeViewModel
@@ -212,11 +194,10 @@ class _HomePageState extends State<HomePage> {
                                                         try {
                                                           await attendanceViewModel
                                                               .timeIn();
-                                                          _attendanceList =
-                                                              await attendanceViewModel
-                                                                  .fetchUserAttendance(
-                                                                      timeDateViewModel
-                                                                          .dateTime);
+                                                          await attendanceViewModel
+                                                              .fetchUserAttendance(
+                                                                  timeDateViewModel
+                                                                      .dateTime);
                                                           Navigator.pop(
                                                               context);
                                                         } finally {
@@ -298,11 +279,10 @@ class _HomePageState extends State<HomePage> {
                                                       onYes: () async {
                                                         await attendanceViewModel
                                                             .timeOut();
-                                                        _attendanceList =
-                                                            await attendanceViewModel
-                                                                .fetchUserAttendance(
-                                                                    timeDateViewModel
-                                                                        .dateTime);
+                                                        await attendanceViewModel
+                                                            .fetchUserAttendance(
+                                                                timeDateViewModel
+                                                                    .dateTime);
                                                         Navigator.pop(context);
                                                         showDialog(
                                                             context: context,
@@ -368,10 +348,13 @@ class _HomePageState extends State<HomePage> {
                         Positioned(
                             top: 0,
                             right: 0,
-                            child: Image.asset(
-                              'lib/assets/profile.png',
-                              width: 100,
-                              height: 100,
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Image.asset(
+                                'lib/assets/profile.png',
+                                width: 50,
+                                height: 50,
+                              ),
                             )),
                       ],
                     ),
