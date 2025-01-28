@@ -1,29 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_attendance_system/viewmodel/theme_view_model.dart';
+import 'package:provider/provider.dart';
 
 class ProfileInfoTile extends StatelessWidget{
   final String title;
+  //final List<String> contentTile;
   final IconData icon;
+  final Map<String, String>? value;
 
-  ProfileInfoTile({
+  const ProfileInfoTile({
     super.key,
     required this.title,
     required this.icon,
+    required this.value,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      leading: Icon(icon),
-      title: Text(title),
-      children: [
-        Text(
-          'This is the content of the tile',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.black,
+    final themeViewModel = Provider.of<ThemeViewModel>(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, right: 10, left: 10),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          color: themeViewModel.currentTheme.backgroundColor,
+          child: SingleChildScrollView(
+            child: ExpansionTile(
+              leading: Icon(
+                icon,
+                color: themeViewModel.currentTheme.themeColor,
+              ),
+              title: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: themeViewModel.currentTheme.textColor,
+                ),
+              ),
+              childrenPadding: EdgeInsets.only(bottom: 5, left: 15),
+              children: value?.entries.map((entry) => Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: themeViewModel.currentTheme.textColor,
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: ListTile(
+                  title: Text(
+                    entry.key,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                  subtitle: Text(entry.value),
+                ),
+              )).toList() ?? []
+            ),
           ),
-        )
-      ],
+        ),
+      ),
     );
   }
 }

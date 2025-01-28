@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/viewmodel/attendance_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/auth_view_model.dart';
+import 'package:flutter_attendance_system/viewmodel/profile_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/schedule_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/theme_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (context) => ThemeViewModel()),
         ChangeNotifierProvider(create: (context) => ScheduleViewModel()),
+        ChangeNotifierProvider(create: (context) => ProfileViewModel()),
         // Add other providers here
       ],
       child: MaterialApp(
