@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_attendance_system/viewmodel/profile_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/theme_view_model.dart';
+import 'package:flutter_attendance_system/widgets/custom_elevated_button.dart';
 import 'package:flutter_attendance_system/widgets/profile_info_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -14,24 +16,22 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late TextEditingController textController;
 
   @override
   void initState() {
     super.initState();
-    textController = TextEditingController(text: 'test');
   }
 
   @override
   void dispose() {
-    textController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    
     final themeViewModel = Provider.of<ThemeViewModel>(context);
+    final profileViewModel = Provider.of<ProfileViewModel>(context);  
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -57,7 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           Column(
             children: [
-              const SizedBox(height: 40),
+              const SizedBox(height: 25),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -73,8 +73,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: ClipOval(
                       child: Image.asset(
                         'lib/assets/profile.png',
-                        height: 100,
-                        width: 100,
+                        height: 150,
+                        width: 150,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -82,8 +82,23 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
               const SizedBox(height: 20),
-              ProfileInfoTile(
-                  title: 'test', icon: Icons.abc )
+              SingleChildScrollView(
+                child: SizedBox(
+                  height: 500,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: profileViewModel.profileInfoList.length,
+                    itemBuilder: (context, index) {
+                      return ProfileInfoTile(
+                          title: profileViewModel.profileInfoList[index].title, 
+                          icon: profileViewModel.profileInfoList[index].icon,
+                          value: profileViewModel.profileInfoList[index].value,
+                      );
+                    }
+                  ),
+                ),
+               
+              ),
             ],
           ),
         ],

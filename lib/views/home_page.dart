@@ -52,7 +52,10 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: Icon(
+              Icons.logout,
+              color: themeViewModel.currentTheme.boxTextColor,
+            ),
             onPressed: () async {
               setState(() {
                 _showSpinner = true;
