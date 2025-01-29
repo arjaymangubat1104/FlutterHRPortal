@@ -24,7 +24,7 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   Future<void> register(
-      String email, String password, String displayName) async {
+      String email, String password, String userName, String firstName, String middleName, String lastName, String gender, String civilStatus, String birthDate) async {
     try {
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
@@ -35,7 +35,17 @@ class AuthViewModel extends ChangeNotifier {
 
       // Store user information in Firestore
       _userModel =
-          UserModel(uid: user!.uid, email: email, displayName: displayName);
+          UserModel(
+            uid: user!.uid, 
+            email: email, 
+            userName: userName, 
+            firstName: firstName, 
+            middleName: middleName, 
+            lastName: lastName,
+            gender: gender,
+            civilStatus: civilStatus,
+            birthDate: birthDate
+          );
       await _firestore
           .collection('users')
           .doc(user.uid)

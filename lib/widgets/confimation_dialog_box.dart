@@ -26,46 +26,50 @@ class ConfimationDialogBox extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            OutlinedButton(
-              onPressed: () => onNo(),
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: themeViewModel.currentTheme.buttonColor),
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                textStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () => onNo(),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: themeViewModel.currentTheme.buttonColor),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  textStyle: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  elevation: 0,
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                elevation: 0,
-              ),
-              child: Text(
-                'No',
-                style: TextStyle(
-                  color: themeViewModel.currentTheme.buttonColor,
+                child: Text(
+                  'No',
+                  style: TextStyle(
+                    color: themeViewModel.currentTheme.buttonColor,
+                  ),
                 ),
               ),
             ),
             const SizedBox(width: 20),
-            ElevatedButton(
-              onPressed: () => onYes(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: themeViewModel.currentTheme.buttonColor,
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                textStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () => onYes(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: themeViewModel.currentTheme.buttonColor,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  textStyle: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  elevation: 0,
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                elevation: 0,
-              ),
-              child: Text(
-                'Yes',
-                style: TextStyle(
-                  color: Colors.white,
+                child: Text(
+                  'Yes',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),

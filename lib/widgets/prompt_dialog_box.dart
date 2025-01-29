@@ -35,6 +35,7 @@ class PromptDialogBox extends StatelessWidget {
             title,
             style: TextStyle(
               fontWeight: FontWeight.bold,
+              fontSize: 20
             ),
           ),
         ],
@@ -42,7 +43,7 @@ class PromptDialogBox extends StatelessWidget {
       content: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(content),
+          Flexible(child: Text(content)),
         ],
       ),
       actions: [

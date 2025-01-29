@@ -110,7 +110,7 @@ class AttendanceViewModel extends ChangeNotifier {
       UserAttendanceModel attendance = UserAttendanceModel(
         id: _firestore.collection('attendance').doc().id,
         userId: userModel.uid,
-        userName: userModel.displayName,
+        userName: userModel.userName,
         attendanceStatus: attendanceStatus,
         attendanceDate: DateFormat('yyyy-MM-dd').format(_checkInTime!),
         timeIn: DateFormat('HH:mm:ss').format(_checkInTime!),

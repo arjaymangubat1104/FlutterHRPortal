@@ -82,22 +82,22 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
               const SizedBox(height: 20),
-              SingleChildScrollView(
-                child: SizedBox(
-                  height: 500,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: profileViewModel.profileInfoList.length,
-                    itemBuilder: (context, index) {
-                      return ProfileInfoTile(
-                          title: profileViewModel.profileInfoList[index].title, 
-                          icon: profileViewModel.profileInfoList[index].icon,
-                          value: profileViewModel.profileInfoList[index].value,
-                      );
-                    }
+              Expanded(
+                child: SingleChildScrollView(
+                  child: SizedBox(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: profileViewModel.profileInfoList.length,
+                      itemBuilder: (context, index) {
+                        return ProfileInfoTile(
+                            title: profileViewModel.profileInfoList[index].title, 
+                            icon: profileViewModel.profileInfoList[index].icon,
+                            value: profileViewModel.profileInfoList[index].value,
+                        );
+                      }
+                    ),
                   ),
                 ),
-               
               ),
             ],
           ),

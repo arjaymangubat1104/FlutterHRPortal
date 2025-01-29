@@ -387,204 +387,215 @@ class _AttendancePageState extends State<AttendancePage>
                 top: 20,
                 left: 20,
                 right: 20,
-                child: Column(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Material(
+                bottom: 0,
+                child: LayoutBuilder(
+                  builder: (context, constrains) {
+                    return SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constrains.maxHeight,
+                        ),
                         child: Column(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Material(
+                                child: Column(
                                   children: [
-                                    Text(
-                                      presentCounterCalendar.toString(),
-                                      style: TextStyle(
-                                        fontSize: 30,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Present',
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey[600]),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              presentCounterCalendar.toString(),
+                                              style: TextStyle(
+                                                fontSize: 30,
+                                                color: Colors.green,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Present',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.grey[600]),
+                                            ),
+                                          ],
+                                        ),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              lateUndertimeCounterCalendar.toString(),
+                                              style: TextStyle(
+                                                  fontSize: 30, color: Colors.orange),
+                                            ),
+                                            Text(
+                                              'Late/Undertime',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.grey[600]),
+                                            ),
+                                          ],
+                                        ),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              absentCounter.toString(),
+                                              style: TextStyle(
+                                                  fontSize: 30, color: Colors.red),
+                                            ),
+                                            Text(
+                                              'Absent',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.grey[600]),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                                Column(
-                                  children: [
-                                    Text(
-                                      lateUndertimeCounterCalendar.toString(),
-                                      style: TextStyle(
-                                          fontSize: 30, color: Colors.orange),
-                                    ),
-                                    Text(
-                                      'Late/Undertime',
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey[600]),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    Text(
-                                      absentCounter.toString(),
-                                      style: TextStyle(
-                                          fontSize: 30, color: Colors.red),
-                                    ),
-                                    Text(
-                                      'Absent',
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey[600]),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                              ),
                             ),
+                            CalendarTile(
+                              events:
+                                  widget.attendanceViewModel.getEventsForDay(context),
+                              onDaySelectedCallback: (DateTime day) async {
+                                setState(() {
+                                  selectedDay = day;
+                                });
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Activity',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: themeViewModel.currentTheme.textColor),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Material(
+                                color: themeViewModel.currentTheme.themeColor,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 20),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Date: ',
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                color: themeViewModel
+                                                    .currentTheme.boxTextColor),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                              widget.attendanceViewModel
+                                                          .getAttendanceIndex(
+                                                              selectedDay) ==
+                                                      -1
+                                                  ? ''
+                                                  : DateFormat('EEEE, d MMMM yyyy')
+                                                      .format(DateTime.parse(
+                                                          widget.attendanceViewModel.activityAttendanceListCalendar[
+                                                                  widget
+                                                                      .attendanceViewModel
+                                                                      .getAttendanceIndex(
+                                                                          selectedDay)]
+                                                              .attendanceDate!)),
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: themeViewModel
+                                                      .currentTheme.boxTextColor))
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Time in: ',
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                color: themeViewModel
+                                                    .currentTheme.boxTextColor),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                              widget.attendanceViewModel
+                                                          .getAttendanceIndex(
+                                                              selectedDay) ==
+                                                      -1
+                                                  ? ''
+                                                  : widget.attendanceViewModel.activityAttendanceListCalendar[
+                                                              widget.attendanceViewModel
+                                                                  .getAttendanceIndex(
+                                                                      selectedDay)]
+                                                          .timeIn ??
+                                                      '',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: themeViewModel
+                                                      .currentTheme.boxTextColor))
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Time out: ',
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                color: themeViewModel
+                                                    .currentTheme.boxTextColor),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                              widget.attendanceViewModel
+                                                          .getAttendanceIndex(
+                                                              selectedDay) ==
+                                                      -1
+                                                  ? ''
+                                                  : widget.attendanceViewModel.activityAttendanceListCalendar[
+                                                              widget.attendanceViewModel
+                                                                  .getAttendanceIndex(
+                                                                      selectedDay)]
+                                                          .timeOut ??
+                                                      '',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: themeViewModel
+                                                      .currentTheme.boxTextColor))
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
                           ],
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    CalendarTile(
-                      events:
-                          widget.attendanceViewModel.getEventsForDay(context),
-                      onDaySelectedCallback: (DateTime day) async {
-                        setState(() {
-                          selectedDay = day;
-                        });
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Activity',
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: themeViewModel.currentTheme.textColor),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Material(
-                        color: themeViewModel.currentTheme.themeColor,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Date: ',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: themeViewModel
-                                            .currentTheme.boxTextColor),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                      widget.attendanceViewModel
-                                                  .getAttendanceIndex(
-                                                      selectedDay) ==
-                                              -1
-                                          ? ''
-                                          : DateFormat('EEEE, d MMMM yyyy')
-                                              .format(DateTime.parse(
-                                                  widget.attendanceViewModel.activityAttendanceListCalendar[
-                                                          widget
-                                                              .attendanceViewModel
-                                                              .getAttendanceIndex(
-                                                                  selectedDay)]
-                                                      .attendanceDate!)),
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: themeViewModel
-                                              .currentTheme.boxTextColor))
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Time in: ',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: themeViewModel
-                                            .currentTheme.boxTextColor),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                      widget.attendanceViewModel
-                                                  .getAttendanceIndex(
-                                                      selectedDay) ==
-                                              -1
-                                          ? ''
-                                          : widget.attendanceViewModel.activityAttendanceListCalendar[
-                                                      widget.attendanceViewModel
-                                                          .getAttendanceIndex(
-                                                              selectedDay)]
-                                                  .timeIn ??
-                                              '',
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: themeViewModel
-                                              .currentTheme.boxTextColor))
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Time out: ',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: themeViewModel
-                                            .currentTheme.boxTextColor),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                      widget.attendanceViewModel
-                                                  .getAttendanceIndex(
-                                                      selectedDay) ==
-                                              -1
-                                          ? ''
-                                          : widget.attendanceViewModel.activityAttendanceListCalendar[
-                                                      widget.attendanceViewModel
-                                                          .getAttendanceIndex(
-                                                              selectedDay)]
-                                                  .timeOut ??
-                                              '',
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: themeViewModel
-                                              .currentTheme.boxTextColor))
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
+                    );
+                  }
                 ),
               ),
               if (_showSpinner)
