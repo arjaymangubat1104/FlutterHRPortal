@@ -357,6 +357,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.3"
+  timeline_list:
+    dependency: "direct main"
+    description:
+      name: timeline_list
+      sha256: "2d6a59f2e8047ab4948c68ff497d32f75078e137ebda4dfb6661a9a94ffad47f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   timezone:
     dependency: transitive
     description:

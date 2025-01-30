@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:timeline_list/timeline_list.dart';
 import '../viewmodel/attendance_view_model.dart';
 import '../viewmodel/theme_view_model.dart';
 
@@ -35,6 +35,16 @@ class AttendaceHistoryTile extends StatelessWidget {
     final themeViewModel = Provider.of<ThemeViewModel>(context);
     final attendanceViewModel = Provider.of<AttendanceViewModel>(context);
 
+    var checkIcon = Container(
+        width: 16,
+        height: 16,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.green),
+        child: Icon(Icons.check, color: Colors.white, size: 12));
+    var emptyIcon = Container(
+        width: 16,
+        height: 16,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey));
+
     Color changeColor(String value) {
       switch (value) {
         case 'Present':
@@ -48,9 +58,12 @@ class AttendaceHistoryTile extends StatelessWidget {
       }
     }
 
-    Map<String, int> totalTimeComponents = attendanceViewModel.getDurationComponents(totalTime);
-    Map<String, int> lateHoursComponents = attendanceViewModel.getDurationComponents(lateTime);
-    Map<String, int> underTimeComponents = attendanceViewModel.getDurationComponents(underTime);
+    Map<String, int> totalTimeComponents =
+        attendanceViewModel.getDurationComponents(totalTime);
+    Map<String, int> lateHoursComponents =
+        attendanceViewModel.getDurationComponents(lateTime);
+    Map<String, int> underTimeComponents =
+        attendanceViewModel.getDurationComponents(underTime);
 
     return Padding(
       padding: const EdgeInsets.only(top: 10),
@@ -71,133 +84,90 @@ class AttendaceHistoryTile extends StatelessWidget {
                 Text(
                   attendanceStatus,
                   style: TextStyle(
-                    color: changeColor(attendanceStatus),
-                    fontWeight: FontWeight.bold,
-                  ),
+                      color: changeColor(attendanceStatus),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12),
                 )
               ],
             ),
             childrenPadding: EdgeInsets.only(bottom: 15, left: 15),
             children: [
-              Row(
-                children: [
-                  Text(
-                    'Date:',
-                    style: TextStyle(
-                        color: themeViewModel.currentTheme.textColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    dropDownDate,
-                    style: TextStyle(
-                      color: Colors.black,
+              Column(children: [
+                Timeline.builder(
+                  context: context,
+                  markerCount: 2,
+                  properties: TimelineProperties(
+                      iconAlignment: MarkerIconAlignment.top,
+                      iconSize: 16,
+                      timelinePosition: TimelinePosition.start),
+                  markerBuilder: (context, index) => Marker(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                      child: Column(
+                        children: [
+                          Text(
+                            index == 0 ? 'Timed in' : timeOut == '' ? '' : 'Timed out',
+                            style: TextStyle(
+                                color: index == 0 ? Colors.green : Colors.red,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            index == 0 ? timeIn : timeOut,
+                            style: TextStyle(
+                              color: themeViewModel.currentTheme.textColor,
+                              fontSize: 13,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
+                    icon: index >= 1 && timeOut == '' ? emptyIcon : checkIcon,
+                    position: MarkerPosition.left,
                   ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(
-                    'Time In:',
-                    style: TextStyle(
-                        color: themeViewModel.currentTheme.textColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    timeIn,
-                    style: TextStyle(
-                      color: Colors.black,
+                ),
+              ]),
+              if (timeOut != '') ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          'Total Working Hours',
+                          style: TextStyle(
+                            color: themeViewModel.currentTheme.themeColor,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(
-                    'Time Out:',
-                    style: TextStyle(
-                        color: themeViewModel.currentTheme.textColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    timeOut,
-                    style: TextStyle(
-                      color: Colors.black,
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      color: themeViewModel.currentTheme.themeColor,
+                      size: 16,
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(
-                    'Total Time: ',
-                    style: TextStyle(
-                        color: themeViewModel.currentTheme.textColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                     totalTime == '' ? '' :'${totalTimeComponents['hours']} h ${totalTimeComponents['minutes']} m',
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(
-                    'Late: ',
-                    style: TextStyle(
-                        color: themeViewModel.currentTheme.textColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    lateTime == '' ? '' : '${lateHoursComponents['hours']} h ${lateHoursComponents['minutes']} m',
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(
-                    'Undertime: ',
-                    style: TextStyle(
-                        color: themeViewModel.currentTheme.textColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    underTime == '' ? '' : '${underTimeComponents['hours']} h ${underTimeComponents['minutes']} m',
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(
-                    'Overtime: ',
-                    style: TextStyle(
-                        color: themeViewModel.currentTheme.textColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    totalTime == '' ? '' : '${totalTimeComponents['hours']} h ${totalTimeComponents['minutes']} m',
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
+                    const SizedBox(width: 10),
+                    Text(
+                      totalTime == ''
+                          ? ''
+                          : '${totalTimeComponents['hours']} h ${totalTimeComponents['minutes']} m',
+                      style: TextStyle(
+                          color: themeViewModel.currentTheme.textColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12),
+                    )
+                  ],
+                )
+              ]
+              
             ],
           ),
         ),
