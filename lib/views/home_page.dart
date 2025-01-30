@@ -121,13 +121,15 @@ class _HomePageState extends State<HomePage> {
                                             Text(
                                               userModel?.firstName ?? 'User',
                                               style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold),
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold
+                                                ),
                                             ),
                                             Text(
                                               ' - ${userModel?.uid ?? 'uid'}',
                                               style: TextStyle(
                                                 fontSize: 10,
+                                                color: Colors.grey,
                                               ),
                                             ),
                                           ],

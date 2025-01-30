@@ -39,7 +39,18 @@ class TimeDateViewModel extends ChangeNotifier {
 
   String formatDateString(String dateString) {
     DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
-    return DateFormat('EEEE, d MMMM yyyy').format(dateTime);
+    return DateFormat('EEE, d MMM').format(dateTime);
+  }
+
+  //convert time string 24hr to 12hr
+  String convertTimeto12hrFormat(String time) {
+    try {
+      final format = DateFormat.jm(); //"6:00:00 PM"
+      final dateTime = DateFormat('HH:mm:ss').parse(time);
+      return format.format(dateTime);
+    } catch (e) {
+      return '';
+    }
   }
 
   void _updateTime() {

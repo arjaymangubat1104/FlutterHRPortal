@@ -346,46 +346,48 @@ class _AttendancePageState extends State<AttendancePage>
                           ),
                         ),
                       ),
-                      SingleChildScrollView(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: attendanceListByYearAndMonth.length,
-                          itemBuilder: (context, index) {
-                            return AttendaceHistoryTile(
-                              date: widget.timeDateViewModel.formatDateString(
-                                  attendanceListByYearAndMonth[index]
-                                      .attendanceDate
-                                      .toString()),
-                              attendanceStatus:
-                                  attendanceListByYearAndMonth[index]
-                                      .attendanceStatus
-                                      .toString(),
-                              dropDownDate: widget.timeDateViewModel
-                                  .formatDateString(
-                                      attendanceListByYearAndMonth[index]
-                                          .attendanceDate
-                                          .toString()),
-                              timeIn: attendanceListByYearAndMonth[index]
-                                  .timeIn
-                                  .toString(),
-                              timeOut: attendanceListByYearAndMonth[index]
-                                  .timeOut
-                                  .toString(),
-                              status: attendanceListByYearAndMonth[index]
-                                  .attendanceStatus
-                                  .toString(),
-                              totalTime: attendanceListByYearAndMonth[index]
-                                      .totalTime ??
-                                  '',
-                              lateTime: attendanceListByYearAndMonth[index]
-                                      .lateTime ??
-                                  '',
-                              underTime: attendanceListByYearAndMonth[index]
-                                      .underTime ??
-                                  '',
-                            );
-                          },
-                        ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: attendanceListByYearAndMonth.length,
+                        itemBuilder: (context, index) {
+                          return AttendaceHistoryTile(
+                            date: widget.timeDateViewModel.formatDateString(
+                                attendanceListByYearAndMonth[index]
+                                    .attendanceDate
+                                    .toString()),
+                            attendanceStatus:
+                                attendanceListByYearAndMonth[index]
+                                    .attendanceStatus
+                                    .toString(),
+                            dropDownDate: widget.timeDateViewModel
+                                .formatDateString(
+                                    attendanceListByYearAndMonth[index]
+                                        .attendanceDate
+                                        .toString()),
+                            timeIn: widget.timeDateViewModel
+                                .convertTimeto12hrFormat(
+                                    attendanceListByYearAndMonth[index]
+                                        .timeIn
+                                        .toString()),
+                            timeOut: widget.timeDateViewModel
+                                .convertTimeto12hrFormat(
+                                    attendanceListByYearAndMonth[index]
+                                        .timeOut
+                                        .toString()),
+                            status: attendanceListByYearAndMonth[index]
+                                .attendanceStatus
+                                .toString(),
+                            totalTime: attendanceListByYearAndMonth[index]
+                                    .totalTime ??
+                                '',
+                            lateTime: attendanceListByYearAndMonth[index]
+                                    .lateTime ??
+                                '',
+                            underTime: attendanceListByYearAndMonth[index]
+                                    .underTime ??
+                                '',
+                          );
+                        },
                       ),
                     ],
                   )),

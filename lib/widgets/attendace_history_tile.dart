@@ -79,7 +79,9 @@ class AttendaceHistoryTile extends StatelessWidget {
                   date,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: themeViewModel.currentTheme.textColor),
+                      color: themeViewModel.currentTheme.textColor,
+                      fontSize: 12
+                    ),
                 ),
                 Text(
                   attendanceStatus,
@@ -106,18 +108,18 @@ class AttendaceHistoryTile extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            index == 0 ? 'Timed in' : timeOut == '' ? '' : 'Timed out',
+                            index == 0 ? 'In' : timeOut == '' ? '' : 'Out',
                             style: TextStyle(
                                 color: index == 0 ? Colors.green : Colors.red,
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold),
                           ),
-                          const SizedBox(height: 5),
                           Text(
                             index == 0 ? timeIn : timeOut,
                             style: TextStyle(
                               color: themeViewModel.currentTheme.textColor,
                               fontSize: 13,
+                              fontWeight: FontWeight.bold
                             ),
                           )
                         ],
