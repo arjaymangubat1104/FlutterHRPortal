@@ -38,7 +38,7 @@ class ThemeManager {
   );
 
   static final ThemeModel customTheme = ThemeModel(
-    themeColor: Colors.teal[400]!,
+    themeColor: Colors.teal,
     textColor: Colors.black,
     boxTextColor: Colors.white,
     backgroundColor: Colors.white,

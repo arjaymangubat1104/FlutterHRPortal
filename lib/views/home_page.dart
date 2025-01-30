@@ -132,38 +132,38 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 10),
-                                        AnimatedAnalogClock(
-                                          location: 'Asia/Manila',
-                                          dialType: DialType.numbers,
-                                          size: 125,
-                                          // Gradient Background if you want
-                                          backgroundColor: Colors.lightBlue,
-                                          hourHandColor: Colors.black,
-                                          minuteHandColor: Colors.black,
-                                          secondHandColor: Colors.red,
-                                          centerDotColor: Colors.amber,
-                                          hourDashColor: Colors.lightBlue,
-                                          minuteDashColor: Colors.blueAccent,
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              timeDateViewModel.formattedDateTime,
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                        //const SizedBox(height: 10),
+                                        // AnimatedAnalogClock(
+                                        //   location: 'Asia/Manila',
+                                        //   dialType: DialType.numbers,
+                                        //   size: 125,
+                                        //   // Gradient Background if you want
+                                        //   backgroundColor: Colors.lightBlue,
+                                        //   hourHandColor: Colors.black,
+                                        //   minuteHandColor: Colors.black,
+                                        //   secondHandColor: Colors.red,
+                                        //   centerDotColor: Colors.amber,
+                                        //   hourDashColor: Colors.lightBlue,
+                                        //   minuteDashColor: Colors.blueAccent,
+                                        // ),
+                                        // const SizedBox(height: 10),
+                                        // Row(
+                                        //   mainAxisAlignment: MainAxisAlignment.center,
+                                        //   children: [
+                                        //     Text(
+                                        //       timeDateViewModel.formattedDateTime,
+                                        //       style: TextStyle(
+                                        //         fontSize: 20,
+                                        //       ),
+                                        //     ),
+                                        //   ],
+                                        // ),
                                         const SizedBox(height: 10),
                                         IgnorePointer(
                                           child: DatePicker(
                                             timeDateViewModel.mondayOfCurrentWeek,
                                             initialSelectedDate: DateTime.now(),
-                                            selectionColor: Colors.red,
+                                            selectionColor: themeViewModel.currentTheme.themeColor,
                                             selectedTextColor: Colors.white,
                                             monthTextStyle: TextStyle(fontSize: 10),
                                             dayTextStyle: TextStyle(fontSize: 10),
