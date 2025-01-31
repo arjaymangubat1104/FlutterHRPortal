@@ -6,7 +6,7 @@ class ProfileViewModel extends ChangeNotifier{
 
   final List<ProfileInfoModel> _profileInfoList = [
     ProfileInfoModel(
-      icon: Icons.person,
+      imgPath: 'lib/assets/basic_info.png',
       title: 'Basic Information',
       value: {
         'First Name': '',
@@ -19,7 +19,7 @@ class ProfileViewModel extends ChangeNotifier{
       }
     ),
     ProfileInfoModel(
-      icon: Icons.work,
+      imgPath: 'lib/assets/work_info.png',
       title: 'Work Information',
       value: {
         'Company': '',
@@ -40,7 +40,7 @@ class ProfileViewModel extends ChangeNotifier{
       }
     ),
     ProfileInfoModel(
-      icon: Icons.location_city,
+      imgPath: 'lib/assets/government_info.png',
       title: 'Government Information',
       value: {
         'SSS No.': '',
@@ -51,14 +51,14 @@ class ProfileViewModel extends ChangeNotifier{
       }
     ),
     ProfileInfoModel(
-      icon: Icons.school, 
+      imgPath: 'lib/assets/education_info.png',
       title: 'Eduational Background', 
       value: {
 
       }
     ),
     ProfileInfoModel(
-      icon: Icons.phone, 
+      imgPath: 'lib/assets/contact_info.png',
       title: 'Contact Information', 
       value: {
         'Home Address': '',

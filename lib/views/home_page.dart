@@ -1,12 +1,10 @@
 import 'package:animated_analog_clock/animated_analog_clock.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_attendance_system/views/attendance_page.dart';
+import 'package:flutter_attendance_system/views/button_page/attendance_page.dart';
 import 'package:flutter_attendance_system/widgets/confimation_dialog_box.dart';
-import 'package:flutter_attendance_system/widgets/loading_indicator.dart';
 import 'package:flutter_attendance_system/widgets/prompt_dialog_box.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import '../viewmodel/attendance_view_model.dart';
 import '../viewmodel/auth_view_model.dart';
@@ -50,26 +48,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.logout,
-              color: themeViewModel.currentTheme.boxTextColor,
-            ),
-            onPressed: () async {
-              setState(() {
-                _showSpinner = true;
-              });
-              try {
-                await authViewModel.logout(context);
-              } finally {
-                setState(() {
-                  _showSpinner = false;
-                });
-              }
-            },
-          ),
-        ],
+        
       ),
       body: Stack(
         children: [
@@ -120,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                                             MainAxisAlignment.start,
                                         children: [
                                           Text(
-                                            userModel?.firstName ?? 'User',
+                                            userModel?.userName ?? 'User',
                                             style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.bold),

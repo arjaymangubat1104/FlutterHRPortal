@@ -8,7 +8,7 @@ import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-import '../viewmodel/theme_view_model.dart';
+import '../../viewmodel/theme_view_model.dart';
 
 class AttendancePage extends StatefulWidget {
   final AttendanceViewModel attendanceViewModel;
@@ -146,6 +146,7 @@ class _AttendancePageState extends State<AttendancePage>
   @override
   Widget build(BuildContext context) {
     final themeViewModel = Provider.of<ThemeViewModel>(context);
+    final timeDateViewModel = Provider.of<TimeDateViewModel>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: themeViewModel.currentTheme.themeColor,
@@ -587,14 +588,13 @@ class _AttendancePageState extends State<AttendancePage>
                                                             selectedDay) ==
                                                     -1
                                                 ? ''
-                                                : widget
+                                                : timeDateViewModel.convertTimeto12hrFormat(widget
                                                         .attendanceViewModel
                                                         .activityAttendanceListCalendar[widget
                                                             .attendanceViewModel
                                                             .getAttendanceIndex(
                                                                 selectedDay)]
-                                                        .timeIn ??
-                                                    '',
+                                                        .timeIn.toString()),
                                             style: TextStyle(
                                                 fontSize: 15,
                                                 color: themeViewModel
@@ -620,14 +620,13 @@ class _AttendancePageState extends State<AttendancePage>
                                                             selectedDay) ==
                                                     -1
                                                 ? ''
-                                                : widget
+                                                : timeDateViewModel.convertTimeto12hrFormat(widget
                                                         .attendanceViewModel
                                                         .activityAttendanceListCalendar[widget
                                                             .attendanceViewModel
                                                             .getAttendanceIndex(
                                                                 selectedDay)]
-                                                        .timeOut ??
-                                                    '',
+                                                        .timeOut.toString()),
                                             style: TextStyle(
                                                 fontSize: 15,
                                                 color: themeViewModel

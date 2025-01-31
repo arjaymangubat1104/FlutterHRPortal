@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_attendance_system/viewmodel/auth_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/profile_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/theme_view_model.dart';
-import 'package:flutter_attendance_system/widgets/custom_elevated_button.dart';
 import 'package:flutter_attendance_system/widgets/profile_info_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -31,15 +31,38 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     final themeViewModel = Provider.of<ThemeViewModel>(context);
     final profileViewModel = Provider.of<ProfileViewModel>(context);  
+    final authViewModel = Provider.of<AuthViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My Profile',
+          'Profile',
           style: TextStyle(
             color: themeViewModel.currentTheme.boxTextColor,
+            fontWeight: FontWeight.bold
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.logout,
+              color: themeViewModel.currentTheme.boxTextColor,
+            ),
+            onPressed: () async {
+              await authViewModel.logout(context);
+              // setState(() {
+              //   _showSpinner = true;
+              // });
+              // try {
+                
+              // } finally {
+              //   setState(() {
+              //     _showSpinner = false;
+              //   });
+              // }
+            },
+          ),
+        ],
         backgroundColor: themeViewModel.currentTheme.themeColor,
       ),
       body: Stack(
@@ -57,7 +80,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           Column(
             children: [
-              const SizedBox(height: 25),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -66,19 +88,38 @@ class _ProfilePageState extends State<ProfilePage> {
                       border: Border.all(
                         color: themeViewModel
                             .currentTheme.boxTextColor, // Outline color
-                        width: 4.0, // Outline width
+                        width: 2.0, // Outline width
                       ),
                       shape: BoxShape.circle, // Circular outline
                     ),
                     child: ClipOval(
                       child: Image.asset(
                         'lib/assets/profile.png',
-                        height: 150,
-                        width: 150,
+                        height: 75,
+                        width: 75,
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
+                  const SizedBox(width: 20),
+                  Column(
+                    children: [
+                      Text(
+                        '${authViewModel.userModel?.firstName ?? ''} ${authViewModel.userModel?.lastName ?? ''}',
+                        style: TextStyle(
+                          color: themeViewModel.currentTheme.boxTextColor,
+                          fontSize: 20,
+                        ),
+                      ),
+                      Text(
+                        authViewModel.userModel?.email ?? '',
+                        style: TextStyle(
+                          color: themeViewModel.currentTheme.boxTextColor,
+                          fontSize: 9,
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
               const SizedBox(height: 20),
@@ -89,7 +130,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   itemBuilder: (context, index) {
                     return ProfileInfoTile(
                         title: profileViewModel.profileInfoList[index].title, 
-                        icon: profileViewModel.profileInfoList[index].icon,
+                        imgPath: profileViewModel.profileInfoList[index].imgPath,
                         value: profileViewModel.profileInfoList[index].value,
                     );
                   }

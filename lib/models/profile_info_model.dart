@@ -1,12 +1,11 @@
-import 'package:flutter/material.dart';
 
 class ProfileInfoModel {
-  final IconData icon;
+  final String imgPath;
   final String title;
   final Map<String, String>? value;
 
   ProfileInfoModel({
-    required this.icon,
+    required this.imgPath,
     required this.title,
     required this.value,
   });
