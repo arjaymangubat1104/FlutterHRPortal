@@ -92,7 +92,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                 )
               ],
             ),
-            childrenPadding: EdgeInsets.only(bottom: 15, left: 15),
+            childrenPadding: EdgeInsets.only(bottom: 10, left: 15),
             children: [
               Column(children: [
                 Timeline.builder(

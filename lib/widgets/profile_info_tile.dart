@@ -28,16 +28,15 @@ class ProfileInfoTile extends StatelessWidget{
             child: ExpansionTile(
               leading: Icon(
                 icon,
-                color: themeViewModel.currentTheme.themeColor,
               ),
               title: Text(
                 title,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 15,
                   color: themeViewModel.currentTheme.textColor,
                 ),
               ),
-              childrenPadding: EdgeInsets.only(bottom: 5, left: 15),
+              childrenPadding: EdgeInsets.only(top: 0),
               children: value?.entries.map((entry) => Container(
                 decoration: BoxDecoration(
                   border: Border(
@@ -51,11 +50,17 @@ class ProfileInfoTile extends StatelessWidget{
                   title: Text(
                     entry.key,
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 12,
                       fontWeight: FontWeight.bold
                     ),
                   ),
-                  subtitle: Text(entry.value),
+                  subtitle: Text(
+                    entry.value,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey[600],
+                    ),
+                  ),
                 ),
               )).toList() ?? []
             ),
