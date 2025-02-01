@@ -1,5 +1,5 @@
-import 'package:animated_analog_clock/animated_analog_clock.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/views/button_page/attendance_page.dart';
 import 'package:flutter_attendance_system/widgets/confimation_dialog_box.dart';
@@ -34,7 +34,6 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         backgroundColor: themeViewModel.currentTheme.themeColor,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -44,11 +43,143 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: themeViewModel.currentTheme.boxTextColor),
+                  color: themeViewModel.currentTheme.boxTextColor
+                ),
             ),
           ],
         ),
-        
+        iconTheme: IconThemeData(color: themeViewModel.currentTheme.boxTextColor),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/notification');
+            },
+            icon: Icon(
+              Icons.notifications,
+            ),
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        backgroundColor: themeViewModel.currentTheme.backgroundColor,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: themeViewModel.currentTheme.themeColor,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: themeViewModel
+                            .currentTheme.boxTextColor, // Outline color
+                        width: 2.0, // Outline width
+                      ),
+                      shape: BoxShape.circle, // Circular outline
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'lib/assets/profile.png',
+                        height: 65,
+                        width: 65,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    '${userModel?.firstName ?? ''} ${userModel?.lastName ?? ''}',
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: themeViewModel.currentTheme.boxTextColor),
+                  ),
+                  Text(
+                    userModel?.email ?? 'email',
+                    style: TextStyle(
+                        fontSize: 10,
+                        color: themeViewModel.currentTheme.boxTextColor),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.person_outline,
+                color: themeViewModel.currentTheme.themeColor,
+              ),
+              title: Text(
+                'My Profile',
+                style: TextStyle(
+                    fontSize: 15,
+                    color: themeViewModel.currentTheme.textColor),
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, '/profile');
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.work_outline,
+                color: themeViewModel.currentTheme.themeColor,
+              ),
+              title: Text(
+                'Employment Details',
+                style: TextStyle(
+                    fontSize: 15,
+                    color: themeViewModel.currentTheme.textColor),
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, '/theme');
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.lock_outline,
+                color: themeViewModel.currentTheme.themeColor,
+              ),
+              title: Text(
+                'Change Password',
+                style: TextStyle(
+                    fontSize: 15,
+                    color: themeViewModel.currentTheme.textColor),
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, '/profile');
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.logout,
+                color: themeViewModel.currentTheme.themeColor,
+              ),
+              title: Text(
+                'Logout',
+                style: TextStyle(
+                    fontSize: 15,
+                    color: themeViewModel.currentTheme.textColor),
+              ),
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (context) => ConfimationDialogBox(
+                          title: 'Confirm Logout',
+                          content: 'Are you sure you want to logout?',
+                          onYes: () async {
+                            await authViewModel.logout(context);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, '/login', (route) => false);
+                          },
+                          onNo: () => Navigator.pop(context),
+                        ));
+              },
+            ),
+          ],
+        ),
       ),
       body: Stack(
         children: [
@@ -349,17 +480,6 @@ class _HomePageState extends State<HomePage> {
                                     ],
                                   ),
                                 ),
-                                Positioned(
-                                    top: 0,
-                                    right: 0,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Image.asset(
-                                        'lib/assets/profile.png',
-                                        width: 50,
-                                        height: 50,
-                                      ),
-                                    )),
                               ],
                             ),
                           ),

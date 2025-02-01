@@ -36,7 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Profile',
+          'My Profile',
           style: TextStyle(
             color: themeViewModel.currentTheme.boxTextColor,
             fontWeight: FontWeight.bold
