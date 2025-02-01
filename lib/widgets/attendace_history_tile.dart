@@ -80,8 +80,7 @@ class AttendaceHistoryTile extends StatelessWidget {
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: themeViewModel.currentTheme.textColor,
-                      fontSize: 12
-                    ),
+                      fontSize: 12),
                 ),
                 Text(
                   attendanceStatus,
@@ -94,8 +93,23 @@ class AttendaceHistoryTile extends StatelessWidget {
             ),
             childrenPadding: EdgeInsets.only(bottom: 10, left: 15),
             children: [
-              Column(children: [
+              Column(
+                children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Details',
+                      style: TextStyle(
+                          color: themeViewModel.currentTheme.textColor,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
                 Timeline.builder(
+                  physics: NeverScrollableScrollPhysics(),
                   context: context,
                   markerCount: 2,
                   properties: TimelineProperties(
@@ -108,7 +122,11 @@ class AttendaceHistoryTile extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            index == 0 ? 'In' : timeOut == '' ? '' : 'Out',
+                            index == 0
+                                ? 'In'
+                                : timeOut == ''
+                                    ? ''
+                                    : 'Out',
                             style: TextStyle(
                                 color: index == 0 ? Colors.green : Colors.red,
                                 fontSize: 10,
@@ -117,10 +135,9 @@ class AttendaceHistoryTile extends StatelessWidget {
                           Text(
                             index == 0 ? timeIn : timeOut,
                             style: TextStyle(
-                              color: themeViewModel.currentTheme.textColor,
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold
-                            ),
+                                color: themeViewModel.currentTheme.textColor,
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold),
                           )
                         ],
                       ),
@@ -144,32 +161,30 @@ class AttendaceHistoryTile extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.access_time,
+                              color: themeViewModel.currentTheme.themeColor,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              totalTime == ''
+                                  ? ''
+                                  : '${totalTimeComponents['hours']} h ${totalTimeComponents['minutes']} m',
+                              style: TextStyle(
+                                  color: themeViewModel.currentTheme.textColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12),
+                            )
+                          ],
+                        )
                       ],
                     ),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.access_time,
-                      color: themeViewModel.currentTheme.themeColor,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      totalTime == ''
-                          ? ''
-                          : '${totalTimeComponents['hours']} h ${totalTimeComponents['minutes']} m',
-                      style: TextStyle(
-                          color: themeViewModel.currentTheme.textColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12),
-                    )
-                  ],
-                )
               ]
-              
             ],
           ),
         ),

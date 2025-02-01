@@ -385,7 +385,7 @@ class AttendanceViewModel extends ChangeNotifier {
   }
 
   Future<List<UserAttendanceModel>> fetchAllUserAttendanceByYearAndMonth(
-      {required int year, required int month, int? cutoffs}) async {
+      {required int year, int? month, int? cutoffs}) async {
     try {
       List<UserAttendanceModel> attendanceListByYearAndMonth = [];
       UserModel? userModel = authViewModel.userModel;
@@ -401,9 +401,18 @@ class AttendanceViewModel extends ChangeNotifier {
             }).toList();
         notifyListeners();
       });
-      DateTime startDate = DateTime(year, month, 1); // Start date of the month
-      DateTime endDate = DateTime(year, month + 1, 0); // Last day of the month
-      if (cutoffs != null) {
+      DateTime startDate;
+      DateTime endDate;
+      if(month == null){
+        startDate = DateTime(year, 1, 1);
+        endDate = DateTime(year, 12, 31);
+      }
+      else{
+        startDate = DateTime(year, month, 1); // Start date of the month
+        endDate = DateTime(year, month + 1, 0); // Last day of the month
+      }
+      
+      if (cutoffs != null && month != null) {
         startDate = cutoffs == 15
             ? DateTime(year, month, 1)
             : DateTime(year, month, 16); // Start date of the month
@@ -411,6 +420,7 @@ class AttendanceViewModel extends ChangeNotifier {
             ? DateTime(year, month, 15)
             : DateTime(year, month + 1, 0); // Last day of the month
       }
+
       QuerySnapshot attendanceQuery = await _firestore
           .collection('attendance')
           .where('user_id', isEqualTo: userModel.uid)
@@ -432,6 +442,41 @@ class AttendanceViewModel extends ChangeNotifier {
       return [];
     }
   }
+
+  //create a method that count the incomplete attendance for the whole month
+  Future<int> countIncompleteAttendance(DateTime date) async {
+    try {
+      UserModel? userModel = authViewModel.userModel;
+      if (userModel == null) {
+        throw Exception("User not logged in");
+      }
+      DateTime startDate = DateTime(date.year, date.month, 1);
+      DateTime endDate = DateTime(date.year, date.month + 1, 0);
+      QuerySnapshot attendanceQuery = await _firestore
+          .collection('attendance')
+          .where('user_id', isEqualTo: userModel.uid)
+          .where('attendance_date',
+              isGreaterThanOrEqualTo: DateFormat('yyyy-MM-dd').format(startDate))
+          .where('attendance_date',
+              isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
+          .get();
+      int count = 0;
+      for (DocumentSnapshot doc in attendanceQuery.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        if (data['time_in'] != null && data['time_in'].isNotEmpty) {
+          if (data['time_out'] == null || data['time_out'].isEmpty) {
+            count++;
+          }
+        }
+      }
+      return count;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return 0;
+    }
+  }
+
 
   List<Object?> Function(DateTime) getEventsForDay(BuildContext context) {
     return (DateTime day) {
