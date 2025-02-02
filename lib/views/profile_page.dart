@@ -6,17 +6,15 @@ import 'package:flutter_attendance_system/widgets/profile_info_tile.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
-
   const ProfilePage({
     super.key,
-    });
+  });
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   @override
   void initState() {
     super.initState();
@@ -30,7 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final themeViewModel = Provider.of<ThemeViewModel>(context);
-    final profileViewModel = Provider.of<ProfileViewModel>(context);  
+    final profileViewModel = Provider.of<ProfileViewModel>(context);
     final authViewModel = Provider.of<AuthViewModel>(context);
 
     return Scaffold(
@@ -38,31 +36,9 @@ class _ProfilePageState extends State<ProfilePage> {
         title: Text(
           'My Profile',
           style: TextStyle(
-            color: themeViewModel.currentTheme.boxTextColor,
-            fontWeight: FontWeight.bold
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.logout,
               color: themeViewModel.currentTheme.boxTextColor,
-            ),
-            onPressed: () async {
-              await authViewModel.logout(context);
-              // setState(() {
-              //   _showSpinner = true;
-              // });
-              // try {
-                
-              // } finally {
-              //   setState(() {
-              //     _showSpinner = false;
-              //   });
-              // }
-            },
-          ),
-        ],
+              fontWeight: FontWeight.bold),
+        ),
         backgroundColor: themeViewModel.currentTheme.themeColor,
       ),
       body: Stack(
@@ -125,16 +101,16 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 20),
               Expanded(
                 child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: profileViewModel.profileInfoList.length,
-                  itemBuilder: (context, index) {
-                    return ProfileInfoTile(
-                        title: profileViewModel.profileInfoList[index].title, 
-                        imgPath: profileViewModel.profileInfoList[index].imgPath,
+                    shrinkWrap: true,
+                    itemCount: profileViewModel.profileInfoList.length,
+                    itemBuilder: (context, index) {
+                      return ProfileInfoTile(
+                        title: profileViewModel.profileInfoList[index].title,
+                        imgPath:
+                            profileViewModel.profileInfoList[index].imgPath,
                         value: profileViewModel.profileInfoList[index].value,
-                    );
-                  }
-                ),
+                      );
+                    }),
               ),
             ],
           ),

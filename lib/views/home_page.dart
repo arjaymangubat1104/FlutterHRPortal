@@ -1,5 +1,3 @@
-import 'package:date_picker_timeline/date_picker_timeline.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/views/button_page/attendance_page.dart';
 import 'package:flutter_attendance_system/widgets/confimation_dialog_box.dart';
@@ -43,12 +41,12 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: themeViewModel.currentTheme.boxTextColor
-                ),
+                  color: themeViewModel.currentTheme.boxTextColor),
             ),
           ],
         ),
-        iconTheme: IconThemeData(color: themeViewModel.currentTheme.boxTextColor),
+        iconTheme:
+            IconThemeData(color: themeViewModel.currentTheme.boxTextColor),
         actions: [
           IconButton(
             onPressed: () {
@@ -115,8 +113,7 @@ class _HomePageState extends State<HomePage> {
               title: Text(
                 'My Profile',
                 style: TextStyle(
-                    fontSize: 15,
-                    color: themeViewModel.currentTheme.textColor),
+                    fontSize: 15, color: themeViewModel.currentTheme.textColor),
               ),
               onTap: () {
                 Navigator.pushNamed(context, '/profile');
@@ -130,8 +127,7 @@ class _HomePageState extends State<HomePage> {
               title: Text(
                 'Employment Details',
                 style: TextStyle(
-                    fontSize: 15,
-                    color: themeViewModel.currentTheme.textColor),
+                    fontSize: 15, color: themeViewModel.currentTheme.textColor),
               ),
               onTap: () {
                 Navigator.pushNamed(context, '/theme');
@@ -145,8 +141,7 @@ class _HomePageState extends State<HomePage> {
               title: Text(
                 'Change Password',
                 style: TextStyle(
-                    fontSize: 15,
-                    color: themeViewModel.currentTheme.textColor),
+                    fontSize: 15, color: themeViewModel.currentTheme.textColor),
               ),
               onTap: () {
                 Navigator.pushNamed(context, '/profile');
@@ -160,8 +155,7 @@ class _HomePageState extends State<HomePage> {
               title: Text(
                 'Logout',
                 style: TextStyle(
-                    fontSize: 15,
-                    color: themeViewModel.currentTheme.textColor),
+                    fontSize: 15, color: themeViewModel.currentTheme.textColor),
               ),
               onTap: () {
                 showDialog(
@@ -244,6 +238,46 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ],
                                       ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.punch_clock,
+                                            color: themeViewModel
+                                                .currentTheme.themeColor,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                            timeDateViewModel.formattedDateTime,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: themeViewModel
+                                                  .currentTheme.themeColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.calendar_month,
+                                            color: themeViewModel
+                                                .currentTheme.themeColor,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                            timeDateViewModel.formattedDate,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: themeViewModel
+                                                  .currentTheme.themeColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                       //const SizedBox(height: 10),
                                       // AnimatedAnalogClock(
                                       //   location: 'Asia/Manila',
@@ -270,22 +304,6 @@ class _HomePageState extends State<HomePage> {
                                       //     ),
                                       //   ],
                                       // ),
-                                      const SizedBox(height: 10),
-                                      IgnorePointer(
-                                        child: DatePicker(
-                                          timeDateViewModel.mondayOfCurrentWeek,
-                                          initialSelectedDate: DateTime.now(),
-                                          selectionColor: themeViewModel
-                                              .currentTheme.themeColor,
-                                          selectedTextColor: Colors.white,
-                                          monthTextStyle:
-                                              TextStyle(fontSize: 10),
-                                          dayTextStyle: TextStyle(fontSize: 10),
-                                          dateTextStyle:
-                                              TextStyle(fontSize: 15),
-                                          width: 45,
-                                        ),
-                                      ),
                                       const SizedBox(height: 5),
                                       Row(
                                         children: [

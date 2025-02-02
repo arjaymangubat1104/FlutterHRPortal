@@ -5,6 +5,7 @@ import 'package:flutter_attendance_system/widgets/attendance_counter_tile.dart';
 import 'package:flutter_attendance_system/widgets/calendar_tile.dart';
 import 'package:flutter_attendance_system/viewmodel/attendance_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/time_date_view_model.dart';
+import 'package:flutter_attendance_system/widgets/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -133,90 +134,109 @@ class _AttendancePageState extends State<AttendancePage>
     final themeViewModel = Provider.of<ThemeViewModel>(context);
     final timeDateViewModel = Provider.of<TimeDateViewModel>(context);
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: themeViewModel.currentTheme.themeColor,
-          iconTheme:
-              IconThemeData(color: themeViewModel.currentTheme.boxTextColor),
-          title: Center(
-              child: Text(
+      appBar: AppBar(
+        backgroundColor: themeViewModel.currentTheme.themeColor,
+        iconTheme: IconThemeData(
+          color: themeViewModel.currentTheme.boxTextColor,
+        ),
+        title: Center(
+          child: Text(
             'Attendance',
-            style: TextStyle(color: Colors.white),
-          )),
-          bottom: TabBar(
-            controller: _tabController,
-            tabs: [
-              Tab(text: 'HISTORY'),
-              Tab(text: 'CALENDAR'),
-            ],
-            dividerColor: themeViewModel.currentTheme.themeColor,
-            indicatorColor: themeViewModel.currentTheme.boxTextColor,
-            unselectedLabelColor: themeViewModel.currentTheme.boxTextColor,
-            labelColor: themeViewModel.currentTheme.boxTextColor,
-            labelStyle: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+            style: TextStyle(
+              color: Colors.white,
             ),
-            // onTap: (index) async {
-            //   _updateAttendaceListByYearAndMonth();
-            //     attendanceListByYearAndMonth = await widget.attendanceViewModel
-            //         .fetchAllUserAttendanceByYearAndMonth(
-            //             year: today.year, month: today.month);
-            // },
           ),
         ),
-        body: TabBarView(controller: _tabController, children: [
-          Container(
-            color: themeViewModel.currentTheme.pageBackgroundColor,
-            child: Column(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: ListView.builder(
-                      itemCount: attendanceListByYearAndMonth.length,
-                      itemBuilder: (context, index) {
-                        return AttendaceHistoryTile(
-                          date: widget.timeDateViewModel.formatDateString(
-                              attendanceListByYearAndMonth[index]
-                                  .attendanceDate
-                                  .toString()),
-                          attendanceStatus: attendanceListByYearAndMonth[index]
-                              .attendanceStatus
-                              .toString(),
-                          dropDownDate: widget.timeDateViewModel
-                              .formatDateString(
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: [
+            Tab(text: 'HISTORY'),
+            Tab(text: 'CALENDAR'),
+          ],
+          dividerColor: themeViewModel.currentTheme.themeColor,
+          indicatorColor: themeViewModel.currentTheme.boxTextColor,
+          unselectedLabelColor: themeViewModel.currentTheme.boxTextColor,
+          labelColor: themeViewModel.currentTheme.boxTextColor,
+          labelStyle: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          Stack(
+            children: [
+              Container(
+                color: themeViewModel.currentTheme.pageBackgroundColor,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: ListView.builder(
+                          itemCount: attendanceListByYearAndMonth.length,
+                          itemBuilder: (context, index) {
+                            return AttendaceHistoryTile(
+                              date: widget.timeDateViewModel.formatDateString(
+                                attendanceListByYearAndMonth[index]
+                                    .attendanceDate
+                                    .toString(),
+                              ),
+                              attendanceStatus:
                                   attendanceListByYearAndMonth[index]
-                                      .attendanceDate
-                                      .toString()),
-                          timeIn: widget.timeDateViewModel
-                              .convertTimeto12hrFormat(
-                                  attendanceListByYearAndMonth[index]
-                                      .timeIn
-                                      .toString()),
-                          timeOut: widget.timeDateViewModel
-                              .convertTimeto12hrFormat(
-                                  attendanceListByYearAndMonth[index]
-                                      .timeOut
-                                      .toString()),
-                          status: attendanceListByYearAndMonth[index]
-                              .attendanceStatus
-                              .toString(),
-                          totalTime:
-                              attendanceListByYearAndMonth[index].totalTime ??
+                                      .attendanceStatus
+                                      .toString(),
+                              dropDownDate:
+                                  widget.timeDateViewModel.formatDateString(
+                                attendanceListByYearAndMonth[index]
+                                    .attendanceDate
+                                    .toString(),
+                              ),
+                              timeIn: widget.timeDateViewModel
+                                  .convertTimeto12hrFormat(
+                                      attendanceListByYearAndMonth[index]
+                                          .timeIn
+                                          .toString()),
+                              timeOut: widget.timeDateViewModel
+                                  .convertTimeto12hrFormat(
+                                      attendanceListByYearAndMonth[index]
+                                          .timeOut
+                                          .toString()),
+                              status: attendanceListByYearAndMonth[index]
+                                  .attendanceStatus
+                                  .toString(),
+                              totalTime: attendanceListByYearAndMonth[index]
+                                      .totalTime ??
                                   '',
-                          lateTime:
-                              attendanceListByYearAndMonth[index].lateTime ??
+                              lateTime: attendanceListByYearAndMonth[index]
+                                      .lateTime ??
                                   '',
-                          underTime:
-                              attendanceListByYearAndMonth[index].underTime ??
+                              underTime: attendanceListByYearAndMonth[index]
+                                      .underTime ??
                                   '',
-                        );
-                      },
+                            );
+                          },
+                        ),
+                      ),
                     ),
+                  ],
+                ),
+              ),
+              if (_showSpinner)
+                ModalBarrier(
+                  color: Colors.black.withOpacity(0.5),
+                  dismissible: false,
+                ),
+              if (_showSpinner)
+                Dialog.fullscreen(
+                  backgroundColor: Colors.black.withOpacity(0.5),
+                  child: Center(
+                    child: CustomLoadingIndicator(),
                   ),
                 ),
-              ],
-            ),
+            ],
           ),
           Container(
             color: themeViewModel.currentTheme.pageBackgroundColor,
@@ -273,9 +293,11 @@ class _AttendancePageState extends State<AttendancePage>
                   CalendarTile(
                     events: widget.attendanceViewModel.getEventsForDay(context),
                     onDaySelectedCallback: (DateTime day) async {
-                      setState(() {
-                        selectedDay = day;
-                      });
+                      setState(
+                        () {
+                          selectedDay = day;
+                        },
+                      );
                     },
                   ),
                   Padding(
@@ -285,9 +307,10 @@ class _AttendancePageState extends State<AttendancePage>
                         Text(
                           'Activity',
                           style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: themeViewModel.currentTheme.textColor),
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: themeViewModel.currentTheme.textColor,
+                          ),
                         ),
                       ],
                     ),
@@ -307,30 +330,33 @@ class _AttendancePageState extends State<AttendancePage>
                                 Text(
                                   'Date: ',
                                   style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: themeViewModel
-                                          .currentTheme.boxTextColor),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: themeViewModel
+                                        .currentTheme.boxTextColor,
+                                  ),
                                 ),
                                 const SizedBox(width: 10),
                                 Text(
-                                    widget.attendanceViewModel
-                                                .getAttendanceIndex(
-                                                    selectedDay) ==
-                                            -1
-                                        ? ''
-                                        : DateFormat('EEEE, d MMMM yyyy')
-                                            .format(DateTime.parse(widget
-                                                .attendanceViewModel
-                                                .activityAttendanceListCalendar[
-                                                    widget.attendanceViewModel
-                                                        .getAttendanceIndex(
-                                                            selectedDay)]
-                                                .attendanceDate!)),
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        color: themeViewModel
-                                            .currentTheme.boxTextColor))
+                                  widget.attendanceViewModel.getAttendanceIndex(
+                                              selectedDay) ==
+                                          -1
+                                      ? ''
+                                      : DateFormat('EEEE, d MMMM yyyy').format(
+                                          DateTime.parse(widget
+                                              .attendanceViewModel
+                                              .activityAttendanceListCalendar[
+                                                  widget
+                                                      .attendanceViewModel
+                                                      .getAttendanceIndex(
+                                                          selectedDay)]
+                                              .attendanceDate!)),
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: themeViewModel
+                                        .currentTheme.boxTextColor,
+                                  ),
+                                )
                               ],
                             ),
                             Row(
@@ -339,31 +365,36 @@ class _AttendancePageState extends State<AttendancePage>
                                 Text(
                                   'Time in: ',
                                   style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: themeViewModel
-                                          .currentTheme.boxTextColor),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: themeViewModel
+                                        .currentTheme.boxTextColor,
+                                  ),
                                 ),
                                 const SizedBox(width: 10),
                                 Text(
-                                    widget.attendanceViewModel
-                                                .getAttendanceIndex(
-                                                    selectedDay) ==
-                                            -1
-                                        ? ''
-                                        : timeDateViewModel
-                                            .convertTimeto12hrFormat(widget
-                                                .attendanceViewModel
-                                                .activityAttendanceListCalendar[
-                                                    widget.attendanceViewModel
-                                                        .getAttendanceIndex(
-                                                            selectedDay)]
-                                                .timeIn
-                                                .toString()),
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        color: themeViewModel
-                                            .currentTheme.boxTextColor))
+                                  widget.attendanceViewModel.getAttendanceIndex(
+                                              selectedDay) ==
+                                          -1
+                                      ? ''
+                                      : timeDateViewModel
+                                          .convertTimeto12hrFormat(
+                                          widget
+                                              .attendanceViewModel
+                                              .activityAttendanceListCalendar[
+                                                  widget
+                                                      .attendanceViewModel
+                                                      .getAttendanceIndex(
+                                                          selectedDay)]
+                                              .timeIn
+                                              .toString(),
+                                        ),
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: themeViewModel
+                                        .currentTheme.boxTextColor,
+                                  ),
+                                ),
                               ],
                             ),
                             Row(
@@ -379,24 +410,28 @@ class _AttendancePageState extends State<AttendancePage>
                                 ),
                                 const SizedBox(width: 10),
                                 Text(
-                                    widget.attendanceViewModel
-                                                .getAttendanceIndex(
-                                                    selectedDay) ==
-                                            -1
-                                        ? ''
-                                        : timeDateViewModel
-                                            .convertTimeto12hrFormat(widget
-                                                .attendanceViewModel
-                                                .activityAttendanceListCalendar[
-                                                    widget.attendanceViewModel
-                                                        .getAttendanceIndex(
-                                                            selectedDay)]
-                                                .timeOut
-                                                .toString()),
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        color: themeViewModel
-                                            .currentTheme.boxTextColor))
+                                  widget.attendanceViewModel.getAttendanceIndex(
+                                              selectedDay) ==
+                                          -1
+                                      ? ''
+                                      : timeDateViewModel
+                                          .convertTimeto12hrFormat(
+                                          widget
+                                              .attendanceViewModel
+                                              .activityAttendanceListCalendar[
+                                                  widget
+                                                      .attendanceViewModel
+                                                      .getAttendanceIndex(
+                                                          selectedDay)]
+                                              .timeOut
+                                              .toString(),
+                                        ),
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: themeViewModel
+                                        .currentTheme.boxTextColor,
+                                  ),
+                                ),
                               ],
                             ),
                           ],
@@ -408,6 +443,8 @@ class _AttendancePageState extends State<AttendancePage>
               ),
             ),
           )
-        ]));
+        ],
+      ),
+    );
   }
 }
