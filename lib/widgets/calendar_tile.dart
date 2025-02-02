@@ -56,7 +56,7 @@ class _CalendarTileState extends State<CalendarTile> {
         child: TableCalendar(
           headerStyle: HeaderStyle(
             titleTextStyle: TextStyle(
-              fontSize: 20,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
               color: themeViewModel.currentTheme.themeColor
 
