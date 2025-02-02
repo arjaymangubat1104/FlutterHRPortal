@@ -239,25 +239,23 @@ class _HomePageState extends State<HomePage> {
                                         ],
                                       ),
                                       const SizedBox(height: 10),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.punch_clock,
+                                      Row(children: [
+                                        Icon(
+                                          Icons.punch_clock,
+                                          color: themeViewModel
+                                              .currentTheme.themeColor,
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Text(
+                                          timeDateViewModel.formattedDateTime,
+                                          style: TextStyle(
+                                            fontSize: 15,
                                             color: themeViewModel
                                                 .currentTheme.themeColor,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                          const SizedBox(width: 10),
-                                          Text(
-                                            timeDateViewModel.formattedDateTime,
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              color: themeViewModel
-                                                  .currentTheme.themeColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ]),
                                       const SizedBox(height: 10),
                                       Row(
                                         children: [

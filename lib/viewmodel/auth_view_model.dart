@@ -9,7 +9,6 @@ class AuthViewModel extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final ScheduleViewModel scheduleViewModel = ScheduleViewModel();
 
-
   UserModel? _userModel;
   String? _errorMessage;
   bool _isSuccessSignUp = false;
@@ -24,7 +23,15 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   Future<void> register(
-      String email, String password, String userName, String firstName, String middleName, String lastName, String gender, String civilStatus, String birthDate) async {
+      String email,
+      String password,
+      String userName,
+      String firstName,
+      String middleName,
+      String lastName,
+      String gender,
+      String civilStatus,
+      String birthDate) async {
     try {
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
@@ -34,18 +41,16 @@ class AuthViewModel extends ChangeNotifier {
       User? user = userCredential.user;
 
       // Store user information in Firestore
-      _userModel =
-          UserModel(
-            uid: user!.uid, 
-            email: email, 
-            userName: userName, 
-            firstName: firstName, 
-            middleName: middleName, 
-            lastName: lastName,
-            gender: gender,
-            civilStatus: civilStatus,
-            birthDate: birthDate
-          );
+      _userModel = UserModel(
+          uid: user!.uid,
+          email: email,
+          userName: userName,
+          firstName: firstName,
+          middleName: middleName,
+          lastName: lastName,
+          gender: gender,
+          civilStatus: civilStatus,
+          birthDate: birthDate);
       await _firestore
           .collection('users')
           .doc(user.uid)
@@ -73,8 +78,10 @@ class AuthViewModel extends ChangeNotifier {
       User? user = userCredential.user;
 
       // Fetch user information from Firestore
-      DocumentSnapshot userDoc =
-          await _firestore.collection('users').doc(user!.uid).get();
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(user!.uid)
+          .get(GetOptions(source: Source.cache));
       if (userDoc.exists) {
         _userModel = UserModel.fromFirebase(
             userDoc.data() as Map<String, dynamic>, user.uid);
@@ -115,6 +122,8 @@ class AuthViewModel extends ChangeNotifier {
 
   Future<void> logout(BuildContext context) async {
     await _auth.signOut();
+    await FirebaseFirestore.instance.terminate();
+    await FirebaseFirestore.instance.clearPersistence();
     _userModel = null;
     notifyListeners();
     Navigator.pushReplacementNamed(context, '/login');

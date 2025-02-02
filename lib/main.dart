@@ -16,6 +16,7 @@ import 'package:flutter_attendance_system/views/register_page.dart';
 import 'package:flutter_attendance_system/views/button_page/team_page.dart';
 
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
@@ -26,6 +27,10 @@ void main() async {
           appId: '1:973475796713:ios:93711787d1aeec4e670278',
           messagingSenderId: '973475796713',
           projectId: 'flutterattendance-13ad7'));
+  FirebaseFirestore.instance.settings = Settings(
+    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED, // Set unlimited cache size
+    persistenceEnabled: false, // Enable offline persistence
+  );
   runApp(const MyApp());
 }
 
@@ -40,10 +45,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => TimeDateViewModel()),
         ChangeNotifierProvider(
           create: (context) => AttendanceViewModel(
-            authViewModel: Provider.of<AuthViewModel>(context, listen: false),
-            timeDateViewModel:
-                Provider.of<TimeDateViewModel>(context, listen: false)
-          ),
+              authViewModel: Provider.of<AuthViewModel>(context, listen: false),
+              timeDateViewModel:
+                  Provider.of<TimeDateViewModel>(context, listen: false)),
         ),
         ChangeNotifierProvider(create: (context) => ThemeViewModel()),
         ChangeNotifierProvider(create: (context) => ScheduleViewModel()),
@@ -64,7 +68,6 @@ class MyApp extends StatelessWidget {
           '/intro': (context) => HomePage(),
           '/profile': (context) => ProfilePage(),
           //'/attendance': (context) => AttendancePage(),
-          
           '/overtime': (context) => OverTimePage(),
           '/payslip': (context) => PayslipPage(),
           '/leave': (context) => LeavePage(),

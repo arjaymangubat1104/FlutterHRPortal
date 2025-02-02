@@ -36,23 +36,25 @@ class AttendanceViewModel extends ChangeNotifier {
   }
 
   List<UserAttendanceModel> _attendanceListCalendar = [];
-  List<UserAttendanceModel> get attendanceListCalendar => _attendanceListCalendar;
+  List<UserAttendanceModel> get attendanceListCalendar =>
+      _attendanceListCalendar;
 
   set attendanceListCalendar(List<UserAttendanceModel> value) {
     _attendanceListCalendar = value;
     notifyListeners();
   }
-  
+
   List<String> _scheduleDays = [];
   List<String> get scheduleDays => _scheduleDays;
-  
+
   set scheduleDays(List<String> value) {
     _scheduleDays = value;
     notifyListeners();
   }
-  
+
   List<UserAttendanceModel> _activityAttendanceListCalendar = [];
-  List<UserAttendanceModel> get activityAttendanceListCalendar => _activityAttendanceListCalendar;
+  List<UserAttendanceModel> get activityAttendanceListCalendar =>
+      _activityAttendanceListCalendar;
 
   set activityAttendanceListCalendar(List<UserAttendanceModel> value) {
     _activityAttendanceListCalendar = value;
@@ -82,7 +84,7 @@ class AttendanceViewModel extends ChangeNotifier {
           .where('user_id', isEqualTo: userModel.uid)
           .where('attendance_date',
               isEqualTo: DateFormat('yyyy-MM-dd').format(_checkInTime!))
-          .get();
+          .get(GetOptions(source: Source.cache));
 
       if (attendanceQuery.docs.isNotEmpty) {
         throw Exception("You've already timed in today");
@@ -136,11 +138,12 @@ class AttendanceViewModel extends ChangeNotifier {
     try {
       // Fetch the user's schedule
       UserModel? userModel = authViewModel.userModel;
-    
+
       DateTime now = DateTime.now();
-      
-      List<String> scheduledDaysOfWeek = await scheduleViewModel.getUserSchedule(userModel!.uid);
-      
+
+      List<String> scheduledDaysOfWeek =
+          await scheduleViewModel.getUserSchedule(userModel!.uid);
+
       // Generate the list of days in the current month
       DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
       DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
@@ -150,13 +153,14 @@ class AttendanceViewModel extends ChangeNotifier {
       for (DateTime day = firstDayOfMonth;
           day.isBefore(lastDayOfMonth) || day.isAtSameMomentAs(lastDayOfMonth);
           day = day.add(Duration(days: 1))) {
-        if (scheduledDaysOfWeek.contains(DateFormat('EEEE').format(day)) && day.isBefore(now)) {
+        if (scheduledDaysOfWeek.contains(DateFormat('EEEE').format(day)) &&
+            day.isBefore(now)) {
           QuerySnapshot attendanceQuery = await _firestore
               .collection('attendance')
               .where('user_id', isEqualTo: userModel.uid)
               .where('attendance_date',
                   isEqualTo: DateFormat('yyyy-MM-dd').format(day))
-              .get();
+              .get(GetOptions(source: Source.cache));
 
           if (attendanceQuery.docs.isEmpty) {
             count++;
@@ -184,7 +188,7 @@ class AttendanceViewModel extends ChangeNotifier {
           .where('user_id', isEqualTo: userModel.uid)
           .where('attendance_date',
               isEqualTo: DateFormat('yyyy-MM-dd').format(_checkOutTime!))
-          .get();
+          .get(GetOptions(source: Source.cache));
       if (attendanceQuery.docs.isNotEmpty) {
         DocumentSnapshot doc = attendanceQuery.docs.first;
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -277,7 +281,7 @@ class AttendanceViewModel extends ChangeNotifier {
                   DateFormat('yyyy-MM-dd').format(startDate))
           .where('attendance_date',
               isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
-          .get();
+          .get(GetOptions(source: Source.cache));
       return attendanceQuery.docs.length;
     } catch (e) {
       _errorMessage = e.toString();
@@ -313,7 +317,7 @@ class AttendanceViewModel extends ChangeNotifier {
                   DateFormat('yyyy-MM-dd').format(startDate))
           .where('attendance_date',
               isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
-          .get();
+          .get(GetOptions(source: Source.cache));
       return attendanceQuery.docs.length;
     } catch (e) {
       _errorMessage = e.toString();
@@ -357,7 +361,6 @@ class AttendanceViewModel extends ChangeNotifier {
       'seconds': seconds,
     };
   }
-  
 
   Future<void> fetchUserAttendance(DateTime date) async {
     try {
@@ -371,7 +374,7 @@ class AttendanceViewModel extends ChangeNotifier {
           .where('user_id', isEqualTo: userModel.uid)
           .where('attendance_date', isEqualTo: formattedDate)
           .orderBy('attendance_date', descending: true)
-          .get();
+          .get(GetOptions(source: Source.cache));
       _attendanceList = attendanceQuery.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         return UserAttendanceModel.fromJson(data);
@@ -392,26 +395,16 @@ class AttendanceViewModel extends ChangeNotifier {
       if (userModel == null) {
         throw Exception("User not logged in");
       }
-      _firestore.collection('attendance')
-      .where('user_id', isEqualTo: userModel.uid)
-      .snapshots()
-      .listen((snapshot) {
-        attendanceListByYearAndMonth = snapshot.docs.map((doc) {
-              return UserAttendanceModel.fromJson(doc.data());
-            }).toList();
-        notifyListeners();
-      });
       DateTime startDate;
       DateTime endDate;
-      if(month == null){
+      if (month == null) {
         startDate = DateTime(year, 1, 1);
         endDate = DateTime(year, 12, 31);
-      }
-      else{
+      } else {
         startDate = DateTime(year, month, 1); // Start date of the month
         endDate = DateTime(year, month + 1, 0); // Last day of the month
       }
-      
+
       if (cutoffs != null && month != null) {
         startDate = cutoffs == 15
             ? DateTime(year, month, 1)
@@ -430,7 +423,7 @@ class AttendanceViewModel extends ChangeNotifier {
           .where('attendance_date',
               isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
           .orderBy('attendance_date', descending: true)
-          .get();
+          .get(GetOptions(source: Source.cache));
       attendanceListByYearAndMonth = attendanceQuery.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         return UserAttendanceModel.fromJson(data);
@@ -456,10 +449,11 @@ class AttendanceViewModel extends ChangeNotifier {
           .collection('attendance')
           .where('user_id', isEqualTo: userModel.uid)
           .where('attendance_date',
-              isGreaterThanOrEqualTo: DateFormat('yyyy-MM-dd').format(startDate))
+              isGreaterThanOrEqualTo:
+                  DateFormat('yyyy-MM-dd').format(startDate))
           .where('attendance_date',
               isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
-          .get();
+          .get(GetOptions(source: Source.cache));
       int count = 0;
       for (DocumentSnapshot doc in attendanceQuery.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -477,46 +471,44 @@ class AttendanceViewModel extends ChangeNotifier {
     }
   }
 
-
   List<Object?> Function(DateTime) getEventsForDay(BuildContext context) {
     return (DateTime day) {
       final events = attendanceListCalendar.where((attendance) {
         return isSameDay(DateTime.parse(attendance.attendanceDate ?? ''), day);
       }).toList();
-      
+
       if (scheduleDays.contains(DateFormat('EEEE').format(day)) &&
           day.isBefore(DateTime.now())) {
         if (events.isEmpty &&
-              day.month == DateTime.now().month &&
-              day.year == DateTime.now().year) {
-            final userId =
-                authViewModel.userModel?.uid ?? '';
-            final formattedDate = DateFormat('yyyy-MM-dd').format(day);
+            day.month == DateTime.now().month &&
+            day.year == DateTime.now().year) {
+          final userId = authViewModel.userModel?.uid ?? '';
+          final formattedDate = DateFormat('yyyy-MM-dd').format(day);
 
-            // Set attendance status to "Absent" if no attendance is found
-            final absentAttendance = UserAttendanceModel(
-              id: '',
-              userId: userId,
-              userName: '', // You may want to fetch the user's name if needed
-              attendanceStatus: 'Absent',
-              attendanceDate: formattedDate,
-              timeIn: '',
-              timeOut: '',
-            );
+          // Set attendance status to "Absent" if no attendance is found
+          final absentAttendance = UserAttendanceModel(
+            id: '',
+            userId: userId,
+            userName: '', // You may want to fetch the user's name if needed
+            attendanceStatus: 'Absent',
+            attendanceDate: formattedDate,
+            timeIn: '',
+            timeOut: '',
+          );
 
-            // Add the absent attendance to the list
-            attendanceListCalendar.add(absentAttendance);
-            events.add(absentAttendance);
+          // Add the absent attendance to the list
+          attendanceListCalendar.add(absentAttendance);
+          events.add(absentAttendance);
 
-            // Optionally, you can save this to Firestore if needed
-            //attendanceViewModel.saveAttendance(absentAttendance);
-          }
+          // Optionally, you can save this to Firestore if needed
+          //attendanceViewModel.saveAttendance(absentAttendance);
+        }
       }
       return events;
     };
   }
 
-  void getScheduleDays() async{
+  void getScheduleDays() async {
     _scheduleDays = await scheduleViewModel
         .getUserSchedule(authViewModel.userModel?.uid ?? '');
   }
@@ -571,10 +563,4 @@ class AttendanceViewModel extends ChangeNotifier {
     }
     return 'You have not yet timed in today';
   }
-
-  
-
-
-
-
 }
