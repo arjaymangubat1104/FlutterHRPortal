@@ -8,12 +8,9 @@ class ProfileViewModel extends ChangeNotifier {
   final AuthViewModel authViewModel;
   ProfileViewModel({required this.authViewModel});
 
-  String? errorMessage;
-  String? get _errorMessage => errorMessage;
-  set _errorMessage(String? value) {
-    errorMessage = value;
-    notifyListeners();
-  }
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
+  
   final List<ProfileInfoModel> _profileInfoList = [
     ProfileInfoModel(title: 'Basic Information', value: {
       'First Name': '',
