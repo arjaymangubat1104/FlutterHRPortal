@@ -18,8 +18,6 @@ class AttendanceViewModel extends ChangeNotifier {
   AttendanceViewModel(
       {required this.authViewModel, required this.timeDateViewModel});
 
-  UserModel? _userModel;
-  UserModel? get userModel => _userModel;
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;

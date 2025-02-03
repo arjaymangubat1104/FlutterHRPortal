@@ -6,7 +6,7 @@ class CustomElevatedButton extends StatelessWidget {
   final Color? color;
   final Color? textColor;
 
-  const CustomElevatedButton({
+  const CustomElevatedButton({super.key, 
     required this.text,
     required this.onPressed,
     this.color,
@@ -17,13 +17,13 @@ class CustomElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () => onPressed(),
-      child: Text(
-        text,
-        style: TextStyle(color: textColor),
-      ),
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.all<Color>(
             color ?? Theme.of(context).primaryColor),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(color: textColor),
       ),
     );
   }

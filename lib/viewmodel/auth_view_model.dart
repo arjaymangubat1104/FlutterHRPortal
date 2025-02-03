@@ -81,7 +81,7 @@ class AuthViewModel extends ChangeNotifier {
       DocumentSnapshot userDoc = await _firestore
           .collection('users')
           .doc(user!.uid)
-          .get(GetOptions(source: Source.cache));
+          .get();
       if (userDoc.exists) {
         _userModel = UserModel.fromFirebase(
             userDoc.data() as Map<String, dynamic>, user.uid);
@@ -122,8 +122,8 @@ class AuthViewModel extends ChangeNotifier {
 
   Future<void> logout(BuildContext context) async {
     await _auth.signOut();
-    await FirebaseFirestore.instance.terminate();
-    await FirebaseFirestore.instance.clearPersistence();
+    //await FirebaseFirestore.instance.terminate();
+    //await FirebaseFirestore.instance.clearPersistence();
     _userModel = null;
     notifyListeners();
     Navigator.pushReplacementNamed(context, '/login');

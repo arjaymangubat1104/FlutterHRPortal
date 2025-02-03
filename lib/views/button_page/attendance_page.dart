@@ -30,7 +30,7 @@ class _AttendancePageState extends State<AttendancePage>
 
   final List<DateTime> _months =
       List.generate(12, (index) => DateTime(0, index + 1));
-  int _selectedYear = DateTime.now().year;
+  final int _selectedYear = DateTime.now().year;
   int selectedMonth = DateTime.now().month;
   // List<UserAttendanceModel> attendanceListByYearAndMonth = [
   //   UserAttendanceModel(
@@ -139,12 +139,10 @@ class _AttendancePageState extends State<AttendancePage>
         iconTheme: IconThemeData(
           color: themeViewModel.currentTheme.boxTextColor,
         ),
-        title: Center(
-          child: Text(
-            'Attendance',
-            style: TextStyle(
-              color: Colors.white,
-            ),
+        title: Text(
+          'Attendance',
+          style: TextStyle(
+            color: Colors.white,
           ),
         ),
         bottom: TabBar(
