@@ -29,7 +29,7 @@ void main() async {
           projectId: 'flutterattendance-13ad7'));
   FirebaseFirestore.instance.settings = Settings(
     cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED, // Set unlimited cache size
-    persistenceEnabled: false, // Enable offline persistence
+    persistenceEnabled: true, // Enable offline persistence
   );
   runApp(const MyApp());
 }
