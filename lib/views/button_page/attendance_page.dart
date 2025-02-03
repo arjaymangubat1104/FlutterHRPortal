@@ -139,12 +139,10 @@ class _AttendancePageState extends State<AttendancePage>
         iconTheme: IconThemeData(
           color: themeViewModel.currentTheme.boxTextColor,
         ),
-        title: Center(
-          child: Text(
-            'Attendance',
-            style: TextStyle(
-              color: Colors.white,
-            ),
+        title: Text(
+          'Attendance',
+          style: TextStyle(
+            color: Colors.white,
           ),
         ),
         bottom: TabBar(

@@ -51,7 +51,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (context) => ThemeViewModel()),
         ChangeNotifierProvider(create: (context) => ScheduleViewModel()),
-        ChangeNotifierProvider(create: (context) => ProfileViewModel()),
+        ChangeNotifierProvider(create: (context) => ProfileViewModel(
+            authViewModel: Provider.of<AuthViewModel>(context, listen: false)
+        )),
         // Add other providers here
       ],
       child: MaterialApp(

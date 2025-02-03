@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 15, color: themeViewModel.currentTheme.textColor),
               ),
               onTap: () {
-                Navigator.pushNamed(context, '/profile');
+                Navigator.pushNamed(context, '/ChangePassword');
               },
             ),
             ListTile(

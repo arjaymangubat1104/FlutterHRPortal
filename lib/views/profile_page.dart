@@ -1,121 +1,91 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_attendance_system/viewmodel/auth_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/profile_view_model.dart';
 import 'package:flutter_attendance_system/viewmodel/theme_view_model.dart';
 import 'package:flutter_attendance_system/widgets/profile_info_tile.dart';
 import 'package:provider/provider.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends StatelessWidget {
   const ProfilePage({
     super.key,
   });
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends State<ProfilePage> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final themeViewModel = Provider.of<ThemeViewModel>(context);
     final profileViewModel = Provider.of<ProfileViewModel>(context);
-    final authViewModel = Provider.of<AuthViewModel>(context);
-
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await profileViewModel.getUserInformation();
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'My Profile',
           style: TextStyle(
               color: themeViewModel.currentTheme.boxTextColor,
-              fontWeight: FontWeight.bold),
+              ),
         ),
         backgroundColor: themeViewModel.currentTheme.themeColor,
+        iconTheme: IconThemeData(color: themeViewModel.currentTheme.boxTextColor),
       ),
-      body: Stack(
-        children: [
-          Container(
-            color: themeViewModel.currentTheme.pageBackgroundColor,
-            child: Column(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(
-                  color: themeViewModel.currentTheme.themeColor,
-                  height: 100,
+                Padding(
+                  padding: const EdgeInsets.only(top: 15, left: 20),
+                  child: Text(
+                    profileViewModel.profileInfoList[0].title,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: themeViewModel.currentTheme.textColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
-          ),
-          Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: themeViewModel
-                            .currentTheme.boxTextColor, // Outline color
-                        width: 2.0, // Outline width
-                      ),
-                      shape: BoxShape.circle, // Circular outline
-                    ),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'lib/assets/profile.png',
-                        height: 75,
-                        width: 75,
-                        fit: BoxFit.cover,
-                      ),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: profileViewModel.profileInfoList[0].value?.length,
+              itemBuilder: (context, index){
+                return ProfileInfoTile(
+                  title: profileViewModel.profileInfoList[0].value!.keys.elementAt(index),
+                  subtitle: profileViewModel.profileInfoList[0].value!.values.elementAt(index), 
+                );
+              }
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 15, left: 20),
+                  child: Text(
+                    profileViewModel.profileInfoList[1].title,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: themeViewModel.currentTheme.textColor,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 20),
-                  Column(
-                    children: [
-                      Text(
-                        '${authViewModel.userModel?.firstName ?? ''} ${authViewModel.userModel?.lastName ?? ''}',
-                        style: TextStyle(
-                          color: themeViewModel.currentTheme.boxTextColor,
-                          fontSize: 20,
-                        ),
-                      ),
-                      Text(
-                        authViewModel.userModel?.email ?? '',
-                        style: TextStyle(
-                          color: themeViewModel.currentTheme.boxTextColor,
-                          fontSize: 9,
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: profileViewModel.profileInfoList.length,
-                    itemBuilder: (context, index) {
-                      return ProfileInfoTile(
-                        title: profileViewModel.profileInfoList[index].title,
-                        imgPath:
-                            profileViewModel.profileInfoList[index].imgPath,
-                        value: profileViewModel.profileInfoList[index].value,
-                      );
-                    }),
-              ),
-            ],
-          ),
-        ],
-      ),
+                ),
+              ],
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: profileViewModel.profileInfoList[1].value?.length,
+              itemBuilder: (context, index){
+                return ProfileInfoTile(
+                  title: profileViewModel.profileInfoList[1].value!.keys.elementAt(index),
+                  subtitle: profileViewModel.profileInfoList[1].value!.values.elementAt(index), 
+                );
+              }
+            ),
+
+          ],
+        ),
+      )
     );
   }
 }

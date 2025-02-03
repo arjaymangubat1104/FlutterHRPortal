@@ -122,11 +122,11 @@ class AuthViewModel extends ChangeNotifier {
 
   Future<void> logout(BuildContext context) async {
     await _auth.signOut();
-    await FirebaseFirestore.instance.terminate();
+    //await FirebaseFirestore.instance.terminate();
     await FirebaseFirestore.instance.clearPersistence();
     _userModel = null;
     notifyListeners();
-    Navigator.pushReplacementNamed(context, '/login');
+    //Navigator.pushReplacementNamed(context, '/login');
   }
 
   void clearErrorMessage() {
