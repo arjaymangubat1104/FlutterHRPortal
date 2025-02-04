@@ -78,10 +78,8 @@ class AuthViewModel extends ChangeNotifier {
       User? user = userCredential.user;
 
       // Fetch user information from Firestore
-      DocumentSnapshot userDoc = await _firestore
-          .collection('users')
-          .doc(user!.uid)
-          .get();
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(user!.uid).get();
       if (userDoc.exists) {
         _userModel = UserModel.fromFirebase(
             userDoc.data() as Map<String, dynamic>, user.uid);
