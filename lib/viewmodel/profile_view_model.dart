@@ -13,8 +13,8 @@ class ProfileViewModel extends ChangeNotifier {
   
   final List<ProfileInfoModel> _profileInfoList = [
     ProfileInfoModel(title: 'Basic Information', value: {
-      'First Name': '',
-      'Middle Name': '',
+      'First Name': 'Arjay',
+      'Middle Name': 'Mangubat',
       'Last Name': '',
       'Employee ID': '',
       'Gender': '',
