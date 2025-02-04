@@ -421,7 +421,7 @@ class AttendanceViewModel extends ChangeNotifier {
           .where('attendance_date',
               isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
           .orderBy('attendance_date', descending: true)
-          .get();
+          .get(GetOptions(source: Source.cache));
       attendanceListByYearAndMonth = attendanceQuery.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         return UserAttendanceModel.fromJson(data);
