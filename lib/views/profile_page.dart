@@ -27,7 +27,7 @@ class ProfilePage extends StatelessWidget {
           ),
           actions: [
             GestureDetector(
-              onTap: (){},
+              onTap: () {},
               child: Container(
                 padding: EdgeInsets.all(10),
                 child: Row(
@@ -75,6 +75,7 @@ class ProfilePage extends StatelessWidget {
               ),
               ListView.builder(
                   shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
                   itemCount: profileViewModel.profileInfoList[0].value?.length,
                   itemBuilder: (context, index) {
                     return ProfileInfoTile(
@@ -103,6 +104,7 @@ class ProfilePage extends StatelessWidget {
               ),
               ListView.builder(
                   shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
                   itemCount: profileViewModel.profileInfoList[1].value?.length,
                   itemBuilder: (context, index) {
                     return ProfileInfoTile(

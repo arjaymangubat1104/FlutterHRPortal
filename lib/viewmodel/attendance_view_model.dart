@@ -18,7 +18,6 @@ class AttendanceViewModel extends ChangeNotifier {
   AttendanceViewModel(
       {required this.authViewModel, required this.timeDateViewModel});
 
-
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
@@ -82,7 +81,7 @@ class AttendanceViewModel extends ChangeNotifier {
           .where('user_id', isEqualTo: userModel.uid)
           .where('attendance_date',
               isEqualTo: DateFormat('yyyy-MM-dd').format(_checkInTime!))
-          .get(GetOptions(source: Source.cache));
+          .get();
 
       if (attendanceQuery.docs.isNotEmpty) {
         throw Exception("You've already timed in today");
@@ -158,7 +157,7 @@ class AttendanceViewModel extends ChangeNotifier {
               .where('user_id', isEqualTo: userModel.uid)
               .where('attendance_date',
                   isEqualTo: DateFormat('yyyy-MM-dd').format(day))
-              .get(GetOptions(source: Source.cache));
+              .get();
 
           if (attendanceQuery.docs.isEmpty) {
             count++;
@@ -186,7 +185,7 @@ class AttendanceViewModel extends ChangeNotifier {
           .where('user_id', isEqualTo: userModel.uid)
           .where('attendance_date',
               isEqualTo: DateFormat('yyyy-MM-dd').format(_checkOutTime!))
-          .get(GetOptions(source: Source.cache));
+          .get();
       if (attendanceQuery.docs.isNotEmpty) {
         DocumentSnapshot doc = attendanceQuery.docs.first;
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -279,7 +278,7 @@ class AttendanceViewModel extends ChangeNotifier {
                   DateFormat('yyyy-MM-dd').format(startDate))
           .where('attendance_date',
               isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
-          .get(GetOptions(source: Source.cache));
+          .get();
       return attendanceQuery.docs.length;
     } catch (e) {
       _errorMessage = e.toString();
@@ -315,7 +314,7 @@ class AttendanceViewModel extends ChangeNotifier {
                   DateFormat('yyyy-MM-dd').format(startDate))
           .where('attendance_date',
               isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
-          .get(GetOptions(source: Source.cache));
+          .get();
       return attendanceQuery.docs.length;
     } catch (e) {
       _errorMessage = e.toString();
@@ -372,7 +371,7 @@ class AttendanceViewModel extends ChangeNotifier {
           .where('user_id', isEqualTo: userModel.uid)
           .where('attendance_date', isEqualTo: formattedDate)
           .orderBy('attendance_date', descending: true)
-          .get(GetOptions(source: Source.cache));
+          .get();
       _attendanceList = attendanceQuery.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         return UserAttendanceModel.fromJson(data);
@@ -421,7 +420,7 @@ class AttendanceViewModel extends ChangeNotifier {
           .where('attendance_date',
               isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
           .orderBy('attendance_date', descending: true)
-          .get(GetOptions(source: Source.cache));
+          .get();
       attendanceListByYearAndMonth = attendanceQuery.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         return UserAttendanceModel.fromJson(data);
@@ -451,7 +450,7 @@ class AttendanceViewModel extends ChangeNotifier {
                   DateFormat('yyyy-MM-dd').format(startDate))
           .where('attendance_date',
               isLessThanOrEqualTo: DateFormat('yyyy-MM-dd').format(endDate))
-          .get(GetOptions(source: Source.cache));
+          .get();
       int count = 0;
       for (DocumentSnapshot doc in attendanceQuery.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;

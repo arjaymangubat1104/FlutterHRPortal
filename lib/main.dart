@@ -14,9 +14,7 @@ import 'package:flutter_attendance_system/views/button_page/payslip_page.dart';
 import 'package:flutter_attendance_system/views/profile_page.dart';
 import 'package:flutter_attendance_system/views/register_page.dart';
 import 'package:flutter_attendance_system/views/button_page/team_page.dart';
-
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
@@ -27,10 +25,7 @@ void main() async {
           appId: '1:973475796713:ios:93711787d1aeec4e670278',
           messagingSenderId: '973475796713',
           projectId: 'flutterattendance-13ad7'));
-  FirebaseFirestore.instance.settings = Settings(
-    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED, // Set unlimited cache size
-    persistenceEnabled: true, // Enable offline persistence
-  );
+
   runApp(const MyApp());
 }
 
@@ -51,9 +46,10 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (context) => ThemeViewModel()),
         ChangeNotifierProvider(create: (context) => ScheduleViewModel()),
-        ChangeNotifierProvider(create: (context) => ProfileViewModel(
-            authViewModel: Provider.of<AuthViewModel>(context, listen: false)
-        )),
+        ChangeNotifierProvider(
+            create: (context) => ProfileViewModel(
+                authViewModel:
+                    Provider.of<AuthViewModel>(context, listen: false))),
         // Add other providers here
       ],
       child: MaterialApp(
