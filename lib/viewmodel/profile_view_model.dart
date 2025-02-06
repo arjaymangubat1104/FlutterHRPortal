@@ -10,11 +10,11 @@ class ProfileViewModel extends ChangeNotifier {
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
-  
+
   final List<ProfileInfoModel> _profileInfoList = [
     ProfileInfoModel(title: 'Basic Information', value: {
-      'First Name': 'Arjay',
-      'Middle Name': 'Mangubat',
+      'First Name': '',
+      'Middle Name': '',
       'Last Name': '',
       'Employee ID': '',
       'Gender': '',
@@ -24,8 +24,7 @@ class ProfileViewModel extends ChangeNotifier {
     ProfileInfoModel(title: 'Contact Information', value: {
       'Home Address': '',
       'Provincial Address': '',
-      'Personal Email': '',
-      'Company Email': '',
+      'Email': '',
       'Mobile No.': '',
       'Telephone No.': '',
       'Emergency Contact Person': '',
@@ -67,28 +66,28 @@ class ProfileViewModel extends ChangeNotifier {
 
   //create a method that get user information
   Future<void> getUserInformation() async {
-    try{
+    try {
       String userId = authViewModel.userModel!.uid;
-    DocumentSnapshot documentSnapshot =
-        await _firestore.collection('users').doc(userId).get();
-    if (!documentSnapshot.exists) {
-      throw Exception('User information does not exist');
-    }
-    Map<String, dynamic> userInfo =
-        documentSnapshot.data() as Map<String, dynamic>;
-    _profileInfoList[0].value!['First Name'] = userInfo['first_name'];
-    _profileInfoList[0].value!['Middle Name'] = userInfo['middle_name'];
-    _profileInfoList[0].value!['Last Name'] = userInfo['last_name'];
-    _profileInfoList[0].value!['Employee ID'] = userId;
-    _profileInfoList[0].value!['Gender'] = userInfo['gender'];
-    _profileInfoList[0].value!['Civil Status'] = userInfo['civil_status'];
-    _profileInfoList[0].value!['Date of Birth'] = userInfo['birth_date'];
-    _profileInfoList[0].value;
-    notifyListeners();
-    }catch(e){
+      DocumentSnapshot documentSnapshot =
+          await _firestore.collection('users').doc(userId).get();
+      if (!documentSnapshot.exists) {
+        throw Exception('User information does not exist');
+      }
+      Map<String, dynamic> userInfo =
+          documentSnapshot.data() as Map<String, dynamic>;
+      _profileInfoList[0].value!['First Name'] = userInfo['first_name'];
+      _profileInfoList[0].value!['Middle Name'] = userInfo['middle_name'];
+      _profileInfoList[0].value!['Last Name'] = userInfo['last_name'];
+      _profileInfoList[0].value!['Employee ID'] = userId;
+      _profileInfoList[0].value!['Gender'] = userInfo['gender'];
+      _profileInfoList[0].value!['Civil Status'] = userInfo['civil_status'];
+      _profileInfoList[0].value!['Date of Birth'] = userInfo['birth_date'];
+      _profileInfoList[1].value!['Email'] = userInfo['email'];
+      _profileInfoList[0].value;
+      notifyListeners();
+    } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
     }
-    
   }
 }
