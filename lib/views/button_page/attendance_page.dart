@@ -32,44 +32,7 @@ class _AttendancePageState extends State<AttendancePage>
       List.generate(12, (index) => DateTime(0, index + 1));
   final int _selectedYear = DateTime.now().year;
   int selectedMonth = DateTime.now().month;
-  // List<UserAttendanceModel> attendanceListByYearAndMonth = [
-  //   UserAttendanceModel(
-  //     id: '1',
-  //     userId: 'user1',
-  //     userName: 'John Doe',
-  //     attendanceDate: '2025-01-30',
-  //     attendanceStatus: 'Present',
-  //     timeIn: '08:00:00',
-  //     timeOut: '',
-  //     totalTime: '09:00:00',
-  //     lateTime: '00:00:00',
-  //     underTime: '00:00:00',
-  //   ),
-  //   UserAttendanceModel(
-  //     id: '2',
-  //     userId: 'user2',
-  //     userName: 'Jane Smith',
-  //     attendanceDate: '2025-01-30',
-  //     attendanceStatus: 'Late/Undertime',
-  //     timeIn: '08:00:00',
-  //     timeOut: '17:00:00',
-  //     totalTime: '09:00:00',
-  //     lateTime: '00:30:00',
-  //     underTime: '00:00:00',
-  //   ),
-  //   UserAttendanceModel(
-  //     id: '3',
-  //     userId: 'user3',
-  //     userName: 'Alice Johnson',
-  //     attendanceDate: '2025-01-30',
-  //     attendanceStatus: 'Absent',
-  //     timeIn: '08:00:00',
-  //     timeOut: '17:00:00',
-  //     totalTime: '09:00:00',
-  //     lateTime: '00:00:00',
-  //     underTime: '00:00:00',
-  //   ),
-  // ];
+
   List<UserAttendanceModel> attendanceListByYearAndMonth = [];
   int presentCounterCalendar = 0;
   int lateUndertimeCounterCalendar = 0;
@@ -148,15 +111,19 @@ class _AttendancePageState extends State<AttendancePage>
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(text: 'HISTORY'),
-            Tab(text: 'CALENDAR'),
+            Tab(
+              text: 'HISTORY',
+            ),
+            Tab(
+              text: 'CALENDAR',
+            ),
           ],
           dividerColor: themeViewModel.currentTheme.themeColor,
           indicatorColor: themeViewModel.currentTheme.boxTextColor,
           unselectedLabelColor: themeViewModel.currentTheme.boxTextColor,
           labelColor: themeViewModel.currentTheme.boxTextColor,
           labelStyle: TextStyle(
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
           ),
         ),
