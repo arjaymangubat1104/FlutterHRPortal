@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance_system/viewmodel/theme_view_model.dart';
+import 'package:flutter_attendance_system/widgets/filed_schdule_tile.dart';
 import 'package:provider/provider.dart';
 
 class SchedulePage extends StatefulWidget {
@@ -67,23 +68,36 @@ class _SchedulePageState extends State<SchedulePage>
       body: TabBarView(
         controller: _tabController,
         children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // Add your code here
-                  },
-                  child: Text('View News'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Add your code here
-                  },
-                  child: Text('Add News'),
-                ),
-              ],
+          Container(
+            color: themeViewModel.currentTheme.pageBackgroundColor,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Filed Schedule',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: 1,
+                    itemBuilder: (context, index) {
+                      return FilesSchduleTile(
+                        date: '2021-09-01',
+                        statusMessage: 'Pending',
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
           Center(
